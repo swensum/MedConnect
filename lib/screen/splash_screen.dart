@@ -30,30 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColors.navy,
       body: Center(
         child: SplashLogoAnimation(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.monitor_heart_outlined,
-                size: 72,
-                color: AppColors.white,
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'MedConnect',
-                style: AppTextStyles.h1.copyWith(
-                  color: AppColors.white,
-                  letterSpacing: 0.2,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Care within reach',
-                style: AppTextStyles.bodySecondary.copyWith(
-                  color: AppColors.mutedBlue,
-                ),
-              ),
-            ],
+          child: Image.asset(
+            // Update this to match your actual asset path/filename.
+            'assets/logo.png',
+            width: 200,
           ),
         ),
       ),
