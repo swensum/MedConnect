@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:med_connect/Animations/Splash%20Animation/splashanimation.dart';
 import 'package:med_connect/Theme/theme.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
