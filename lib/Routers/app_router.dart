@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
 import 'package:med_connect/screen/onBoardingscrren/onboarding.dart';
@@ -73,14 +74,13 @@ class AppRouter {
           return slidePage(PhoneAuthScreen(role: role), state);
         },
       ),
-      // Add screens as each section is built, following the same pattern:
-      // GoRoute(
-      //   path: AppRoutes.phoneEntry,
-      //   pageBuilder: (context, state) {
-      //     final role = state.extra as UserRole;
-      //     return slidePage(PhoneEntryScreen(role: role), state);
-      //   },
-      // ),
+      GoRoute(
+        path: AppRoutes.otpVerify,
+        pageBuilder: (context, state) {
+          final (phone, role) = state.extra as (String, UserRole);
+          return slidePage(OtpVerifyScreen(phone: phone, role: role), state);
+        },
+      ),
     ],
   );
 }
