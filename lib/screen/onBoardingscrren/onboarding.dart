@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 
 class _OnboardingSlide {
@@ -309,8 +311,6 @@ class _BloodTag extends StatelessWidget {
   }
 }
 
-/// Small reusable wrapper that scales down slightly on press, for tactile
-/// button feedback without needing a new StatefulWidget per button.
 class _Pressable extends StatefulWidget {
   const _Pressable({required this.onTap, required this.child});
   final VoidCallback onTap;
@@ -352,8 +352,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // Drives the staggered entrance of the visual, title, and body each time
-  // a slide settles into view.
+  
   late final AnimationController _contentController;
   late final Animation<double> _visualFade;
   late final Animation<Offset> _visualSlide;
@@ -416,11 +415,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   void _skip() => _pageController.jumpToPage(_slides.length - 1);
 
-  void _finishOnboarding() {
-    // Replace with your actual next screen, e.g.:
-    // Navigator.of(context).pushReplacement(
-    //   MaterialPageRoute(builder: (_) => const LoginScreen()),
-    // );
+   void _finishOnboarding() {
+    context.go(AppRoutes.roleSelection);
   }
 
   @override

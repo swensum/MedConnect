@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
-import 'package:med_connect/screen/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,10 +20,10 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
+       return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
-          home: const SplashScreen(),
+          routerConfig: AppRouter.router,
           builder: (context, child) {
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: const SystemUiOverlayStyle(
@@ -41,3 +41,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+ 
