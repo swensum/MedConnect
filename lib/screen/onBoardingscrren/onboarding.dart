@@ -553,7 +553,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
-                                Text('Get started'),
+                                Text('Get started',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
                                 SizedBox(width: 8),
                                 Icon(Icons.arrow_forward, size: 18),
                               ],
