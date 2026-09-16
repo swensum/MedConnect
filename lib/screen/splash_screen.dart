@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:med_connect/Animations/Splash%20Animation/splashanimation.dart';
 import 'package:med_connect/Theme/theme.dart';
+import 'package:med_connect/screen/onBoardingscrren/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,10 +17,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Future.delayed(const Duration(milliseconds: 2600), () {
       if (!mounted) return;
-      // Replace with your actual next screen, e.g.:
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-      // );
+      
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+      );
     });
   }
 
