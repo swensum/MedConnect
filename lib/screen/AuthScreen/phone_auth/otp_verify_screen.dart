@@ -83,7 +83,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       _isVerified = true;
     });
 
-    await Future.delayed(const Duration(milliseconds: 1100));
+    await Future.delayed(const Duration(milliseconds: 1300));
     if (!mounted) return;
 
     // Using context.go (not push) since the whole auth flow — phone entry,

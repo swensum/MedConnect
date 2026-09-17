@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:med_connect/Theme/theme.dart';
@@ -257,7 +258,7 @@ class NeuChip extends StatelessWidget {
           label,
           style: AppTextStyles.body.copyWith(
             fontSize: 13.sp,
-           fontWeight: FontWeight.w600,
+            fontWeight:  FontWeight.w600,
             color: selected ? AppColors.white : AppColors.navy,
           ),
         ),
@@ -444,6 +445,207 @@ class NeuSuccessCheck extends StatelessWidget {
           Icons.check_rounded,
           size: (size * 0.45).sp,
           color: AppColors.success,
+        ),
+      ),
+    );
+  }
+}
+
+const List<String> _neuMonthNames = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+/// Opens a neumorphic wheel-style date picker (day / month / year columns)
+/// as a bottom sheet, matching the look of NeuPillButton / NeuInsetSurface
+/// instead of the stock Material date picker dialog. Returns null if the
+/// user dismisses without confirming.
+Future<DateTime?> showNeuDatePicker(
+  BuildContext context, {
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+}) {
+  return showModalBottomSheet<DateTime>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (_) => _NeuDatePickerSheet(
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    ),
+  );
+}
+
+class _NeuDatePickerSheet extends StatefulWidget {
+  const _NeuDatePickerSheet({
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
+  });
+
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+
+  @override
+  State<_NeuDatePickerSheet> createState() => _NeuDatePickerSheetState();
+}
+
+class _NeuDatePickerSheetState extends State<_NeuDatePickerSheet> {
+  late int _day = widget.initialDate.day;
+  late int _month = widget.initialDate.month;
+  late int _year = widget.initialDate.year;
+
+  late final FixedExtentScrollController _dayController =
+      FixedExtentScrollController(initialItem: _day - 1);
+  late final FixedExtentScrollController _monthController =
+      FixedExtentScrollController(initialItem: _month - 1);
+  late final FixedExtentScrollController _yearController =
+      FixedExtentScrollController(initialItem: _year - widget.firstDate.year);
+
+  int get _yearCount => widget.lastDate.year - widget.firstDate.year + 1;
+  int get _daysInSelectedMonth => DateTime(_year, _month + 1, 0).day;
+
+  @override
+  void dispose() {
+    _dayController.dispose();
+    _monthController.dispose();
+    _yearController.dispose();
+    super.dispose();
+  }
+
+  void _confirm() {
+    final clampedDay = _day.clamp(1, _daysInSelectedMonth);
+    Navigator.of(context).pop(DateTime(_year, _month, clampedDay));
+  }
+
+  Widget _wheel({
+  required FixedExtentScrollController controller,
+  required int itemCount,
+  required String Function(int index) labelBuilder,
+  required ValueChanged<int> onChanged,
+}) {
+  return Expanded(
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        // Your neumorphic highlight box, behind the picker.
+        Container(
+          height: 40.h,
+          margin: EdgeInsets.symmetric(horizontal: 4.w),
+          decoration: BoxDecoration(
+            color: kNeuBg,
+            borderRadius: BorderRadius.circular(10.r),
+            boxShadow: neuShadows(distance: 3, blur: 6, inset: true),
+          ),
+        ),
+        CupertinoPicker(
+          selectionOverlay: null,          // <-- kill the default grey bar
+          backgroundColor: Colors.transparent,
+          diameterRatio: 3.0,
+          useMagnifier: false,
+          scrollController: controller,
+          itemExtent: 40.h,
+          onSelectedItemChanged: onChanged,
+          children: List.generate(itemCount, (i) {
+            return Center(
+              child: Text(
+                labelBuilder(i),
+                style: AppTextStyles.body.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.navy,
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    ),
+  );
+}
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      decoration: BoxDecoration(
+        color: kNeuBg,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 10.h),
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: AppColors.mutedBlue.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Row(
+                children: [
+                  Text('Select date of birth', style: AppTextStyles.h2.copyWith(fontSize: 17.sp)),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(Icons.close_rounded, size: 20.sp, color: AppColors.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 12.h),
+            SizedBox(
+              height: 200.h,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  children: [
+                    _wheel(
+                      controller: _dayController,
+                      itemCount: 31,
+                      labelBuilder: (i) => '${i + 1}',
+                      onChanged: (i) => setState(() => _day = i + 1),
+                    ),
+                    SizedBox(width: 8.w),
+                    _wheel(
+                      controller: _monthController,
+                      itemCount: 12,
+                      labelBuilder: (i) => _neuMonthNames[i],
+                      onChanged: (i) => setState(() => _month = i + 1),
+                    ),
+                    SizedBox(width: 8.w),
+                    _wheel(
+                      controller: _yearController,
+                      itemCount: _yearCount,
+                      labelBuilder: (i) => '${widget.firstDate.year + i}',
+                      onChanged: (i) =>
+                          setState(() => _year = widget.firstDate.year + i),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 36.h),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+              child: NeuPillButton(
+                enabled: true,
+                onTap: _confirm,
+                label: 'Confirm',
+              ),
+            ),
+          ],
         ),
       ),
     );

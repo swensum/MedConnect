@@ -55,11 +55,20 @@ class PhoneAuthScreen extends StatefulWidget {
 class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   String _fullPhoneNumber = '';
   bool _isValid = false;
+ bool _isSending = false;
 
-  void _sendOtp() {
-    if (!_isValid) return;
+ Future<void> _sendOtp() async {
+    if (!_isValid || _isSending) return;
+    setState(() => _isSending = true);
+
+    await Future.delayed(const Duration(milliseconds: 900));
+
+    if (!mounted) return;
+    setState(() => _isSending = false);
+
     context.push(AppRoutes.otpVerify, extra: (_fullPhoneNumber, widget.role));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +106,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               ),
               const Spacer(),
               NeuPillButton(
-                enabled: _isValid,
+                 enabled: _isValid && !_isSending,
+                loading: _isSending,
                 onTap: _sendOtp,
                 label: 'Send OTP',
               ),
