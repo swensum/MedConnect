@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 
 enum UserRole { patient, doctor }
-const Color _kNeuBg = AppColors.paleBlue;
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -19,14 +19,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
   void _continue() {
     if (_selectedRole == null) return;
-
     context.push(AppRoutes.phoneEntry, extra: _selectedRole);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kNeuBg,
+      backgroundColor: kNeuBg,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -62,93 +61,15 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
               const Spacer(),
 
-              _NeumorphicButton(
+              NeuPillButton(
                 enabled: _selectedRole != null,
                 label: 'Continue',
                 onTap: _continue,
+                height: 58.h,
+                radius: 20,
               ),
               SizedBox(height: 24.h),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-List<BoxShadow> _neuShadows({
-  required double distance,
-  required double blur,
-  bool inset = false,
-}) {
-  
-  final darkOffset =
-      inset ? Offset(-distance, -distance) : Offset(distance, distance);
-  final lightOffset =
-      inset ? Offset(distance, distance) : Offset(-distance, -distance);
-
-  return [
-    BoxShadow(
-      color: const Color(0xFFA9BBCF).withOpacity(0.65),
-      offset: darkOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-    BoxShadow(
-      color: Colors.white.withOpacity(0.9),
-      offset: lightOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-  ];
-}
-
-class _NeumorphicButton extends StatefulWidget {
-  const _NeumorphicButton({
-    required this.enabled,
-    required this.label,
-    required this.onTap,
-  });
-
-  final bool enabled;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  State<_NeumorphicButton> createState() => _NeumorphicButtonState();
-}
-
-class _NeumorphicButtonState extends State<_NeumorphicButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool down = _pressed && widget.enabled;
-    final radius = 20.r;
-
-    return GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-      onTapCancel: () => setState(() => _pressed = false),
-      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        width: double.infinity,
-        height: 58.h,
-        decoration: BoxDecoration(
-          color: widget.enabled ? AppColors.navy : _kNeuBg,
-          borderRadius: BorderRadius.circular(radius),
-          boxShadow:
-              _neuShadows(distance: down ? 3 : 7, blur: down ? 6 : 16, inset: down),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          widget.label,
-          style: AppTextStyles.button.copyWith(
-            fontSize: 15.sp,
-            color: widget.enabled
-                ? AppColors.white
-                : AppColors.navy.withOpacity(0.4),
           ),
         ),
       ),
@@ -182,9 +103,9 @@ class _RoleCard extends StatelessWidget {
         curve: Curves.easeOut,
         padding: EdgeInsets.all(18.w),
         decoration: BoxDecoration(
-          color: selected ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+          color: selected ? Color.lerp(kNeuBg, AppColors.navy, 0.06) : kNeuBg,
           borderRadius: BorderRadius.circular(radius),
-          boxShadow: _neuShadows(
+          boxShadow: neuShadows(
             distance: selected ? 4 : 7,
             blur: selected ? 8 : 16,
             inset: selected,
@@ -231,14 +152,14 @@ class _NeuIconBadge extends StatelessWidget {
       width: 50.w,
       height: 50.w,
       decoration: BoxDecoration(
-        color: active ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+        color: active ? Color.lerp(kNeuBg, AppColors.navy, 0.06) : kNeuBg,
         shape: BoxShape.circle,
-        boxShadow: _neuShadows(distance: 4, blur: 8, inset: active),
+        boxShadow: neuShadows(distance: 4, blur: 8, inset: active),
       ),
       child: Icon(
         icon,
         size: 22.sp,
-        color: active ? AppColors.navy : AppColors.navy.withOpacity(0.6),
+        color: active ? AppColors.navy : AppColors.navy.withValues(alpha: 0.6),
       ),
     );
   }
@@ -255,9 +176,9 @@ class _NeuCheckDot extends StatelessWidget {
       width: 26.w,
       height: 26.w,
       decoration: BoxDecoration(
-        color: selected ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+        color: selected ? Color.lerp(kNeuBg, AppColors.navy, 0.06) : kNeuBg,
         shape: BoxShape.circle,
-        boxShadow: _neuShadows(distance: 3, blur: 5, inset: true),
+        boxShadow: neuShadows(distance: 3, blur: 5, inset: true),
       ),
       child: selected
           ? Icon(Icons.check, size: 13.sp, color: AppColors.navy)

@@ -3,42 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Routers/app_router.dart';
+
 import 'package:med_connect/Theme/systemui.dart';
 import 'package:med_connect/Theme/theme.dart';
+
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
-
-/// Same surface token used across the phone-auth / role-selection screens
-/// so this screen reads as part of the same neumorphic flow.
-const Color _kNeuBg = AppColors.paleBlue;
-
-/// Two soft, large-blur shadows — dark bottom-right + light top-left — is
-/// the neumorphic trick. `inset` swaps the corners to fake a "pressed/
-/// carved in" surface.
-List<BoxShadow> _neuShadows({
-  required double distance,
-  required double blur,
-  bool inset = false,
-}) {
-  final darkOffset =
-      inset ? Offset(-distance, -distance) : Offset(distance, distance);
-  final lightOffset =
-      inset ? Offset(distance, distance) : Offset(-distance, -distance);
-
-  return [
-    BoxShadow(
-      color: const Color(0xFFA9BBCF).withValues(alpha: 0.65),
-      offset: darkOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-    BoxShadow(
-      color: Colors.white.withValues(alpha: 0.9),
-      offset: lightOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-  ];
-}
 
 class OtpVerifyScreen extends StatefulWidget {
   const OtpVerifyScreen({super.key, required this.phone, required this.role});
@@ -96,9 +68,21 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       _errorText = null;
     });
 
+    // TODO: Replace with real Firebase Auth verification. During dev, use
+    // Firebase Console → Authentication → Phone → "Phone numbers for
+    // testing" so no real SMS is sent and no cost is incurred.
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     setState(() => _isVerifying = false);
+
+    // Route into the role-specific next step. Using context.go (not push)
+    // since the whole auth flow — phone entry, OTP — should be popped off
+    // the back stack once verification succeeds.
+    if (widget.role == UserRole.patient) {
+      context.go(AppRoutes.patientProfileSetup, extra: widget.phone);
+    } else {
+      context.go(AppRoutes.doctorKyc, extra: widget.phone);
+    }
   }
 
   void _resend() {
@@ -109,12 +93,12 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kNeuBg,
+      backgroundColor: kNeuBg,
       appBar: AppBar(
-        backgroundColor: _kNeuBg,
+        backgroundColor: kNeuBg,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
-        systemOverlayStyle: overlayFor(_kNeuBg),
+        systemOverlayStyle: overlayFor(kNeuBg),
       ),
       body: SafeArea(
         child: Padding(
@@ -177,7 +161,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
               _ResendRow(secondsLeft: _secondsLeft, onResend: _resend),
 
               const Spacer(),
-              _NeuPillButton(
+              NeuPillButton(
                 enabled: _isComplete && !_isVerifying,
                 onTap: _verify,
                 loading: _isVerifying,
@@ -192,12 +176,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   }
 }
 
-/// OTP cells styled as neumorphic surfaces instead of bordered boxes:
-/// empty cells sit raised off the background, the currently-focused cell
-/// gets a slightly stronger raise, and filled cells look "pressed in"
-/// (inset shadow) with the navy digit sitting inside the carve. Error
-/// state swaps the shadow tint for a soft red glow instead of a hard
-/// red border, keeping the soft-UI language even when something's wrong.
 class _OtpInput extends StatefulWidget {
   const _OtpInput({
     required this.length,
@@ -285,11 +263,11 @@ class __OtpInputState extends State<_OtpInput> with SingleTickerProviderStateMix
                   ),
                 ];
               } else if (filled) {
-                shadow = _neuShadows(distance: 3, blur: 6, inset: true);
+                shadow = neuShadows(distance: 3, blur: 6, inset: true);
               } else if (isCurrent) {
-                shadow = _neuShadows(distance: 4, blur: 9);
+                shadow = neuShadows(distance: 4, blur: 9);
               } else {
-                shadow = _neuShadows(distance: 3, blur: 6);
+                shadow = neuShadows(distance: 3, blur: 6);
               }
 
               return AnimatedContainer(
@@ -298,7 +276,7 @@ class __OtpInputState extends State<_OtpInput> with SingleTickerProviderStateMix
                 height: 56.h,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: _kNeuBg,
+                  color: kNeuBg,
                   borderRadius: BorderRadius.circular(14.r),
                   boxShadow: shadow,
                 ),
@@ -353,80 +331,6 @@ class _ResendRow extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// A raised neumorphic pill for the primary submit action — same shape and
-/// press behavior as the "Send OTP" button on the phone-auth screen, with
-/// an added `loading` state that swaps the label for a spinner.
-class _NeuPillButton extends StatefulWidget {
-  const _NeuPillButton({
-    required this.enabled,
-    required this.onTap,
-    required this.label,
-    this.loading = false,
-  });
-
-  final bool enabled;
-  final VoidCallback onTap;
-  final String label;
-  final bool loading;
-
-  @override
-  State<_NeuPillButton> createState() => _NeuPillButtonState();
-}
-
-class _NeuPillButtonState extends State<_NeuPillButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool down = _pressed && widget.enabled;
-
-    return GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-      onTapCancel: () => setState(() => _pressed = false),
-      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedScale(
-        scale: down ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: double.infinity,
-          height: 54.h,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: widget.enabled ? AppColors.navy : _kNeuBg,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: _neuShadows(
-              distance: down ? 3 : 7,
-              blur: down ? 6 : 16,
-              inset: down,
-            ),
-          ),
-          child: widget.loading
-              ? SizedBox(
-                  width: 20.w,
-                  height: 20.w,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(AppColors.navy),
-                  ),
-                )
-              : Text(
-                  widget.label,
-                  style: AppTextStyles.button.copyWith(
-                    fontSize: 15.sp,
-                    color: widget.enabled
-                        ? AppColors.white
-                        : AppColors.navy.withValues(alpha: 0.4),
-                  ),
-                ),
-        ),
-      ),
     );
   }
 }

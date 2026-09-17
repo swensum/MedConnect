@@ -2,44 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Routers/app_router.dart';
+
 import 'package:med_connect/Theme/systemui.dart';
 import 'package:med_connect/Theme/theme.dart';
-
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
-
-/// Base surface color every neumorphic shadow is derived from — same token
-/// used across the role selection and onboarding screens.
-const Color _kNeuBg = AppColors.paleBlue;
-
-/// Two soft, large-blur shadows — dark bottom-right + light top-left — is
-/// the neumorphic trick. `inset` swaps the corners to fake a "pressed/
-/// carved in" surface, which is what we want for the phone input field.
-List<BoxShadow> _neuShadows({
-  required double distance,
-  required double blur,
-  bool inset = false,
-}) {
-  final darkOffset =
-      inset ? Offset(-distance, -distance) : Offset(distance, distance);
-  final lightOffset =
-      inset ? Offset(distance, distance) : Offset(-distance, -distance);
-
-  return [
-    BoxShadow(
-      color: const Color(0xFFA9BBCF).withValues(alpha: 0.65),
-      offset: darkOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-    BoxShadow(
-      color: Colors.white.withValues(alpha: 0.9),
-      offset: lightOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-  ];
-}
 
 class _CountryCode {
   const _CountryCode({
@@ -53,8 +21,6 @@ class _CountryCode {
   final String flag;
 }
 
-/// A slightly wider list than before — this is the kind of thing a real
-/// picker needs so search actually feels useful. Extend freely.
 const List<_CountryCode> _countryCodes = [
   _CountryCode(code: '+977', name: 'Nepal', flag: '🇳🇵'),
   _CountryCode(code: '+91', name: 'India', flag: '🇮🇳'),
@@ -98,12 +64,12 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _kNeuBg,
+      backgroundColor: kNeuBg,
       appBar: AppBar(
-        backgroundColor: _kNeuBg,
+        backgroundColor: kNeuBg,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
-        systemOverlayStyle: overlayFor(_kNeuBg),
+        systemOverlayStyle: overlayFor(kNeuBg),
       ),
       body: SafeArea(
         child: Padding(
@@ -112,7 +78,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 8.h),
-              _RoleBadge(role: widget.role),
+              RoleBadge(role: widget.role),
               SizedBox(height: 24.h),
               Text('Enter your phone number', style: AppTextStyles.h1),
               SizedBox(height: 8.h),
@@ -130,7 +96,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                 },
               ),
               const Spacer(),
-              _NeuPillButton(
+              NeuPillButton(
                 enabled: _isValid,
                 onTap: _sendOtp,
                 label: 'Send OTP',
@@ -144,9 +110,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   }
 }
 
-/// A neumorphic phone field: one carved-in (inset shadow) rounded surface
-/// holding a tappable country-code selector, a thin divider, and the number
-/// input — no borders, matching the soft-UI language used across the app.
 class _PhoneInputField extends StatefulWidget {
   const _PhoneInputField({required this.onChanged});
 
@@ -198,9 +161,9 @@ class _PhoneInputFieldState extends State<_PhoneInputField> {
       height: 58.h,
       padding: EdgeInsets.symmetric(horizontal: 14.w),
       decoration: BoxDecoration(
-        color: _kNeuBg,
+        color: kNeuBg,
         borderRadius: BorderRadius.circular(16.r),
-        boxShadow: _neuShadows(distance: 5, blur: 10, inset: true),
+        boxShadow: neuShadows(distance: 5, blur: 10, inset: true),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -301,7 +264,7 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: _kNeuBg,
+            color: kNeuBg,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
           ),
           child: Column(
@@ -336,9 +299,9 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                   height: 46.h,
                   padding: EdgeInsets.symmetric(horizontal: 14.w),
                   decoration: BoxDecoration(
-                    color: _kNeuBg,
+                    color: kNeuBg,
                     borderRadius: BorderRadius.circular(14.r),
-                    boxShadow: _neuShadows(distance: 2.5, blur: 5, inset: true),
+                    boxShadow: neuShadows(distance: 2.5, blur: 5, inset: true),
                   ),
                   child: Row(
                     children: [
@@ -423,101 +386,6 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
           ),
         );
       },
-    );
-  }
-}
-class _NeuPillButton extends StatefulWidget {
-  const _NeuPillButton({
-    required this.enabled,
-    required this.onTap,
-    required this.label,
-  });
-
-  final bool enabled;
-  final VoidCallback onTap;
-  final String label;
-
-  @override
-  State<_NeuPillButton> createState() => _NeuPillButtonState();
-}
-
-class _NeuPillButtonState extends State<_NeuPillButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final bool down = _pressed && widget.enabled;
-
-    return GestureDetector(
-      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
-      onTapCancel: () => setState(() => _pressed = false),
-      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
-      onTap: widget.enabled ? widget.onTap : null,
-      child: AnimatedScale(
-        scale: down ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: double.infinity,
-          height: 54.h,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: widget.enabled ? AppColors.navy : _kNeuBg,
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: _neuShadows(
-              distance: down ? 3 : 7,
-              blur: down ? 6 : 16,
-              inset: down,
-            ),
-          ),
-          child: Text(
-            widget.label,
-            style: AppTextStyles.button.copyWith(
-              fontSize: 15.sp,
-              color: widget.enabled
-                  ? AppColors.white
-                  : AppColors.navy.withValues(alpha: 0.4),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A small raised neumorphic pill instead of a flat-filled badge.
-class _RoleBadge extends StatelessWidget {
-  const _RoleBadge({required this.role});
-  final UserRole role;
-  @override
-  Widget build(BuildContext context) {
-    final label = role == UserRole.patient ? 'Patient' : 'Doctor';
-    final icon = role == UserRole.patient
-        ? Icons.person_outline
-        : Icons.medical_services_outlined;
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: _kNeuBg,
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: _neuShadows(distance: 4, blur: 8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14.sp, color: AppColors.navy),
-          SizedBox(width: 6.w),
-          Text(
-            'Signing up as $label',
-            style: AppTextStyles.caption.copyWith(
-              color: AppColors.navy,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

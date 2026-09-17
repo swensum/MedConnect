@@ -1,35 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
-
-const Color _kNeuBg = AppColors.paleBlue;
-
-List<BoxShadow> _neuShadows({
-  required double distance,
-  required double blur,
-  bool inset = false,
-}) {
-  final darkOffset =
-      inset ? Offset(-distance, -distance) : Offset(distance, distance);
-  final lightOffset =
-      inset ? Offset(distance, distance) : Offset(-distance, -distance);
-
-  return [
-    BoxShadow(
-      color: const Color(0xFFA9BBCF).withValues(alpha: 0.65),
-      offset: darkOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-    BoxShadow(
-      color: Colors.white.withValues(alpha: 0.9),
-      offset: lightOffset,
-      blurRadius: blur,
-      spreadRadius: 0.5,
-    ),
-  ];
-}
 
 class _OnboardingSlide {
   const _OnboardingSlide({
@@ -87,8 +60,8 @@ class _DoctorDiscoveryVisual extends StatelessWidget {
             height: 176,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _kNeuBg,
-              boxShadow: _neuShadows(distance: 9, blur: 20),
+              color: kNeuBg,
+              boxShadow: neuShadows(distance: 9, blur: 20),
             ),
           ),
           Container(
@@ -96,8 +69,8 @@ class _DoctorDiscoveryVisual extends StatelessWidget {
             height: 124,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _kNeuBg,
-              boxShadow: _neuShadows(distance: 6, blur: 14, inset: true),
+              color: kNeuBg,
+              boxShadow: neuShadows(distance: 6, blur: 14, inset: true),
             ),
             child: const Icon(
               Icons.medical_services_outlined,
@@ -121,8 +94,8 @@ class _ConsultVisual extends StatelessWidget {
       height: 64,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: active ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
-        boxShadow: _neuShadows(distance: 5, blur: 10, inset: active),
+        color: active ? Color.lerp(kNeuBg, AppColors.navy, 0.06) : kNeuBg,
+        boxShadow: neuShadows(distance: 5, blur: 10, inset: active),
       ),
       child: Icon(
         Icons.person_outline,
@@ -173,8 +146,8 @@ class _ConsultVisual extends StatelessWidget {
               height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _kNeuBg,
-                boxShadow: _neuShadows(distance: 6, blur: 12),
+                color: kNeuBg,
+                boxShadow: neuShadows(distance: 6, blur: 12),
               ),
               child: const Icon(
                 Icons.videocam_outlined,
@@ -199,9 +172,9 @@ class _VitalsVisual extends StatelessWidget {
       height: 104,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _kNeuBg,
+        color: kNeuBg,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: _neuShadows(distance: 6, blur: 14),
+        boxShadow: neuShadows(distance: 6, blur: 14),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,8 +235,8 @@ class _DonationVisual extends StatelessWidget {
               height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _kNeuBg,
-                boxShadow: _neuShadows(distance: 7, blur: 16),
+                color: kNeuBg,
+                boxShadow: neuShadows(distance: 7, blur: 16),
               ),
             ),
           ),
@@ -274,8 +247,8 @@ class _DonationVisual extends StatelessWidget {
               height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _kNeuBg,
-                boxShadow: _neuShadows(distance: 7, blur: 16),
+                color: kNeuBg,
+                boxShadow: neuShadows(distance: 7, blur: 16),
               ),
             ),
           ),
@@ -284,8 +257,8 @@ class _DonationVisual extends StatelessWidget {
             height: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _kNeuBg,
-              boxShadow: _neuShadows(distance: 5, blur: 10, inset: true),
+              color: kNeuBg,
+              boxShadow: neuShadows(distance: 5, blur: 10, inset: true),
             ),
             child: const Icon(
               Icons.water_drop_outlined,
@@ -318,108 +291,15 @@ class _BloodTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: _kNeuBg,
+        color: kNeuBg,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: _neuShadows(distance: 3, blur: 6),
+        boxShadow: neuShadows(distance: 3, blur: 6),
       ),
       child: Text(
         label,
         style: AppTextStyles.caption.copyWith(
           color: AppColors.navy,
           fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-/// A full-width neumorphic pill button ("Get started"). Raised by default,
-/// sinks into the page (inset shadow pair + slight scale) while pressed.
-class _NeuPillButton extends StatefulWidget {
-  const _NeuPillButton({super.key, required this.onTap, required this.child});
-
-  final VoidCallback onTap;
-  final Widget child;
-
-  @override
-  State<_NeuPillButton> createState() => _NeuPillButtonState();
-}
-
-class _NeuPillButtonState extends State<_NeuPillButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      child: AnimatedScale(
-        scale: _pressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: double.infinity,
-          height: 54,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: AppColors.navy,
-            borderRadius: BorderRadius.circular(27),
-            boxShadow: _neuShadows(
-              distance: _pressed ? 3 : 7,
-              blur: _pressed ? 6 : 16,
-              inset: _pressed,
-            ),
-          ),
-          child: widget.child,
-        ),
-      ),
-    );
-  }
-}
-
-/// A circular neumorphic "next" button — same raised/pressed language as
-/// the pill button, sized for a compact icon-only control.
-class _NeuCircleButton extends StatefulWidget {
-  const _NeuCircleButton({required this.onTap, required this.icon});
-
-  final VoidCallback onTap;
-  final IconData icon;
-
-  @override
-  State<_NeuCircleButton> createState() => _NeuCircleButtonState();
-}
-
-class _NeuCircleButtonState extends State<_NeuCircleButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      child: AnimatedScale(
-        scale: _pressed ? 0.92 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: 54,
-          height: 54,
-          decoration: BoxDecoration(
-            color: AppColors.navy,
-            shape: BoxShape.circle,
-            boxShadow: _neuShadows(
-              distance: _pressed ? 3 : 7,
-              blur: _pressed ? 6 : 16,
-              inset: _pressed,
-            ),
-          ),
-          child: Icon(widget.icon, color: AppColors.white, size: 22),
         ),
       ),
     );
@@ -514,7 +394,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.paleBlue,
+      backgroundColor: kNeuBg,
       body: SafeArea(
         child: Column(
           children: [
@@ -619,28 +499,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
                 child: _isLastPage
-                    ? _NeuPillButton(
+                    ? NeuPillButton(
                         key: const ValueKey('get-started'),
+                        enabled: true,
                         onTap: _goToNext,
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Get started',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.white,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 18,
-                              color: AppColors.white,
-                            ),
-                          ],
-                        ),
+                        label: 'Get started',
+                        icon: Icons.arrow_forward,
                       )
                     : Row(
                         key: const ValueKey('next-row'),
@@ -664,7 +528,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               );
                             }),
                           ),
-                          _NeuCircleButton(
+                          NeuCircleButton(
                             onTap: _goToNext,
                             icon: Icons.arrow_forward,
                           ),

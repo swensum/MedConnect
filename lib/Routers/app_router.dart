@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
+import 'package:med_connect/screen/Profile/Patient%20Profile/patient_profile_screen.dart';
 import 'package:med_connect/screen/onBoardingscrren/onboarding.dart';
 import 'package:med_connect/screen/splash_screen.dart';
 
@@ -14,7 +15,7 @@ class AppRoutes {
   static const roleSelection = '/role-selection';
   static const phoneEntry = '/phone-entry';
   static const otpVerify = '/otp-verify';
-  
+  static const patientProfileSetup = '/patient-profile-setup';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -79,6 +80,16 @@ class AppRouter {
         pageBuilder: (context, state) {
           final (phone, role) = state.extra as (String, UserRole);
           return slidePage(OtpVerifyScreen(phone: phone, role: role), state);
+        },
+      ),
+       GoRoute(
+        path: AppRoutes.patientProfileSetup,
+        pageBuilder: (context, state) {
+          final phone = state.extra as String;
+          return slidePage(
+            PatientProfileSetupScreen(phone: phone),
+            state,
+          );
         },
       ),
     ],
