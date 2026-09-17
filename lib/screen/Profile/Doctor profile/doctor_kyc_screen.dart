@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,11 +38,20 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
       TextEditingController();
 
   String? _specialization;
-  String? _licenseFileName;
-  String? _degreeFileName;
-  String? _clinicProofFileName;
+
+  // Holds the actual picked file (name, size, path/bytes) so it's ready
+  // to upload once Storage is wired up later — for now we just read
+  // .name for the UI.
+  PlatformFile? _licenseFile;
+  PlatformFile? _degreeFile;
+  PlatformFile? _clinicProofFile;
+
   bool _isSubmitting = false;
   bool _isSubmitted = false;
+
+  String? get _licenseFileName => _licenseFile?.name;
+  String? get _degreeFileName => _degreeFile?.name;
+  String? get _clinicProofFileName => _clinicProofFile?.name;
 
   bool get _isValid =>
       _nameController.text.trim().length >= 2 &&
@@ -50,8 +60,8 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
           _otherSpecializationController.text.trim().isNotEmpty) &&
       _licenseController.text.trim().isNotEmpty &&
       _experienceController.text.trim().isNotEmpty &&
-      _licenseFileName != null &&
-      _degreeFileName != null;
+      _licenseFile != null &&
+      _degreeFile != null;
 
   @override
   void initState() {
@@ -77,26 +87,49 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
     super.dispose();
   }
 
-  /// Stub picker — replace with file_picker / image_picker. Returning a
-  /// fixed name is enough to unblock building the rest of the flow now;
-  /// swap this for a real file-pick call when you wire up Storage upload.
-  Future<void> _pickFile(void Function(String fileName) onPicked) async {
-    HapticFeedback.selectionClick();
-    // TODO: Replace with real picker, e.g.
-    //   final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf','jpg','png']);
-    //   if (result != null) onPicked(result.files.single.name);
-    await Future.delayed(const Duration(milliseconds: 300));
-    onPicked('document.pdf');
+  /// Opens the native file picker restricted to PDF/JPG/PNG, with a basic
+  /// size guard. Calls [onPicked] with the selected file, or does nothing
+  /// if the user cancels.
+  Future<void> _pickFile(void Function(PlatformFile file) onPicked) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+      );
+
+      if (result == null || result.files.isEmpty) return; // user cancelled
+
+      final file = result.files.single;
+
+      const maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+      if (file.size > maxSizeBytes) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('File must be under 10 MB')),
+          );
+        }
+        return;
+      }
+
+      HapticFeedback.selectionClick();
+      onPicked(file);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Couldn\'t open file picker: $e')),
+        );
+      }
+    }
   }
 
   Future<void> _submit() async {
     if (!_isValid || _isSubmitting) return;
     setState(() => _isSubmitting = true);
 
-    // TODO: Upload the three files to Firebase Storage, then write the
-    // doctor_profiles doc with verified_status: 'pending', e.g.
-    //   await FirebaseFirestore.instance.collection('doctor_profiles')
-    //       .doc(uid).set({...uploadedUrls, 'verified_status': 'pending'});
+    // TODO: once backend is wired up — upload _licenseFile / _degreeFile /
+    // _clinicProofFile (each has .path on mobile/desktop or .bytes on web)
+    // to storage, then write the doctor_profiles doc with those URLs and
+    // verified_status: 'pending'.
     await Future.delayed(const Duration(milliseconds: 1000));
     if (!mounted) return;
 
@@ -269,22 +302,22 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
                   label: 'Medical license',
                   fileName: _licenseFileName,
                   onTap: () =>
-                      _pickFile((f) => setState(() => _licenseFileName = f)),
+                      _pickFile((f) => setState(() => _licenseFile = f)),
                 ),
                 SizedBox(height: 12.h),
                 NeuUploadTile(
                   label: 'Degree certificate',
                   fileName: _degreeFileName,
                   onTap: () =>
-                      _pickFile((f) => setState(() => _degreeFileName = f)),
+                      _pickFile((f) => setState(() => _degreeFile = f)),
                 ),
                 SizedBox(height: 12.h),
                 NeuUploadTile(
                   label: 'Clinic / hospital proof',
                   sublabel: 'Optional — add later if you don\'t have one yet',
                   fileName: _clinicProofFileName,
-                  onTap: () => _pickFile(
-                      (f) => setState(() => _clinicProofFileName = f)),
+                  onTap: () =>
+                      _pickFile((f) => setState(() => _clinicProofFile = f)),
                 ),
                 SizedBox(height: 32.h),
               ],
