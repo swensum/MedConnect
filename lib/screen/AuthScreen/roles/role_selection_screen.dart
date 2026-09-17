@@ -5,6 +5,7 @@ import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 
 enum UserRole { patient, doctor }
+const Color _kNeuBg = AppColors.paleBlue;
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -19,13 +20,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   void _continue() {
     if (_selectedRole == null) return;
 
-   context.push(AppRoutes.phoneEntry, extra: _selectedRole);
+    context.push(AppRoutes.phoneEntry, extra: _selectedRole);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: _kNeuBg,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -45,11 +46,11 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 icon: Icons.person_outline,
                 title: "I'm a Patient",
                 subtitle:
-                    'Find doctors, book consultations, and track your health.',
+                    'Find doctors, book consultations, and track health.',
                 selected: _selectedRole == UserRole.patient,
                 onTap: () => setState(() => _selectedRole = UserRole.patient),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 20.h),
               _RoleCard(
                 icon: Icons.medical_services_outlined,
                 title: "I'm a Doctor",
@@ -61,22 +62,93 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
               const Spacer(),
 
-              SizedBox(
-                width: double.infinity,
-                height: 54.h,
-                child: ElevatedButton(
-                  onPressed: _selectedRole == null ? null : _continue,
-                  style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor: AppColors.mutedBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: const Text('Continue'),
-                ),
+              _NeumorphicButton(
+                enabled: _selectedRole != null,
+                label: 'Continue',
+                onTap: _continue,
               ),
               SizedBox(height: 24.h),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+List<BoxShadow> _neuShadows({
+  required double distance,
+  required double blur,
+  bool inset = false,
+}) {
+  
+  final darkOffset =
+      inset ? Offset(-distance, -distance) : Offset(distance, distance);
+  final lightOffset =
+      inset ? Offset(distance, distance) : Offset(-distance, -distance);
+
+  return [
+    BoxShadow(
+      color: const Color(0xFFA9BBCF).withOpacity(0.65),
+      offset: darkOffset,
+      blurRadius: blur,
+      spreadRadius: 0.5,
+    ),
+    BoxShadow(
+      color: Colors.white.withOpacity(0.9),
+      offset: lightOffset,
+      blurRadius: blur,
+      spreadRadius: 0.5,
+    ),
+  ];
+}
+
+class _NeumorphicButton extends StatefulWidget {
+  const _NeumorphicButton({
+    required this.enabled,
+    required this.label,
+    required this.onTap,
+  });
+
+  final bool enabled;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  State<_NeumorphicButton> createState() => _NeumorphicButtonState();
+}
+
+class _NeumorphicButtonState extends State<_NeumorphicButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool down = _pressed && widget.enabled;
+    final radius = 20.r;
+
+    return GestureDetector(
+      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
+      onTapCancel: () => setState(() => _pressed = false),
+      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
+      onTap: widget.enabled ? widget.onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        width: double.infinity,
+        height: 58.h,
+        decoration: BoxDecoration(
+          color: widget.enabled ? AppColors.navy : _kNeuBg,
+          borderRadius: BorderRadius.circular(radius),
+          boxShadow:
+              _neuShadows(distance: down ? 3 : 7, blur: down ? 6 : 16, inset: down),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          widget.label,
+          style: AppTextStyles.button.copyWith(
+            fontSize: 15.sp,
+            color: widget.enabled
+                ? AppColors.white
+                : AppColors.navy.withOpacity(0.4),
           ),
         ),
       ),
@@ -101,6 +173,8 @@ class _RoleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = 24.r;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -108,28 +182,17 @@ class _RoleCard extends StatelessWidget {
         curve: Curves.easeOut,
         padding: EdgeInsets.all(18.w),
         decoration: BoxDecoration(
-          color: selected ? AppColors.paleBlue : AppColors.white,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: selected ? AppColors.navy : AppColors.mutedBlue,
-            width: selected ? 1.6 : 0.8,
+          color: selected ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+          borderRadius: BorderRadius.circular(radius),
+          boxShadow: _neuShadows(
+            distance: selected ? 4 : 7,
+            blur: selected ? 8 : 16,
+            inset: selected,
           ),
         ),
         child: Row(
           children: [
-            Container(
-              width: 48.w,
-              height: 48.w,
-              decoration: BoxDecoration(
-                color: selected ? AppColors.navy : AppColors.paleBlue,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 22.sp,
-                color: selected ? AppColors.white : AppColors.navy,
-              ),
-            ),
+            _NeuIconBadge(icon: icon, active: selected),
             SizedBox(width: 14.w),
             Expanded(
               child: Column(
@@ -148,24 +211,57 @@ class _RoleCard extends StatelessWidget {
               ),
             ),
             SizedBox(width: 8.w),
-            Container(
-              width: 20.w,
-              height: 20.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: selected ? AppColors.navy : Colors.transparent,
-                border: Border.all(
-                  color: selected ? AppColors.navy : AppColors.mutedBlue,
-                  width: 1.6,
-                ),
-              ),
-              child: selected
-                  ? Icon(Icons.check, size: 13.sp, color: AppColors.white)
-                  : null,
-            ),
+            _NeuCheckDot(selected: selected),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _NeuIconBadge extends StatelessWidget {
+  const _NeuIconBadge({required this.icon, required this.active});
+
+  final IconData icon;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 50.w,
+      height: 50.w,
+      decoration: BoxDecoration(
+        color: active ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+        shape: BoxShape.circle,
+        boxShadow: _neuShadows(distance: 4, blur: 8, inset: active),
+      ),
+      child: Icon(
+        icon,
+        size: 22.sp,
+        color: active ? AppColors.navy : AppColors.navy.withOpacity(0.6),
+      ),
+    );
+  }
+}
+
+class _NeuCheckDot extends StatelessWidget {
+  const _NeuCheckDot({required this.selected});
+
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 26.w,
+      height: 26.w,
+      decoration: BoxDecoration(
+        color: selected ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+        shape: BoxShape.circle,
+        boxShadow: _neuShadows(distance: 3, blur: 5, inset: true),
+      ),
+      child: selected
+          ? Icon(Icons.check, size: 13.sp, color: AppColors.navy)
+          : null,
     );
   }
 }

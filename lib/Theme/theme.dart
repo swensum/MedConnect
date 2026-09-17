@@ -85,7 +85,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.white,
+      scaffoldBackgroundColor: AppColors.paleBlue,
       fontFamily: AppFonts.body,
 
       colorScheme: ColorScheme.fromSeed(

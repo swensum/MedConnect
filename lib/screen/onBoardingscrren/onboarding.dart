@@ -3,6 +3,34 @@ import 'package:go_router/go_router.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 
+const Color _kNeuBg = AppColors.paleBlue;
+
+List<BoxShadow> _neuShadows({
+  required double distance,
+  required double blur,
+  bool inset = false,
+}) {
+  final darkOffset =
+      inset ? Offset(-distance, -distance) : Offset(distance, distance);
+  final lightOffset =
+      inset ? Offset(distance, distance) : Offset(-distance, -distance);
+
+  return [
+    BoxShadow(
+      color: const Color(0xFFA9BBCF).withValues(alpha: 0.65),
+      offset: darkOffset,
+      blurRadius: blur,
+      spreadRadius: 0.5,
+    ),
+    BoxShadow(
+      color: Colors.white.withValues(alpha: 0.9),
+      offset: lightOffset,
+      blurRadius: blur,
+      spreadRadius: 0.5,
+    ),
+  ];
+}
+
 class _OnboardingSlide {
   const _OnboardingSlide({
     required this.title,
@@ -42,7 +70,7 @@ final List<_OnboardingSlide> _slides = [
   ),
 ];
 
-// ---- Slide 1: concentric circle with a single icon ----
+// ---- Slide 1: concentric neumorphic rings with a single icon ----
 class _DoctorDiscoveryVisual extends StatelessWidget {
   const _DoctorDiscoveryVisual();
 
@@ -57,9 +85,10 @@ class _DoctorDiscoveryVisual extends StatelessWidget {
           Container(
             width: 176,
             height: 176,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.navy,
+              color: _kNeuBg,
+              boxShadow: _neuShadows(distance: 9, blur: 20),
             ),
           ),
           Container(
@@ -67,14 +96,8 @@ class _DoctorDiscoveryVisual extends StatelessWidget {
             height: 124,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.navy.withValues(alpha: 0.18),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              color: _kNeuBg,
+              boxShadow: _neuShadows(distance: 6, blur: 14, inset: true),
             ),
             child: const Icon(
               Icons.medical_services_outlined,
@@ -88,16 +111,24 @@ class _DoctorDiscoveryVisual extends StatelessWidget {
   }
 }
 
-// ---- Slide 2: two connected avatars with a video-call badge ----
+// ---- Slide 2: two neumorphic avatars with a raised video-call badge ----
 class _ConsultVisual extends StatelessWidget {
   const _ConsultVisual();
 
-  Widget _avatar({required Color bg, required Color iconColor}) {
+  Widget _avatar({required bool active}) {
     return Container(
       width: 64,
       height: 64,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
-      child: Icon(Icons.person_outline, size: 30, color: iconColor),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: active ? Color.lerp(_kNeuBg, AppColors.navy, 0.06) : _kNeuBg,
+        boxShadow: _neuShadows(distance: 5, blur: 10, inset: active),
+      ),
+      child: Icon(
+        Icons.person_outline,
+        size: 30,
+        color: active ? AppColors.navy : AppColors.navy.withValues(alpha: 0.7),
+      ),
     );
   }
 
@@ -112,7 +143,7 @@ class _ConsultVisual extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _avatar(bg: AppColors.paleBlue, iconColor: AppColors.navy),
+              _avatar(active: false),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -132,7 +163,7 @@ class _ConsultVisual extends StatelessWidget {
                   ),
                 ),
               ),
-              _avatar(bg: AppColors.navy, iconColor: AppColors.white),
+              _avatar(active: true),
             ],
           ),
           Positioned(
@@ -142,20 +173,13 @@ class _ConsultVisual extends StatelessWidget {
               height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.navy,
-                border: Border.all(color: AppColors.white, width: 3),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.navy.withValues(alpha: 0.25),
-                    blurRadius: 14,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                color: _kNeuBg,
+                boxShadow: _neuShadows(distance: 6, blur: 12),
               ),
               child: const Icon(
                 Icons.videocam_outlined,
                 size: 20,
-                color: AppColors.white,
+                color: AppColors.navy,
               ),
             ),
           ),
@@ -165,7 +189,7 @@ class _ConsultVisual extends StatelessWidget {
   }
 }
 
-// ---- Slide 3: mini vitals stat cards, echoing the home screen ----
+// ---- Slide 3: mini neumorphic vitals stat cards ----
 class _VitalsVisual extends StatelessWidget {
   const _VitalsVisual();
 
@@ -175,8 +199,9 @@ class _VitalsVisual extends StatelessWidget {
       height: 104,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.paleBlue,
-        borderRadius: BorderRadius.circular(16),
+        color: _kNeuBg,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: _neuShadows(distance: 6, blur: 14),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +243,7 @@ class _VitalsVisual extends StatelessWidget {
   }
 }
 
-// ---- Slide 4: overlapping circles representing donor matching ----
+// ---- Slide 4: overlapping neumorphic circles representing donor matching ----
 class _DonationVisual extends StatelessWidget {
   const _DonationVisual();
 
@@ -235,9 +260,10 @@ class _DonationVisual extends StatelessWidget {
             child: Container(
               width: 130,
               height: 130,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.paleBlue,
+                color: _kNeuBg,
+                boxShadow: _neuShadows(distance: 7, blur: 16),
               ),
             ),
           ),
@@ -248,7 +274,8 @@ class _DonationVisual extends StatelessWidget {
               height: 130,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.mutedBlue.withValues(alpha: 0.7),
+                color: _kNeuBg,
+                boxShadow: _neuShadows(distance: 7, blur: 16),
               ),
             ),
           ),
@@ -257,14 +284,8 @@ class _DonationVisual extends StatelessWidget {
             height: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.navy.withValues(alpha: 0.15),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+              color: _kNeuBg,
+              boxShadow: _neuShadows(distance: 5, blur: 10, inset: true),
             ),
             child: const Icon(
               Icons.water_drop_outlined,
@@ -297,30 +318,81 @@ class _BloodTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.navy,
+        color: _kNeuBg,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: _neuShadows(distance: 3, blur: 6),
       ),
       child: Text(
         label,
         style: AppTextStyles.caption.copyWith(
-          color: AppColors.white,
-          fontWeight: FontWeight.w600,
+          color: AppColors.navy,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
   }
 }
 
-class _Pressable extends StatefulWidget {
-  const _Pressable({required this.onTap, required this.child});
+/// A full-width neumorphic pill button ("Get started"). Raised by default,
+/// sinks into the page (inset shadow pair + slight scale) while pressed.
+class _NeuPillButton extends StatefulWidget {
+  const _NeuPillButton({super.key, required this.onTap, required this.child});
+
   final VoidCallback onTap;
   final Widget child;
 
   @override
-  State<_Pressable> createState() => _PressableState();
+  State<_NeuPillButton> createState() => _NeuPillButtonState();
 }
 
-class _PressableState extends State<_Pressable> {
+class _NeuPillButtonState extends State<_NeuPillButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.97 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: double.infinity,
+          height: 54,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppColors.navy,
+            borderRadius: BorderRadius.circular(27),
+            boxShadow: _neuShadows(
+              distance: _pressed ? 3 : 7,
+              blur: _pressed ? 6 : 16,
+              inset: _pressed,
+            ),
+          ),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+/// A circular neumorphic "next" button — same raised/pressed language as
+/// the pill button, sized for a compact icon-only control.
+class _NeuCircleButton extends StatefulWidget {
+  const _NeuCircleButton({required this.onTap, required this.icon});
+
+  final VoidCallback onTap;
+  final IconData icon;
+
+  @override
+  State<_NeuCircleButton> createState() => _NeuCircleButtonState();
+}
+
+class _NeuCircleButtonState extends State<_NeuCircleButton> {
   bool _pressed = false;
 
   @override
@@ -334,7 +406,21 @@ class _PressableState extends State<_Pressable> {
         scale: _pressed ? 0.92 : 1.0,
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
-        child: widget.child,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: 54,
+          height: 54,
+          decoration: BoxDecoration(
+            color: AppColors.navy,
+            shape: BoxShape.circle,
+            boxShadow: _neuShadows(
+              distance: _pressed ? 3 : 7,
+              blur: _pressed ? 6 : 16,
+              inset: _pressed,
+            ),
+          ),
+          child: Icon(widget.icon, color: AppColors.white, size: 22),
+        ),
       ),
     );
   }
@@ -352,7 +438,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  
   late final AnimationController _contentController;
   late final Animation<double> _visualFade;
   late final Animation<Offset> _visualSlide;
@@ -415,7 +500,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   void _skip() => _pageController.jumpToPage(_slides.length - 1);
 
-   void _finishOnboarding() {
+  void _finishOnboarding() {
     context.go(AppRoutes.roleSelection);
   }
 
@@ -429,7 +514,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.paleBlue,
       body: SafeArea(
         child: Column(
           children: [
@@ -443,7 +528,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   opacity: _isLastPage ? 0.0 : 1.0,
                   child: GestureDetector(
                     onTap: _isLastPage ? null : _skip,
-                    child: Text('Skip', style: AppTextStyles.bodySecondary),
+                    child: Text('Skip', style: AppTextStyles.bodySecondary.copyWith(fontWeight: FontWeight.w600)),
                   ),
                 ),
               ),
@@ -534,27 +619,27 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
                 child: _isLastPage
-                    ? _Pressable(
+                    ? _NeuPillButton(
+                        key: const ValueKey('get-started'),
                         onTap: _goToNext,
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 54,
-                          child: ElevatedButton(
-                            onPressed: _goToNext,
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(27),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Get started',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.white,
                               ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text('Get started',style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
-                                SizedBox(width: 8),
-                                Icon(Icons.arrow_forward, size: 18),
-                              ],
+                            SizedBox(width: 8),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 18,
+                              color: AppColors.white,
                             ),
-                          ),
+                          ],
                         ),
                       )
                     : Row(
@@ -579,29 +664,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               );
                             }),
                           ),
-                          _Pressable(
+                          _NeuCircleButton(
                             onTap: _goToNext,
-                            child: Container(
-                              width: 54,
-                              height: 54,
-                              decoration: BoxDecoration(
-                                color: AppColors.navy,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color:
-                                        AppColors.navy.withValues(alpha: 0.3),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.arrow_forward,
-                                color: AppColors.white,
-                                size: 22,
-                              ),
-                            ),
+                            icon: Icons.arrow_forward,
                           ),
                         ],
                       ),

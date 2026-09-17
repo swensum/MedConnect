@@ -1,23 +1,82 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Routers/app_router.dart';
+import 'package:med_connect/Theme/systemui.dart';
 import 'package:med_connect/Theme/theme.dart';
+
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
 
-const List<_CountryCode> _countryCodes = [
-  _CountryCode(code: '977', label: 'Nepal'),
-  _CountryCode(code: '+91', label: 'India'),
-  _CountryCode(code: '+1', label: 'USA'),
-  _CountryCode(code: '+44', label: 'UK'),
-];
+/// Base surface color every neumorphic shadow is derived from — same token
+/// used across the role selection and onboarding screens.
+const Color _kNeuBg = AppColors.paleBlue;
+
+/// Two soft, large-blur shadows — dark bottom-right + light top-left — is
+/// the neumorphic trick. `inset` swaps the corners to fake a "pressed/
+/// carved in" surface, which is what we want for the phone input field.
+List<BoxShadow> _neuShadows({
+  required double distance,
+  required double blur,
+  bool inset = false,
+}) {
+  final darkOffset =
+      inset ? Offset(-distance, -distance) : Offset(distance, distance);
+  final lightOffset =
+      inset ? Offset(distance, distance) : Offset(-distance, -distance);
+
+  return [
+    BoxShadow(
+      color: const Color(0xFFA9BBCF).withValues(alpha: 0.65),
+      offset: darkOffset,
+      blurRadius: blur,
+      spreadRadius: 0.5,
+    ),
+    BoxShadow(
+      color: Colors.white.withValues(alpha: 0.9),
+      offset: lightOffset,
+      blurRadius: blur,
+      spreadRadius: 0.5,
+    ),
+  ];
+}
 
 class _CountryCode {
-  const _CountryCode({required this.code, required this.label});
+  const _CountryCode({
+    required this.code,
+    required this.name,
+    required this.flag,
+  });
+
   final String code;
-  final String label;
+  final String name;
+  final String flag;
 }
+
+/// A slightly wider list than before — this is the kind of thing a real
+/// picker needs so search actually feels useful. Extend freely.
+const List<_CountryCode> _countryCodes = [
+  _CountryCode(code: '+977', name: 'Nepal', flag: '🇳🇵'),
+  _CountryCode(code: '+91', name: 'India', flag: '🇮🇳'),
+  _CountryCode(code: '+1', name: 'United States', flag: '🇺🇸'),
+  _CountryCode(code: '+44', name: 'United Kingdom', flag: '🇬🇧'),
+  _CountryCode(code: '+61', name: 'Australia', flag: '🇦🇺'),
+  _CountryCode(code: '+971', name: 'United Arab Emirates', flag: '🇦🇪'),
+  _CountryCode(code: '+966', name: 'Saudi Arabia', flag: '🇸🇦'),
+  _CountryCode(code: '+974', name: 'Qatar', flag: '🇶🇦'),
+  _CountryCode(code: '+65', name: 'Singapore', flag: '🇸🇬'),
+  _CountryCode(code: '+60', name: 'Malaysia', flag: '🇲🇾'),
+  _CountryCode(code: '+81', name: 'Japan', flag: '🇯🇵'),
+  _CountryCode(code: '+82', name: 'South Korea', flag: '🇰🇷'),
+  _CountryCode(code: '+86', name: 'China', flag: '🇨🇳'),
+  _CountryCode(code: '+880', name: 'Bangladesh', flag: '🇧🇩'),
+  _CountryCode(code: '+92', name: 'Pakistan', flag: '🇵🇰'),
+  _CountryCode(code: '+49', name: 'Germany', flag: '🇩🇪'),
+  _CountryCode(code: '+33', name: 'France', flag: '🇫🇷'),
+  _CountryCode(code: '+39', name: 'Italy', flag: '🇮🇹'),
+  _CountryCode(code: '+34', name: 'Spain', flag: '🇪🇸'),
+  _CountryCode(code: '+7', name: 'Russia', flag: '🇷🇺'),
+];
 
 class PhoneAuthScreen extends StatefulWidget {
   const PhoneAuthScreen({super.key, required this.role});
@@ -39,11 +98,12 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: _kNeuBg,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: _kNeuBg,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
+        systemOverlayStyle: overlayFor(_kNeuBg),
       ),
       body: SafeArea(
         child: Padding(
@@ -70,19 +130,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                 },
               ),
               const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 54.h,
-                child: ElevatedButton(
-                  onPressed: _isValid ? _sendOtp : null,
-                  style: ElevatedButton.styleFrom(
-                    disabledBackgroundColor: AppColors.mutedBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: const Text('Send OTP'),
-                ),
+              _NeuPillButton(
+                enabled: _isValid,
+                onTap: _sendOtp,
+                label: 'Send OTP',
               ),
               SizedBox(height: 24.h),
             ],
@@ -93,6 +144,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   }
 }
 
+/// A neumorphic phone field: one carved-in (inset shadow) rounded surface
+/// holding a tappable country-code selector, a thin divider, and the number
+/// input — no borders, matching the soft-UI language used across the app.
 class _PhoneInputField extends StatefulWidget {
   const _PhoneInputField({required this.onChanged});
 
@@ -112,6 +166,20 @@ class _PhoneInputFieldState extends State<_PhoneInputField> {
     widget.onChanged('${_selectedCode.code}$digits', isValid);
   }
 
+  Future<void> _openCountryPicker() async {
+    HapticFeedback.selectionClick();
+    final result = await showModalBottomSheet<_CountryCode>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _CountryPickerSheet(selected: _selectedCode),
+    );
+    if (result != null) {
+      setState(() => _selectedCode = result);
+      _notifyParent();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -126,58 +194,299 @@ class _PhoneInputFieldState extends State<_PhoneInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 47.h,
-          padding: EdgeInsets.symmetric(horizontal: 10.w),
-          decoration: BoxDecoration(
-            color: AppColors.white,
+    return Container(
+      height: 58.h,
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
+      decoration: BoxDecoration(
+        color: _kNeuBg,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: _neuShadows(distance: 5, blur: 10, inset: true),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          InkWell(
             borderRadius: BorderRadius.circular(10.r),
-            border: Border.all(color: AppColors.mutedBlue),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<_CountryCode>(
-              value: _selectedCode,
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                size: 18.sp,
-                color: AppColors.textSecondary,
+            onTap: _openCountryPicker,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.h),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(_selectedCode.flag, style: TextStyle(fontSize: 18.sp)),
+                  SizedBox(width: 6.w),
+                  Text(
+                    _selectedCode.code,
+                    style: AppTextStyles.body.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.navy,
+                    ),
+                  ),
+                  SizedBox(width: 2.w),
+                  Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 18.sp,
+                    color: AppColors.textSecondary,
+                  ),
+                ],
               ),
-              items: _countryCodes.map((c) {
-                return DropdownMenuItem(
-                  value: c,
-                child: Text(
-  c.code,
-  style: AppTextStyles.body.copyWith(
-    fontWeight: FontWeight.w600,
-  ),
-),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value == null) return;
-                setState(() => _selectedCode = value);
-                _notifyParent();
-              },
             ),
           ),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          child: TextField(
-            controller: _controller,
-            keyboardType: TextInputType.phone,
-            style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-            decoration: const InputDecoration(hintText: '98XXXXXXXX'),
+          SizedBox(width: 10.w),
+          Container(
+            width: 1,
+            height: 24.h,
+            color: AppColors.mutedBlue.withValues(alpha: 0.6),
           ),
-        ),
-      ],
+          SizedBox(width: 10.w),
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              keyboardType: TextInputType.phone,
+              style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+              decoration: const InputDecoration(
+                hintText: '98XXXXXXXX',
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                filled: false,
+                isCollapsed: true,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
+class _CountryPickerSheet extends StatefulWidget {
+  const _CountryPickerSheet({required this.selected});
+  final _CountryCode selected;
+
+  @override
+  State<_CountryPickerSheet> createState() => _CountryPickerSheetState();
+}
+
+class _CountryPickerSheetState extends State<_CountryPickerSheet> {
+  final TextEditingController _searchController = TextEditingController();
+  late List<_CountryCode> _filtered = _countryCodes;
+
+  void _onSearchChanged(String query) {
+    final q = query.trim().toLowerCase();
+    setState(() {
+      _filtered = q.isEmpty
+          ? _countryCodes
+          : _countryCodes
+              .where((c) =>
+                  c.name.toLowerCase().contains(q) ||
+                  c.code.replaceAll('+', '').contains(q.replaceAll('+', '')))
+              .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.75,
+      minChildSize: 0.5,
+      maxChildSize: 0.92,
+      expand: false,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: _kNeuBg,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          ),
+          child: Column(
+            children: [
+              SizedBox(height: 10.h),
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: AppColors.mutedBlue.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  children: [
+                    Text('Select country', style: AppTextStyles.h1.copyWith(fontSize: 18.sp)),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close_rounded, size: 20.sp, color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 18.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Container(
+                  height: 46.h,
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  decoration: BoxDecoration(
+                    color: _kNeuBg,
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: _neuShadows(distance: 2.5, blur: 5, inset: true),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.search_rounded, size: 18.sp, color: AppColors.textSecondary),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          style: AppTextStyles.body,
+                          decoration: const InputDecoration(
+                            hintText: 'Search country or code',
+                            border: InputBorder.none,
+                            isCollapsed: true,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 14.h),
+              Expanded(
+                child: _filtered.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No matches found',
+                          style: AppTextStyles.bodySecondary,
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        itemCount: _filtered.length,
+                        itemBuilder: (context, index) {
+                          final country = _filtered[index];
+                          final isSelected = country.code == widget.selected.code &&
+                              country.name == widget.selected.name;
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(14.r),
+                            onTap: () => Navigator.of(context).pop(country),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 4.h),
+                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.navy.withValues(alpha: 0.08)
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(14.r),
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(country.flag, style: TextStyle(fontSize: 22.sp)),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Text(
+                                      country.name,
+                                      style: AppTextStyles.body.copyWith(
+                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    country.code,
+                                    style: AppTextStyles.body.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.navy,
+                                    ),
+                                  ),
+                                  if (isSelected) ...[
+                                    SizedBox(width: 8.w),
+                                    Icon(Icons.check_rounded, size: 18.sp, color: AppColors.navy),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+class _NeuPillButton extends StatefulWidget {
+  const _NeuPillButton({
+    required this.enabled,
+    required this.onTap,
+    required this.label,
+  });
+
+  final bool enabled;
+  final VoidCallback onTap;
+  final String label;
+
+  @override
+  State<_NeuPillButton> createState() => _NeuPillButtonState();
+}
+
+class _NeuPillButtonState extends State<_NeuPillButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool down = _pressed && widget.enabled;
+
+    return GestureDetector(
+      onTapDown: widget.enabled ? (_) => setState(() => _pressed = true) : null,
+      onTapCancel: () => setState(() => _pressed = false),
+      onTapUp: widget.enabled ? (_) => setState(() => _pressed = false) : null,
+      onTap: widget.enabled ? widget.onTap : null,
+      child: AnimatedScale(
+        scale: down ? 0.97 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: double.infinity,
+          height: 54.h,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: widget.enabled ? AppColors.navy : _kNeuBg,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: _neuShadows(
+              distance: down ? 3 : 7,
+              blur: down ? 6 : 16,
+              inset: down,
+            ),
+          ),
+          child: Text(
+            widget.label,
+            style: AppTextStyles.button.copyWith(
+              fontSize: 15.sp,
+              color: widget.enabled
+                  ? AppColors.white
+                  : AppColors.navy.withValues(alpha: 0.4),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A small raised neumorphic pill instead of a flat-filled badge.
 class _RoleBadge extends StatelessWidget {
   const _RoleBadge({required this.role});
   final UserRole role;
@@ -189,10 +498,11 @@ class _RoleBadge extends StatelessWidget {
         : Icons.medical_services_outlined;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.paleBlue,
+        color: _kNeuBg,
         borderRadius: BorderRadius.circular(20.r),
+        boxShadow: _neuShadows(distance: 4, blur: 8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

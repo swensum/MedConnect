@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:med_connect/Routers/app_router.dart';
+import 'package:med_connect/Theme/systemui.dart';
 import 'package:med_connect/Theme/theme.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,19 +22,15 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-       return MaterialApp.router(
+        return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           routerConfig: AppRouter.router,
           builder: (context, child) {
+          
+           
             return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarBrightness: Brightness.dark,
-                statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor: AppColors.navy,
-                systemNavigationBarIconBrightness: Brightness.light,
-              ),
+              value: overlayFor(AppColors.paleBlue),
               child: child!,
             );
           },
@@ -41,4 +39,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
- 
