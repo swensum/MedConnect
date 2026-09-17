@@ -28,6 +28,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
 
   String _code = '';
   bool _isVerifying = false;
+  bool _isVerified = false;
   String? _errorText;
 
   Timer? _resendTimer;
@@ -73,11 +74,20 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     // testing" so no real SMS is sent and no cost is incurred.
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
-    setState(() => _isVerifying = false);
 
-    // Route into the role-specific next step. Using context.go (not push)
-    // since the whole auth flow — phone entry, OTP — should be popped off
-    // the back stack once verification succeeds.
+    // Swap the form for the success view instead of navigating right away
+    // — gives the user a clear "yes, that worked" moment before the next
+    // screen (profile setup / KYC) appears.
+    setState(() {
+      _isVerifying = false;
+      _isVerified = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1100));
+    if (!mounted) return;
+
+    // Using context.go (not push) since the whole auth flow — phone entry,
+    // OTP — should be popped off the back stack once verification succeeds.
     if (widget.role == UserRole.patient) {
       context.go(AppRoutes.patientProfileSetup, extra: widget.phone);
     } else {
@@ -103,74 +113,107 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsetsGeometry.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: _isVerified
+                ? _SuccessView(role: widget.role)
+                : _buildForm(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm() {
+    return Column(
+      key: const ValueKey('otp-form'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 8.h),
+        Text('Verify your number', style: AppTextStyles.h1),
+        SizedBox(height: 8.h),
+        RichText(
+          text: TextSpan(
+            style: AppTextStyles.bodySecondary,
             children: [
-              SizedBox(height: 8.h),
-              Text('Verify your number', style: AppTextStyles.h1),
-              SizedBox(height: 8.h),
-              RichText(
-                text: TextSpan(
-                  style: AppTextStyles.bodySecondary,
-                  children: [
-                    const TextSpan(text: 'Enter the 6-digit code sent to '),
-                    TextSpan(
-                      text: widget.phone,
-                      style: AppTextStyles.bodySecondary.copyWith(
-                        color: AppColors.navy,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+              const TextSpan(text: 'Enter the 6-digit code sent to '),
+              TextSpan(
+                text: widget.phone,
+                style: AppTextStyles.bodySecondary.copyWith(
+                  color: AppColors.navy,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 32.h),
-
-              _OtpInput(
-                length: _otpLength,
-                hasError: _errorText != null,
-                onChanged: (value) {
-                  setState(() {
-                    _code = value;
-                    _errorText = null;
-                  });
-                },
-                onCompleted: (_) => _verify(),
-              ),
-
-              if (_errorText != null) ...[
-                SizedBox(height: 10.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 14.sp,
-                      color: AppColors.danger,
-                    ),
-                    SizedBox(width: 6.w),
-                    Text(
-                      _errorText!,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.danger,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              SizedBox(height: 24.h),
-              _ResendRow(secondsLeft: _secondsLeft, onResend: _resend),
-
-              const Spacer(),
-              NeuPillButton(
-                enabled: _isComplete && !_isVerifying,
-                onTap: _verify,
-                loading: _isVerifying,
-                label: 'Verify',
-              ),
-              SizedBox(height: 24.h),
             ],
           ),
         ),
+        SizedBox(height: 32.h),
+
+        _OtpInput(
+          length: _otpLength,
+          hasError: _errorText != null,
+          onChanged: (value) {
+            setState(() {
+              _code = value;
+              _errorText = null;
+            });
+          },
+          onCompleted: (_) => _verify(),
+        ),
+
+        if (_errorText != null) ...[
+          SizedBox(height: 10.h),
+          Row(
+            children: [
+              Icon(Icons.error_outline, size: 14.sp, color: AppColors.danger),
+              SizedBox(width: 6.w),
+              Text(
+                _errorText!,
+                style: AppTextStyles.caption.copyWith(color: AppColors.danger),
+              ),
+            ],
+          ),
+        ],
+        SizedBox(height: 24.h),
+        _ResendRow(secondsLeft: _secondsLeft, onResend: _resend),
+
+        const Spacer(),
+        NeuPillButton(
+          enabled: _isComplete && !_isVerifying,
+          onTap: _verify,
+          loading: _isVerifying,
+          label: 'Verify',
+        ),
+        SizedBox(height: 24.h),
+      ],
+    );
+  }
+}
+
+/// Shown in place of the form once verification succeeds — a brief,
+/// unmissable confirmation before the role-specific next screen loads.
+class _SuccessView extends StatelessWidget {
+  const _SuccessView({required this.role});
+
+  final UserRole role;
+
+  @override
+  Widget build(BuildContext context) {
+    final nextStepLabel = role == UserRole.patient
+        ? 'Setting up your profile...'
+        : 'Taking you to verification...';
+
+    return Center(
+      key: const ValueKey('otp-success'),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const NeuSuccessCheck(),
+          SizedBox(height: 20.h),
+          Text('Phone verified', style: AppTextStyles.h2),
+          SizedBox(height: 6.h),
+          Text(nextStepLabel, style: AppTextStyles.bodySecondary),
+        ],
       ),
     );
   }

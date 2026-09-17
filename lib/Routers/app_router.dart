@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
+import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_screen.dart';
 import 'package:med_connect/screen/Profile/Patient%20Profile/patient_profile_screen.dart';
 import 'package:med_connect/screen/onBoardingscrren/onboarding.dart';
 import 'package:med_connect/screen/splash_screen.dart';
@@ -16,6 +17,7 @@ class AppRoutes {
   static const phoneEntry = '/phone-entry';
   static const otpVerify = '/otp-verify';
   static const patientProfileSetup = '/patient-profile-setup';
+  static const doctorKyc = '/doctor-kyc';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -90,6 +92,13 @@ class AppRouter {
             PatientProfileSetupScreen(phone: phone),
             state,
           );
+        },
+      ),
+       GoRoute(
+        path: AppRoutes.doctorKyc,
+        pageBuilder: (context, state) {
+          final phone = state.extra as String;
+          return slidePage(DoctorKycScreen(phone: phone), state);
         },
       ),
     ],

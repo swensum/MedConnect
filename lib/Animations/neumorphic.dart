@@ -3,6 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
 
+/// Shared surface token for every neumorphic screen. Keeping this in one
+/// place means a background change is a one-line edit, not a find-replace
+/// across every auth screen.
 const Color kNeuBg = AppColors.paleBlue;
 
 /// Two soft, large-blur shadows — dark bottom-right + light top-left — is
@@ -254,7 +257,7 @@ class NeuChip extends StatelessWidget {
           label,
           style: AppTextStyles.body.copyWith(
             fontSize: 13.sp,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+           fontWeight: FontWeight.w600,
             color: selected ? AppColors.white : AppColors.navy,
           ),
         ),
@@ -319,6 +322,129 @@ class RoleBadge extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Tap-to-upload tile for verification documents. Empty state shows an
+/// inset "add" surface; once a file is attached it flips to a filled
+/// state with the file name and a checkmark. Reusable anywhere the app
+/// needs a document/photo upload (KYC now, medical reports/X-rays later).
+class NeuUploadTile extends StatelessWidget {
+  const NeuUploadTile({
+    super.key,
+    required this.label,
+    required this.onTap,
+    this.fileName,
+    this.sublabel,
+  });
+
+  final String label;
+  final String? sublabel;
+  final String? fileName;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final uploaded = fileName != null;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: kNeuBg,
+          borderRadius: BorderRadius.circular(14.r),
+          boxShadow: neuShadows(distance: 4, blur: 9, inset: uploaded),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: uploaded
+                    ? Color.lerp(kNeuBg, AppColors.navy, 0.06)
+                    : kNeuBg,
+                shape: BoxShape.circle,
+                boxShadow: neuShadows(distance: 2, blur: 5, inset: true),
+              ),
+              child: Icon(
+                uploaded ? Icons.check : Icons.upload_file_outlined,
+                size: 18.sp,
+                color: AppColors.navy,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: AppTextStyles.body.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.sp,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    uploaded ? fileName! : (sublabel ?? 'Tap to upload'),
+                    style: AppTextStyles.caption.copyWith(
+                      color: uploaded
+                          ? AppColors.navy
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              uploaded ? Icons.refresh : Icons.chevron_right,
+              size: 18.sp,
+              color: AppColors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A raised neumorphic circle with a checkmark that pops in with a small,
+/// satisfying bounce. Use this for any "action succeeded" moment — OTP
+/// verified, booking confirmed, KYC submitted, etc. — not just here.
+class NeuSuccessCheck extends StatelessWidget {
+  const NeuSuccessCheck({super.key, this.size = 96});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 550),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value.clamp(0, 1),
+          child: Transform.scale(scale: value, child: child),
+        );
+      },
+      child: Container(
+        width: size.w,
+        height: size.w,
+        decoration: BoxDecoration(
+          color: kNeuBg,
+          shape: BoxShape.circle,
+          boxShadow: neuShadows(distance: 7, blur: 16),
+        ),
+        child: Icon(
+          Icons.check_rounded,
+          size: (size * 0.45).sp,
+          color: AppColors.success,
+        ),
       ),
     );
   }
