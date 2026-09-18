@@ -483,13 +483,11 @@ class NeuPulseIcon extends StatefulWidget {
     required this.icon,
     this.color,
     this.size = 96,
-    this.flip = false,
   });
 
   final IconData icon;
   final Color? color;
   final double size;
-  final bool flip;
 
   @override
   State<NeuPulseIcon> createState() => _NeuPulseIconState();
@@ -497,60 +495,24 @@ class NeuPulseIcon extends StatefulWidget {
 
 class _NeuPulseIconState extends State<NeuPulseIcon>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _pulseController = AnimationController(
+  late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1400),
   )..repeat(reverse: true);
 
-  // Separate, longer-cycle controller for the flip so it's not tied to the
-  // pulse's timing — an hourglass shouldn't flip on every pulse beat.
-  late final AnimationController _flipController = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 2600),
-  );
-
-  late final Animation<double> _flipAnimation = TweenSequence<double>([
-    // Hold upright.
-    TweenSequenceItem(tween: ConstantTween(0.0), weight: 42),
-    // Turn over.
-    TweenSequenceItem(
-      tween: Tween(begin: 0.0, end: 3.14159), // 0 -> 180°
-      weight: 8,
-    ),
-    // Hold upside down.
-    TweenSequenceItem(tween: ConstantTween(3.14159), weight: 42),
-    // Turn back.
-    TweenSequenceItem(
-      tween: Tween(begin: 3.14159, end: 6.28318), // 180 -> 360°
-      weight: 8,
-    ),
-  ]).animate(_flipController);
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.flip) _flipController.repeat();
-  }
-
   @override
   void dispose() {
-    _pulseController.dispose();
-    _flipController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation:
-          Listenable.merge([_pulseController, if (widget.flip) _flipController]),
+      animation: _controller,
       builder: (context, child) {
-        final scale = 1.0 + (_pulseController.value * 0.06);
-        final rotation = widget.flip ? _flipAnimation.value : 0.0;
-        return Transform.scale(
-          scale: scale,
-          child: Transform.rotate(angle: rotation, child: child),
-        );
+        final scale = 1.0 + (_controller.value * 0.06);
+        return Transform.scale(scale: scale, child: child);
       },
       child: Container(
         width: widget.size.w,
@@ -570,7 +532,88 @@ class _NeuPulseIconState extends State<NeuPulseIcon>
   }
 }
 
+class NeuBottomNavItem {
+  const NeuBottomNavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+  });
 
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+}
+
+/// A floating, pill-shaped bottom nav bar consistent with the neumorphic
+/// language elsewhere in the app. The active tab expands into a filled
+/// navy pill with a label; inactive tabs are icon-only.
+class NeuBottomNavBar extends StatelessWidget {
+  const NeuBottomNavBar({
+    super.key,
+    required this.items,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  final List<NeuBottomNavItem> items;
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(20.w, 0, 20.w, 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: kNeuBg,
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: neuShadows(distance: 6, blur: 14),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(items.length, (i) {
+          final selected = i == currentIndex;
+          final item = items[i];
+          return GestureDetector(
+            onTap: () => onTap(i),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              padding: EdgeInsets.symmetric(
+                horizontal: selected ? 18.w : 12.w,
+                vertical: 10.h,
+              ),
+              decoration: BoxDecoration(
+                color: selected ? AppColors.navy : Colors.transparent,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    selected ? item.activeIcon : item.icon,
+                    size: 20.sp,
+                    color: selected ? AppColors.white : AppColors.textSecondary,
+                  ),
+                  if (selected) ...[
+                    SizedBox(width: 6.w),
+                    Text(
+                      item.label,
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
 class _NeuDatePickerSheet extends StatefulWidget {
   const _NeuDatePickerSheet({
     required this.initialDate,

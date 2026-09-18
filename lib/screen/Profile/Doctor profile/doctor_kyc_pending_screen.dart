@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
@@ -34,6 +36,32 @@ class DoctorKycPendingScreen extends StatefulWidget {
 class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
   bool _isRefreshing = false;
 
+  // Local, mutable copy of the status so the fake-approval timer below can
+  // flip it without needing a parent rebuild.
+  late DoctorKycStatus _status = widget.status;
+  Timer? _fakeApprovalTimer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // DEV-ONLY: auto-approves after 15s so the "approved" state can be
+    // previewed without wiring up real status polling yet.
+    // TODO: remove this once Firestore status listening is wired up.
+    if (_status == DoctorKycStatus.pending) {
+      _fakeApprovalTimer = Timer(const Duration(seconds: 15), () {
+        if (!mounted) return;
+        setState(() => _status = DoctorKycStatus.approved);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _fakeApprovalTimer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _refreshStatus() async {
     if (_isRefreshing) return;
     setState(() => _isRefreshing = true);
@@ -57,16 +85,20 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 32.h),
-                      _statusHeader(),
-                      SizedBox(height: 36.h),
-                      if (widget.status != DoctorKycStatus.rejected)
-                        _StatusTimeline(status: widget.status),
-                      if (widget.status == DoctorKycStatus.rejected)
-                        _rejectionNote(),
-                    ],
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: Column(
+                      key: ValueKey(_status),
+                      children: [
+                        SizedBox(height: 32.h),
+                        _statusHeader(),
+                        SizedBox(height: 36.h),
+                        if (_status != DoctorKycStatus.rejected)
+                          _StatusTimeline(status: _status),
+                        if (_status == DoctorKycStatus.rejected)
+                          _rejectionNote(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -82,11 +114,11 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
   }
 
   Widget _statusHeader() {
-    switch (widget.status) {
+    switch (_status) {
       case DoctorKycStatus.pending:
         return Column(
           children: [
-            const NeuPulseIcon(icon: Icons.hourglass_top_rounded, flip: true,),
+            const NeuPulseIcon(icon: Icons.hourglass_top_rounded),
             SizedBox(height: 20.h),
             Text('Verification in progress', style: AppTextStyles.h2),
             SizedBox(height: 8.h),
@@ -172,7 +204,7 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
   }
 
   Widget _bottomAction() {
-    switch (widget.status) {
+    switch (_status) {
       case DoctorKycStatus.pending:
         return NeuPillButton(
           enabled: !_isRefreshing,

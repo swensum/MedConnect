@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 
 const List<String> _genders = ['Male', 'Female', 'Other'];
@@ -64,8 +66,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> {
     );
     if (picked != null) setState(() => _dob = picked);
   }
-
-  Future<void> _save() async {
+Future<void> _save() async {
     if (!_isValid || _isSaving) return;
     setState(() => _isSaving = true);
 
@@ -87,10 +88,12 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> {
     await Future.delayed(const Duration(milliseconds: 1100));
     if (!mounted) return;
 
-    // On success, land the user in the app, e.g.:
-    //   context.go(AppRoutes.home);
+    // Land the user in the app.
+    context.pushReplacement(
+      AppRoutes.patientHome,
+      extra: _nameController.text.trim(),
+    );
   }
-
   String get _dobLabel {
     if (_dob == null) return 'Select your date of birth';
     return '${_dob!.day.toString().padLeft(2, '0')}'
