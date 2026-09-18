@@ -2,10 +2,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Routers/app_router.dart';
 
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
+import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_pending_screen.dart';
 
 const List<String> _specializations = [
   'General physician',
@@ -121,8 +124,7 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
       }
     }
   }
-
-  Future<void> _submit() async {
+Future<void> _submit() async {
     if (!_isValid || _isSubmitting) return;
     setState(() => _isSubmitting = true);
 
@@ -143,11 +145,13 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
     await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
 
-    // On success, land the doctor on a "pending review" screen — admin
-    // approval gates them from appearing in doctor discovery (Section 2).
-    // e.g. context.go(AppRoutes.kycPendingReview);
+    // Land the doctor on the "pending review" screen — admin approval
+    // gates them from appearing in doctor discovery (Section 2).
+    context.pushReplacement(
+      AppRoutes.kycPendingReview,
+      extra: DoctorKycStatus.pending,
+    );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

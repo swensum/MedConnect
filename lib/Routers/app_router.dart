@@ -4,6 +4,7 @@ import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart'
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
 import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_screen.dart';
+import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_pending_screen.dart';
 import 'package:med_connect/screen/Profile/Patient%20Profile/patient_profile_screen.dart';
 import 'package:med_connect/screen/onBoardingscrren/onboarding.dart';
 import 'package:med_connect/screen/splash_screen.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const otpVerify = '/otp-verify';
   static const patientProfileSetup = '/patient-profile-setup';
   static const doctorKyc = '/doctor-kyc';
+   static const String kycPendingReview = '/kyc-pending-review';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -101,6 +103,19 @@ class AppRouter {
           return slidePage(DoctorKycScreen(phone: phone), state);
         },
       ),
+      GoRoute(
+        path: AppRoutes.kycPendingReview,
+        pageBuilder: (context, state) {
+          final status = state.extra is DoctorKycStatus
+              ? state.extra as DoctorKycStatus
+              : DoctorKycStatus.pending;
+          return slidePage(
+            DoctorKycPendingScreen(status: status),
+            state,
+          );
+        },
+      ),
+      
     ],
   );
 }

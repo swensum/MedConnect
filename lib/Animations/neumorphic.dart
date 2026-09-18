@@ -477,6 +477,99 @@ Future<DateTime?> showNeuDatePicker(
     ),
   );
 }
+class NeuPulseIcon extends StatefulWidget {
+  const NeuPulseIcon({
+    super.key,
+    required this.icon,
+    this.color,
+    this.size = 96,
+    this.flip = false,
+  });
+
+  final IconData icon;
+  final Color? color;
+  final double size;
+  final bool flip;
+
+  @override
+  State<NeuPulseIcon> createState() => _NeuPulseIconState();
+}
+
+class _NeuPulseIconState extends State<NeuPulseIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulseController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1400),
+  )..repeat(reverse: true);
+
+  // Separate, longer-cycle controller for the flip so it's not tied to the
+  // pulse's timing — an hourglass shouldn't flip on every pulse beat.
+  late final AnimationController _flipController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2600),
+  );
+
+  late final Animation<double> _flipAnimation = TweenSequence<double>([
+    // Hold upright.
+    TweenSequenceItem(tween: ConstantTween(0.0), weight: 42),
+    // Turn over.
+    TweenSequenceItem(
+      tween: Tween(begin: 0.0, end: 3.14159), // 0 -> 180°
+      weight: 8,
+    ),
+    // Hold upside down.
+    TweenSequenceItem(tween: ConstantTween(3.14159), weight: 42),
+    // Turn back.
+    TweenSequenceItem(
+      tween: Tween(begin: 3.14159, end: 6.28318), // 180 -> 360°
+      weight: 8,
+    ),
+  ]).animate(_flipController);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.flip) _flipController.repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _flipController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation:
+          Listenable.merge([_pulseController, if (widget.flip) _flipController]),
+      builder: (context, child) {
+        final scale = 1.0 + (_pulseController.value * 0.06);
+        final rotation = widget.flip ? _flipAnimation.value : 0.0;
+        return Transform.scale(
+          scale: scale,
+          child: Transform.rotate(angle: rotation, child: child),
+        );
+      },
+      child: Container(
+        width: widget.size.w,
+        height: widget.size.w,
+        decoration: BoxDecoration(
+          color: kNeuBg,
+          shape: BoxShape.circle,
+          boxShadow: neuShadows(distance: 7, blur: 16),
+        ),
+        child: Icon(
+          widget.icon,
+          size: (widget.size * 0.4).sp,
+          color: widget.color ?? AppColors.navy,
+        ),
+      ),
+    );
+  }
+}
+
 
 class _NeuDatePickerSheet extends StatefulWidget {
   const _NeuDatePickerSheet({
