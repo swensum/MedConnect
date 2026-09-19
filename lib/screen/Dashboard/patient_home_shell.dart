@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/patient_home_widgets.dart';
+
 import 'package:med_connect/models/patient_home_models.dart';
 
 class PatientHomeShell extends StatefulWidget {
@@ -29,6 +32,11 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
       label: 'Appointments',
     ),
     NeuBottomNavItem(
+      icon: Icons.chat_bubble_outline_rounded,
+      activeIcon: Icons.chat_bubble_rounded,
+      label: 'Messages',
+    ),
+    NeuBottomNavItem(
       icon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
       label: 'Profile',
@@ -46,12 +54,15 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
           children: [
             _PatientHomeTab(patientName: widget.patientName),
             const _PlaceholderTab(label: 'Appointments'),
+            const _PlaceholderTab(label: 'Messages'),
             const _PlaceholderTab(label: 'Profile'),
           ],
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom * 0.1, // half the usual inset
+        ),
         child: NeuBottomNavBar(
           items: _items,
           currentIndex: _tabIndex,
@@ -74,8 +85,6 @@ class _PlaceholderTab extends StatelessWidget {
   }
 }
 
-/// The Home tab — just assembles the reusable pieces from
-/// patient_home_widgets.dart using the mock data in patient_home_models.dart.
 class _PatientHomeTab extends StatelessWidget {
   const _PatientHomeTab({required this.patientName});
 
@@ -107,22 +116,26 @@ class _PatientHomeTab extends StatelessWidget {
             },
           ),
           SizedBox(height: 28.h),
-          Text('Browse by specialization', style: AppTextStyles.h3),
+          Text('What do you need today?', style: AppTextStyles.h3),
           SizedBox(height: 14.h),
-          SpecializationRow(
-            shortcuts: specializationShortcuts,
-            onTapShortcut: (s) {
-              // TODO: navigate to doctor discovery pre-filtered by s.label.
+          QuickActionRow(
+            actions: quickActions,
+            onTapAction: (a) {
+              if (a.isEmergency) {
+                // TODO: launch emergency call / ambulance flow.
+                return;
+              }
+              context.push(AppRoutes.doctorDiscovery, extra: a.label);
             },
           ),
           SizedBox(height: 28.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Top doctors', style: AppTextStyles.h3),
+              Text('Hospitals near you', style: AppTextStyles.h3),
               GestureDetector(
                 onTap: () {
-                  // TODO: navigate to full doctor discovery/search screen.
+                  // TODO: navigate to full hospitals/clinics list screen.
                 },
                 child: Text(
                   'See all',
@@ -135,13 +148,43 @@ class _PatientHomeTab extends StatelessWidget {
             ],
           ),
           SizedBox(height: 14.h),
-          ...topDoctors.map(
-            (d) => Padding(
-              padding: EdgeInsets.only(bottom: 12.h),
-              child: DoctorCard(
-                doctor: d,
+          HospitalRow(
+            hospitals: nearbyHospitals,
+            onTapHospital: (h) {
+              // TODO: navigate to hospital detail screen.
+            },
+          ),
+          SizedBox(height: 28.h),
+          Text("Today's health tip", style: AppTextStyles.h3),
+          SizedBox(height: 14.h),
+          HealthTipCard(tip: todaysHealthTip),
+          SizedBox(height: 28.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Exercises from your doctor', style: AppTextStyles.h3),
+              GestureDetector(
                 onTap: () {
-                  // TODO: navigate to doctor detail/profile screen.
+                  // TODO: navigate to full exercise plan screen.
+                },
+                child: Text(
+                  'See all',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.navy,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 14.h),
+          ...recommendedExercises.map(
+            (e) => Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: ExerciseListItem(
+                exercise: e,
+                onTap: () {
+                  // TODO: navigate to exercise detail screen.
                 },
               ),
             ),
@@ -180,9 +223,7 @@ class _PatientHomeTab extends StatelessWidget {
 
   Widget _searchBar(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // TODO: navigate to doctor search/discovery screen.
-      },
+      onTap: () => context.push(AppRoutes.doctorDiscovery),
       child: NeuInsetSurface(
         height: 54.h,
         child: Row(
