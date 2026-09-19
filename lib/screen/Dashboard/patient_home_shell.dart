@@ -31,11 +31,11 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
       activeIcon: Icons.calendar_month_rounded,
       label: 'Appointments',
     ),
-    NeuBottomNavItem(
-      icon: Icons.chat_bubble_outline_rounded,
-      activeIcon: Icons.chat_bubble_rounded,
-      label: 'Messages',
-    ),
+   NeuBottomNavItem(
+    icon: Icons.assignment_outlined,
+    activeIcon: Icons.assignment_rounded,
+    label: 'Records',
+  ),
     NeuBottomNavItem(
       icon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
@@ -54,7 +54,7 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
           children: [
             _PatientHomeTab(patientName: widget.patientName),
             const _PlaceholderTab(label: 'Appointments'),
-            const _PlaceholderTab(label: 'Messages'),
+           const _PlaceholderTab(label: 'Records'),
             const _PlaceholderTab(label: 'Profile'),
           ],
         ),

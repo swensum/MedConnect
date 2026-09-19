@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:med_connect/components/patient_dashboard/doctor_discovery_screen.dart';
+import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_discovery_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';

@@ -1,34 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/patient_home_widgets.dart';
-import 'package:med_connect/models/patient_home_models.dart';
+import 'package:med_connect/providers/doctor_providers.dart';
 
-class DoctorDiscoveryScreen extends StatefulWidget {
+class DoctorDiscoveryScreen extends ConsumerStatefulWidget {
   const DoctorDiscoveryScreen({super.key, this.initialSpecialization});
   final String? initialSpecialization;
 
   @override
-  State<DoctorDiscoveryScreen> createState() => _DoctorDiscoveryScreenState();
+  ConsumerState<DoctorDiscoveryScreen> createState() =>
+      _DoctorDiscoveryScreenState();
 }
 
-class _DoctorDiscoveryScreenState extends State<DoctorDiscoveryScreen> {
+class _DoctorDiscoveryScreenState
+    extends ConsumerState<DoctorDiscoveryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String? _selectedSpecialization;
-  String _query = '';
-  late final List<String> _filters = [
-    'All',
-    ...{for (final d in allDoctors) d.specialization},
-  ];
 
   @override
   void initState() {
     super.initState();
-    _selectedSpecialization = widget.initialSpecialization ?? 'All';
+    // Seed the filter provider from the quick-action tile that launched
+    // this screen (e.g. tapping "Doctor" vs a specific specialization).
+    if (widget.initialSpecialization != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(specializationFilterProvider.notifier).state =
+            widget.initialSpecialization!;
+      });
+    }
     _searchController.addListener(() {
-      setState(() => _query = _searchController.text.trim().toLowerCase());
+      ref.read(doctorSearchQueryProvider.notifier).state =
+          _searchController.text;
     });
   }
 
@@ -38,29 +44,23 @@ class _DoctorDiscoveryScreenState extends State<DoctorDiscoveryScreen> {
     super.dispose();
   }
 
-  List<DoctorPreview> get _results {
-    return allDoctors.where((d) {
-      final matchesFilter = _selectedSpecialization == 'All' ||
-          d.specialization == _selectedSpecialization;
-      final matchesQuery = _query.isEmpty ||
-          d.name.toLowerCase().contains(_query) ||
-          d.specialization.toLowerCase().contains(_query);
-      return matchesFilter && matchesQuery;
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final results = _results;
+    final results = ref.watch(filteredDoctorsProvider);
+    final allSpecializations = ref.watch(doctorsProvider);
+    final selectedSpecialization = ref.watch(specializationFilterProvider);
     final bottomInset = MediaQuery.of(context).padding.bottom;
+
+    final filters = [
+      'All',
+      ...{for (final d in allSpecializations) d.specialization},
+    ];
 
     return Scaffold(
       backgroundColor: kNeuBg,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
-      
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -90,7 +90,7 @@ class _DoctorDiscoveryScreenState extends State<DoctorDiscoveryScreen> {
                   ),
                 ),
                 SizedBox(height: 18.h),
-      
+
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: NeuInsetSurface(
@@ -127,28 +127,29 @@ class _DoctorDiscoveryScreenState extends State<DoctorDiscoveryScreen> {
                   ),
                 ),
                 SizedBox(height: 16.h),
-      
+
                 SizedBox(
                   height: 40.h,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.none,
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    itemCount: _filters.length,
+                    itemCount: filters.length,
                     separatorBuilder: (_, __) => SizedBox(width: 10.w),
                     itemBuilder: (context, i) {
-                      final f = _filters[i];
+                      final f = filters[i];
                       return NeuChip(
                         label: f,
-                        selected: _selectedSpecialization == f,
-                        onTap: () =>
-                            setState(() => _selectedSpecialization = f),
+                        selected: selectedSpecialization == f,
+                        onTap: () => ref
+                            .read(specializationFilterProvider.notifier)
+                            .state = f,
                       );
                     },
                   ),
                 ),
                 SizedBox(height: 18.h),
-      
+
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Text(
@@ -159,7 +160,7 @@ class _DoctorDiscoveryScreenState extends State<DoctorDiscoveryScreen> {
               ],
             ),
           ),
-      
+
           Expanded(
             child: results.isEmpty
                 ? _emptyState()
@@ -173,10 +174,13 @@ class _DoctorDiscoveryScreenState extends State<DoctorDiscoveryScreen> {
                     itemCount: results.length,
                     separatorBuilder: (_, __) => SizedBox(height: 12.h),
                     itemBuilder: (context, i) {
+                      final doctor = results[i];
                       return DoctorCard(
-                        doctor: results[i],
+                        doctor: doctor,
                         onTap: () {
-                          // TODO: navigate to doctor detail/profile screen.
+                          ref.read(selectedDoctorProvider.notifier).state =
+                              doctor;
+                          context.push(AppRoutes.doctorProfile);
                         },
                       );
                     },

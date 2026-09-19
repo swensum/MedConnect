@@ -16,46 +16,26 @@ const List<SpecializationShortcut> specializationShortcuts = [
   SpecializationShortcut('Dental', Icons.mood_outlined),
   SpecializationShortcut('Neurology', Icons.psychology_outlined),
 ];
-
 class DoctorPreview {
   const DoctorPreview({
+    required this.id,
     required this.name,
     required this.specialization,
     required this.experienceYears,
     required this.fee,
     required this.rating,
+    this.bio,
   });
 
+  final String id;
   final String name;
   final String specialization;
   final int experienceYears;
   final int fee;
   final double rating;
+  final String? bio;
 }
 
-const List<DoctorPreview> topDoctors = [
-  DoctorPreview(
-    name: 'Dr. Anita Sharma',
-    specialization: 'Cardiologist',
-    experienceYears: 12,
-    fee: 800,
-    rating: 4.8,
-  ),
-  DoctorPreview(
-    name: 'Dr. Bikash Thapa',
-    specialization: 'General physician',
-    experienceYears: 7,
-    fee: 500,
-    rating: 4.6,
-  ),
-  DoctorPreview(
-    name: 'Dr. Priya Koirala',
-    specialization: 'Dermatologist',
-    experienceYears: 9,
-    fee: 700,
-    rating: 4.9,
-  ),
-];
 
 class AppointmentPreview {
   const AppointmentPreview({
@@ -88,13 +68,17 @@ const AppointmentPreview? todaysAppointment = AppointmentPreview(
 
 const List<DoctorPreview> allDoctors = [
   DoctorPreview(
+    id: 'anita-sharma',
     name: 'Dr. Anita Sharma',
     specialization: 'Cardiologist',
     experienceYears: 12,
     fee: 800,
     rating: 4.8,
+     bio: 'Specializes in heart disease prevention and management, with '
+        'over a decade of clinical experience in cardiac care.',
   ),
   DoctorPreview(
+    id: 'bikash-thapa',
     name: 'Dr. Bikash Thapa',
     specialization: 'General physician',
     experienceYears: 7,
@@ -102,6 +86,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.6,
   ),
   DoctorPreview(
+    id: 'priya-koirala',
     name: 'Dr. Priya Koirala',
     specialization: 'Dermatologist',
     experienceYears: 9,
@@ -109,6 +94,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.9,
   ),
   DoctorPreview(
+    id: 'suresh-rai',
     name: 'Dr. Suresh Rai',
     specialization: 'Cardiologist',
     experienceYears: 15,
@@ -116,6 +102,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.7,
   ),
   DoctorPreview(
+    id: 'meena-gurung',
     name: 'Dr. Meena Gurung',
     specialization: 'Pediatrician',
     experienceYears: 6,
@@ -123,6 +110,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.5,
   ),
   DoctorPreview(
+    id: 'rajesh-karki',
     name: 'Dr. Rajesh Karki',
     specialization: 'General physician',
     experienceYears: 4,
@@ -130,6 +118,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.3,
   ),
   DoctorPreview(
+    id: 'sabina-lama',
     name: 'Dr. Sabina Lama',
     specialization: 'Dermatologist',
     experienceYears: 5,
@@ -137,6 +126,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.6,
   ),
   DoctorPreview(
+    id: 'nabin-adhikari',
     name: 'Dr. Nabin Adhikari',
     specialization: 'Neurologist',
     experienceYears: 11,
@@ -144,6 +134,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.9,
   ),
   DoctorPreview(
+    id: 'sunita-basnet',
     name: 'Dr. Sunita Basnet',
     specialization: 'Pediatrician',
     experienceYears: 8,
@@ -151,6 +142,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.7,
   ),
   DoctorPreview(
+    id: 'kiran-shrestha',
     name: 'Dr. Kiran Shrestha',
     specialization: 'Dentist',
     experienceYears: 10,
@@ -158,10 +150,6 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.8,
   ),
 ];
-
-/// -------- Home-tab additions: quick actions, hospitals, tip, exercises ---
-
-/// A shortcut shown in the "What do you need today?" row.
 class QuickAction {
   const QuickAction({
     required this.icon,
