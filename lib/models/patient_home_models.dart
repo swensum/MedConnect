@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 /// -------- Mock data (swap for real models/Firestore once wired up) -----
 
+/// NOTE: unused now that QuickActionRow replaced the old specialization
+/// shortcut row on the home tab — safe to delete if you don't plan to
+/// reuse it elsewhere.
 class SpecializationShortcut {
   const SpecializationShortcut(this.label, this.icon);
   final String label;
@@ -16,6 +19,24 @@ const List<SpecializationShortcut> specializationShortcuts = [
   SpecializationShortcut('Dental', Icons.mood_outlined),
   SpecializationShortcut('Neurology', Icons.psychology_outlined),
 ];
+
+/// A single patient review shown on the doctor profile screen.
+class DoctorReview {
+  const DoctorReview({
+    required this.patientName,
+    required this.rating,
+    required this.comment,
+    required this.timeAgo,
+  });
+
+  final String patientName;
+  final double rating;
+  final String comment;
+
+  /// Relative time label, e.g. '2 weeks ago'.
+  final String timeAgo;
+}
+
 class DoctorPreview {
   const DoctorPreview({
     required this.id,
@@ -25,6 +46,11 @@ class DoctorPreview {
     required this.fee,
     required this.rating,
     this.bio,
+    this.workplaceName,
+    this.workplaceAddress,
+    this.consultationModes = const ['In-clinic'],
+    this.todaySlots = const [],
+    this.reviews = const [],
   });
 
   final String id;
@@ -34,8 +60,23 @@ class DoctorPreview {
   final int fee;
   final double rating;
   final String? bio;
-}
 
+  /// Hospital/clinic the doctor is primarily associated with.
+  final String? workplaceName;
+  final String? workplaceAddress;
+
+  /// e.g. ['In-clinic', 'Video call'] — shown as informational pills on
+  /// the profile screen; the actual choice happens inside booking.
+  final List<String> consultationModes;
+
+  /// Quick-glance open slots for today, e.g. ['10:00 AM', '2:30 PM'].
+  /// Empty means "no slots today" — the UI falls back to full booking.
+  final List<String> todaySlots;
+
+  final List<DoctorReview> reviews;
+
+  int get reviewCount => reviews.length;
+}
 
 class AppointmentPreview {
   const AppointmentPreview({
@@ -64,7 +105,6 @@ const AppointmentPreview? todaysAppointment = AppointmentPreview(
   weekday: 'Friday',
   time: '4:30 PM',
 );
-// Add this below the existing `topDoctors` list.
 
 const List<DoctorPreview> allDoctors = [
   DoctorPreview(
@@ -74,8 +114,27 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 12,
     fee: 800,
     rating: 4.8,
-     bio: 'Specializes in heart disease prevention and management, with '
+    bio: 'Specializes in heart disease prevention and management, with '
         'over a decade of clinical experience in cardiac care.',
+    workplaceName: 'Koshi Zonal Hospital',
+    workplaceAddress: 'Biratnagar-4, Koshi Province',
+    consultationModes: ['In-clinic', 'Video call'],
+    todaySlots: ['10:00 AM', '11:30 AM', '4:00 PM'],
+    reviews: [
+      DoctorReview(
+        patientName: 'Sunil R.',
+        rating: 5,
+        comment: 'Very thorough and explained everything clearly. '
+            'Didn\'t feel rushed at all.',
+        timeAgo: '2 weeks ago',
+      ),
+      DoctorReview(
+        patientName: 'Kamala T.',
+        rating: 4.5,
+        comment: 'Good experience, slight wait but worth it.',
+        timeAgo: '1 month ago',
+      ),
+    ],
   ),
   DoctorPreview(
     id: 'bikash-thapa',
@@ -84,6 +143,10 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 7,
     fee: 500,
     rating: 4.6,
+    workplaceName: 'City Care Clinic',
+    workplaceAddress: 'Traffic Chowk, Biratnagar',
+    consultationModes: ['In-clinic'],
+    todaySlots: ['9:00 AM', '1:00 PM'],
   ),
   DoctorPreview(
     id: 'priya-koirala',
@@ -92,6 +155,17 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 9,
     fee: 700,
     rating: 4.9,
+    workplaceName: 'Nobel Medical College',
+    workplaceAddress: 'Kanchanbari, Biratnagar',
+    consultationModes: ['In-clinic', 'Video call'],
+    reviews: [
+      DoctorReview(
+        patientName: 'Anjali M.',
+        rating: 5,
+        comment: 'Cleared up my skin issue in just two visits.',
+        timeAgo: '3 weeks ago',
+      ),
+    ],
   ),
   DoctorPreview(
     id: 'suresh-rai',
@@ -100,6 +174,9 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 15,
     fee: 900,
     rating: 4.7,
+    workplaceName: 'Koshi Zonal Hospital',
+    workplaceAddress: 'Biratnagar-4, Koshi Province',
+    consultationModes: ['In-clinic'],
   ),
   DoctorPreview(
     id: 'meena-gurung',
@@ -108,6 +185,10 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 6,
     fee: 450,
     rating: 4.5,
+    workplaceName: 'City Care Clinic',
+    workplaceAddress: 'Traffic Chowk, Biratnagar',
+    consultationModes: ['In-clinic', 'Video call'],
+    todaySlots: ['2:00 PM', '3:30 PM'],
   ),
   DoctorPreview(
     id: 'rajesh-karki',
@@ -116,6 +197,8 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 4,
     fee: 400,
     rating: 4.3,
+    workplaceName: 'Nobel Medical College',
+    workplaceAddress: 'Kanchanbari, Biratnagar',
   ),
   DoctorPreview(
     id: 'sabina-lama',
@@ -124,6 +207,9 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 5,
     fee: 600,
     rating: 4.6,
+    workplaceName: 'City Care Clinic',
+    workplaceAddress: 'Traffic Chowk, Biratnagar',
+    consultationModes: ['In-clinic', 'Video call'],
   ),
   DoctorPreview(
     id: 'nabin-adhikari',
@@ -132,6 +218,17 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 11,
     fee: 1000,
     rating: 4.9,
+    workplaceName: 'Koshi Zonal Hospital',
+    workplaceAddress: 'Biratnagar-4, Koshi Province',
+    reviews: [
+      DoctorReview(
+        patientName: 'Deepak S.',
+        rating: 5,
+        comment: 'Extremely knowledgeable, took time to answer all my '
+            'questions.',
+        timeAgo: '1 week ago',
+      ),
+    ],
   ),
   DoctorPreview(
     id: 'sunita-basnet',
@@ -140,6 +237,9 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 8,
     fee: 500,
     rating: 4.7,
+    workplaceName: 'Nobel Medical College',
+    workplaceAddress: 'Kanchanbari, Biratnagar',
+    todaySlots: ['11:00 AM'],
   ),
   DoctorPreview(
     id: 'kiran-shrestha',
@@ -148,8 +248,12 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 10,
     fee: 550,
     rating: 4.8,
+    workplaceName: 'City Care Clinic',
+    workplaceAddress: 'Traffic Chowk, Biratnagar',
+    consultationModes: ['In-clinic'],
   ),
 ];
+
 class QuickAction {
   const QuickAction({
     required this.icon,
