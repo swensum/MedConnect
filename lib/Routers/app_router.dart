@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:med_connect/components/patient_dashboard/Doctor_Screen/book_appointment_screen.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_discovery_screen.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_profile_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
@@ -26,6 +27,8 @@ class AppRoutes {
    static const String patientHome = '/patient-home';
    static const String doctorDiscovery = '/doctor-discovery';
    static const String doctorProfile = '/doctor-profile';
+   static const String bookAppointment = '/book-appointment';
+static const String bookingConfirm = '/booking-confirm';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -151,7 +154,11 @@ GoRoute(
   pageBuilder: (context, state) =>
       slidePage(const DoctorProfileScreen(), state),
 ),
-      
+      GoRoute(
+  path: AppRoutes.bookAppointment,
+  pageBuilder: (context, state) =>
+      slidePage(const BookAppointmentScreen(), state),
+),
     ],
   );
 }

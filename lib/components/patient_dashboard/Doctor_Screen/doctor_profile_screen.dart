@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/booking_providers.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/doctor_profile_widgets.dart';
 import 'package:med_connect/models/patient_home_models.dart';
@@ -102,13 +104,20 @@ class DoctorProfileScreen extends ConsumerWidget {
                     TodaySlotsRow(
                       slots: doctor.todaySlots,
                       onTapSlot: (slot) {
-                        // TODO: open booking pre-filled with today + this slot.
+                        // Always start from a clean draft before pre-filling,
+                        // so a stale date/slot from a previous booking
+                        // session can't leak through.
+                        ref.read(bookingDraftProvider.notifier)
+                          ..reset()
+                          ..selectDate(DateTime.now())
+                          ..selectSlot(slot);
+                        context.push(AppRoutes.bookAppointment);
                       },
                     ),
                     SizedBox(height: 26.h),
 
                     if (doctor.workplaceName != null) ...[
-                      Text('Practices at', style: AppTextStyles.h3),
+                      Text('Works at', style: AppTextStyles.h3),
                       SizedBox(height: 12.h),
                       WorkplaceCard(
                         name: doctor.workplaceName!,
@@ -176,7 +185,12 @@ class DoctorProfileScreen extends ConsumerWidget {
               child: NeuPillButton(
                 enabled: true,
                 onTap: () {
-                  // TODO: navigate to slot-selection / booking screen.
+                  // Fresh draft for a plain "Book appointment" tap too —
+                  // no pre-filled date/slot from any earlier session.
+                  ref.read(bookingDraftProvider.notifier)
+                    ..reset()
+                    ..selectDate(DateTime.now());
+                  context.push(AppRoutes.bookAppointment);
                 },
                 label: 'Book appointment',
               ),

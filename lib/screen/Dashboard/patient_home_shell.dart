@@ -98,10 +98,10 @@ class _PatientHomeTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LocationRow(
-            // TODO: swap for the user's real detected/selected location.
+           
             location: 'Biratnagar, Koshi',
             onTap: () {
-              // TODO: open location picker, or re-request GPS location.
+             
             },
           ),
           SizedBox(height: 16.h),
@@ -109,25 +109,26 @@ class _PatientHomeTab extends StatelessWidget {
           SizedBox(height: 22.h),
           _searchBar(context),
           SizedBox(height: 28.h),
-          TodayAppointmentCard(
-            appointment: todaysAppointment,
-            onTap: () {
-              // TODO: navigate to appointment detail screen.
-            },
-          ),
+         TodayAppointmentCard(appointment:todaysAppointment),
           SizedBox(height: 28.h),
           Text('What do you need today?', style: AppTextStyles.h3),
           SizedBox(height: 14.h),
           QuickActionRow(
-            actions: quickActions,
-            onTapAction: (a) {
-              if (a.isEmergency) {
-                // TODO: launch emergency call / ambulance flow.
-                return;
-              }
-              context.push(AppRoutes.doctorDiscovery, extra: a.label);
-            },
-          ),
+  actions: quickActions,
+  onTapAction: (a) {
+    if (a.isEmergency) {
+      // TODO: launch emergency call / ambulance flow.
+      return;
+    }
+    if (a.label == 'Doctor') {
+      // "Doctor" isn't a specialization — it means "browse all doctors".
+      context.push(AppRoutes.doctorDiscovery);
+      return;
+    }
+   
+    context.push(AppRoutes.doctorDiscovery, extra: a.label);
+  },
+),
           SizedBox(height: 28.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

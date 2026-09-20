@@ -2,24 +2,6 @@ import 'package:flutter/material.dart';
 
 /// -------- Mock data (swap for real models/Firestore once wired up) -----
 
-/// NOTE: unused now that QuickActionRow replaced the old specialization
-/// shortcut row on the home tab — safe to delete if you don't plan to
-/// reuse it elsewhere.
-class SpecializationShortcut {
-  const SpecializationShortcut(this.label, this.icon);
-  final String label;
-  final IconData icon;
-}
-
-const List<SpecializationShortcut> specializationShortcuts = [
-  SpecializationShortcut('General', Icons.medical_services_outlined),
-  SpecializationShortcut('Cardiology', Icons.favorite_border_rounded),
-  SpecializationShortcut('Dermatology', Icons.face_retouching_natural_rounded),
-  SpecializationShortcut('Pediatrics', Icons.child_care_rounded),
-  SpecializationShortcut('Dental', Icons.mood_outlined),
-  SpecializationShortcut('Neurology', Icons.psychology_outlined),
-];
-
 /// A single patient review shown on the doctor profile screen.
 class DoctorReview {
   const DoctorReview({
@@ -69,8 +51,10 @@ class DoctorPreview {
   /// the profile screen; the actual choice happens inside booking.
   final List<String> consultationModes;
 
-  /// Quick-glance open slots for today, e.g. ['10:00 AM', '2:30 PM'].
-  /// Empty means "no slots today" — the UI falls back to full booking.
+  /// Quick-glance open slots for today. IMPORTANT: these must exactly
+  /// match the string format used in mockSlotsFor() (two-digit hour,
+  /// e.g. '09:00 AM' not '9:00 AM') or the booking screen won't be able
+  /// to match/highlight them.
   final List<String> todaySlots;
 
   final List<DoctorReview> reviews;
@@ -119,7 +103,7 @@ const List<DoctorPreview> allDoctors = [
     workplaceName: 'Koshi Zonal Hospital',
     workplaceAddress: 'Biratnagar-4, Koshi Province',
     consultationModes: ['In-clinic', 'Video call'],
-    todaySlots: ['10:00 AM', '11:30 AM', '4:00 PM'],
+    todaySlots: ['10:00 AM', '11:30 AM', '04:00 PM'], // fixed: 04:00 not 4:00
     reviews: [
       DoctorReview(
         patientName: 'Sunil R.',
@@ -146,7 +130,7 @@ const List<DoctorPreview> allDoctors = [
     workplaceName: 'City Care Clinic',
     workplaceAddress: 'Traffic Chowk, Biratnagar',
     consultationModes: ['In-clinic'],
-    todaySlots: ['9:00 AM', '1:00 PM'],
+    todaySlots: ['09:00 AM', '01:00 PM'], // fixed: 09:00, 01:00
   ),
   DoctorPreview(
     id: 'priya-koirala',
@@ -188,7 +172,7 @@ const List<DoctorPreview> allDoctors = [
     workplaceName: 'City Care Clinic',
     workplaceAddress: 'Traffic Chowk, Biratnagar',
     consultationModes: ['In-clinic', 'Video call'],
-    todaySlots: ['2:00 PM', '3:30 PM'],
+    todaySlots: ['02:00 PM', '03:30 PM'], // fixed: 02:00 not 2:00
   ),
   DoctorPreview(
     id: 'rajesh-karki',
@@ -239,7 +223,7 @@ const List<DoctorPreview> allDoctors = [
     rating: 4.7,
     workplaceName: 'Nobel Medical College',
     workplaceAddress: 'Kanchanbari, Biratnagar',
-    todaySlots: ['11:00 AM'],
+    todaySlots: ['11:00 AM'], // already correct
   ),
   DoctorPreview(
     id: 'kiran-shrestha',
