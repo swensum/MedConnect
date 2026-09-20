@@ -62,7 +62,7 @@ class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.splash,
+   initialLocation: AppRoutes.patientProfileSetup,
     routes: [
       // No slide here — splash has its own pulse/zoom entrance.
       GoRoute(
@@ -98,7 +98,9 @@ class AppRouter {
        GoRoute(
         path: AppRoutes.patientProfileSetup,
         pageBuilder: (context, state) {
-          final phone = state.extra as String;
+          final phone = state.extra is String
+        ? state.extra as String
+        : '9800000000';
           return slidePage(
             PatientProfileSetupScreen(phone: phone),
             state,

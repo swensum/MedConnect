@@ -7,7 +7,7 @@ import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/booking_widgets.dart';
 import 'package:med_connect/models/booking_models.dart';
-import 'package:med_connect/providers/booking_providers.dart';
+import 'package:med_connect/providers/booking_providers.dart'; // lowercase — must match doctor_profile_screen.dart
 import 'package:med_connect/providers/doctor_providers.dart';
 
 class BookAppointmentScreen extends ConsumerStatefulWidget {
@@ -21,10 +21,9 @@ class BookAppointmentScreen extends ConsumerStatefulWidget {
 class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final TextEditingController _noteController = TextEditingController();
 
-  // No pre-fill/reset logic here anymore — the doctor profile screen is
-  // now responsible for setting up bookingDraftProvider (reset + date,
-  // and slot if applicable) before it navigates here. This screen just
-  // reads whatever state it's given.
+  // No initState logic needed — the doctor profile screen always
+  // resets + pre-fills bookingDraftProvider before navigating here.
+  // This screen only reads and updates that shared state.
 
   @override
   void dispose() {
@@ -43,7 +42,10 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         backgroundColor: kNeuBg,
         body: SafeArea(
           child: Center(
-            child: Text('No doctor selected.', style: AppTextStyles.bodySecondary),
+            child: Text(
+              'No doctor selected.',
+              style: AppTextStyles.bodySecondary,
+            ),
           ),
         ),
       );
@@ -84,20 +86,33 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                           decoration: BoxDecoration(
                             color: kNeuBg,
                             shape: BoxShape.circle,
-                            boxShadow: neuShadows(distance: 3, blur: 8, inset: true),
+                            boxShadow: neuShadows(
+                              distance: 3,
+                              blur: 8,
+                              inset: true,
+                            ),
                           ),
-                          child: Icon(Icons.person_rounded,
-                              size: 22.sp, color: AppColors.navy),
+                          child: Icon(
+                            Icons.person_rounded,
+                            size: 22.sp,
+                            color: AppColors.navy,
+                          ),
                         ),
                         SizedBox(width: 12.w),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(doctor.name,
-                                  style: AppTextStyles.body
-                                      .copyWith(fontWeight: FontWeight.w700)),
-                              Text(doctor.specialization, style: AppTextStyles.caption),
+                              Text(
+                                doctor.name,
+                                style: AppTextStyles.body.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                doctor.specialization,
+                                style: AppTextStyles.caption,
+                              ),
                             ],
                           ),
                         ),
@@ -123,16 +138,18 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                       ),
                       SizedBox(height: 26.h),
                     ] else if (doctor.consultationModes.isNotEmpty) ...[
-                      // Only one mode available — auto-selected, nothing to
-                      // show the user a choice for.
-                      Builder(builder: (_) {
-                        if (draft.consultationMode == null) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            notifier.selectMode(doctor.consultationModes.first);
-                          });
-                        }
-                        return const SizedBox.shrink();
-                      }),
+                      Builder(
+                        builder: (_) {
+                          if (draft.consultationMode == null) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              notifier.selectMode(
+                                doctor.consultationModes.first,
+                              );
+                            });
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                     ],
 
                     Text('Select date', style: AppTextStyles.h3),
@@ -145,18 +162,23 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
 
                     Text('Select time', style: AppTextStyles.h3),
                     SizedBox(height: 14.h),
-                    ...slotGroups.entries.map((entry) => Padding(
-                          padding: EdgeInsets.only(bottom: 18.h),
-                          child: SlotSection(
-                            label: entry.key,
-                            slots: entry.value,
-                            selectedSlot: draft.slot,
-                            onSelect: notifier.selectSlot,
-                          ),
-                        )),
+                    ...slotGroups.entries.map(
+                      (entry) => Padding(
+                        padding: EdgeInsets.only(bottom: 18.h),
+                        child: SlotSection(
+                          label: entry.key,
+                          slots: entry.value,
+                          selectedSlot: draft.slot,
+                          onSelect: notifier.selectSlot,
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 8.h),
 
-                    Text('Note for the doctor (optional)', style: AppTextStyles.h3),
+                    Text(
+                      'Note for the doctor (optional)',
+                      style: AppTextStyles.h3,
+                    ),
                     SizedBox(height: 12.h),
                     NeuInsetSurface(
                       padding: EdgeInsets.all(14.w),
@@ -165,11 +187,8 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                         maxLines: 3,
                         onChanged: notifier.setNote,
                         style: AppTextStyles.body,
-                        decoration: InputDecoration(
-                          hintText: 'e.g. Reason for visit, symptoms...',
-                          hintStyle: AppTextStyles.bodySecondary,
-                          border: InputBorder.none,
-                          isDense: true,
+                        decoration: bareInputDecoration(
+                          'e.g. Reason for visit, symptoms...',
                         ),
                       ),
                     ),
@@ -184,7 +203,10 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Consultation fee', style: AppTextStyles.bodySecondary),
+                      Text(
+                        'Consultation fee',
+                        style: AppTextStyles.bodySecondary,
+                      ),
                       Text(
                         'Rs. ${doctor.fee}',
                         style: AppTextStyles.body.copyWith(

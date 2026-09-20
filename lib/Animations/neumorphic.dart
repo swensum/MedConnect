@@ -37,11 +37,18 @@ List<BoxShadow> neuShadows({
     ),
   ];
 }
-
-/// A raised neumorphic pill for primary submit actions. Supports an
-/// optional loading state (swaps the label for a spinner) and an optional
-/// trailing icon (e.g. an arrow on a "Get started" button). Height/radius
-/// default to match the auth-flow screens but can be overridden per screen.
+InputDecoration bareInputDecoration(String hint) {
+  return InputDecoration(
+    hintText: hint,
+    hintStyle: AppTextStyles.bodySecondary,
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    filled: false,
+    isDense: true,
+    contentPadding: EdgeInsets.zero,
+  );
+}
 class NeuPillButton extends StatefulWidget {
   const NeuPillButton({
     super.key,

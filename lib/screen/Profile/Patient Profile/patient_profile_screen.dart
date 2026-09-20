@@ -142,7 +142,7 @@ Future<void> _save() async {
                     controller: _nameController,
                     style: AppTextStyles.body,
                     textCapitalization: TextCapitalization.words,
-                    decoration: _bareInput('Enter your name'),
+                   decoration: bareInputDecoration('Enter your name'),
                   ),
                 ),
                 SizedBox(height: 20.h),

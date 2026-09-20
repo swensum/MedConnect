@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
-import 'package:med_connect/Providers/booking_providers.dart';
+import 'package:med_connect/providers/booking_providers.dart'; // lowercase — must match book_appointment_screen.dart
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/doctor_profile_widgets.dart';
@@ -104,9 +104,10 @@ class DoctorProfileScreen extends ConsumerWidget {
                     TodaySlotsRow(
                       slots: doctor.todaySlots,
                       onTapSlot: (slot) {
-                        // Always start from a clean draft before pre-filling,
-                        // so a stale date/slot from a previous booking
-                        // session can't leak through.
+                        // Every entry into booking starts fully fresh —
+                        // required since a booking = payment, so nothing
+                        // from a previous/abandoned attempt should carry
+                        // over once you're back on the profile screen.
                         ref.read(bookingDraftProvider.notifier)
                           ..reset()
                           ..selectDate(DateTime.now())
@@ -185,8 +186,6 @@ class DoctorProfileScreen extends ConsumerWidget {
               child: NeuPillButton(
                 enabled: true,
                 onTap: () {
-                  // Fresh draft for a plain "Book appointment" tap too —
-                  // no pre-filled date/slot from any earlier session.
                   ref.read(bookingDraftProvider.notifier)
                     ..reset()
                     ..selectDate(DateTime.now());
