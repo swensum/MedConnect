@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/appointment_providers.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/payment_widgets.dart';
@@ -25,38 +26,22 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
   bool _isConfirming = false;
   bool _isConfirmed = false;
 
-  Future<void> _confirm(AppointmentPreview appointment) async {
+    Future<void> _confirm(AppointmentPreview appointment) async {
     if (_isConfirming) return;
 
     final method = ref.read(selectedPaymentMethodProvider);
 
-    // eSewa/Khalti need a successful checkout before the booking is
-    // actually confirmed — cash skips straight through.
     if (method.requiresOnlineCheckout) {
       final paid = await _openPaymentCheckout(method);
-      if (!paid || !mounted) return; // cancelled/failed — stay on this screen
+      if (!paid || !mounted) return;
     }
 
     setState(() => _isConfirming = true);
 
-    // TODO: write the appointment doc to Firestore here, including
-    // payment status/method, e.g.
-    //   await FirebaseFirestore.instance.collection('appointments').add({
-    //     'doctor_id': doctor.id,
-    //     'date': draft.date,
-    //     'slot': draft.slot,
-    //     'consultation_mode': draft.consultationMode,
-    //     'note': draft.note,
-    //     'payment_method': method.name,
-    //     'payment_status': method == PaymentMethod.cash ? 'pending' : 'paid',
-    //   });
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
 
-    // The Home tab's card should now reflect this booking.
-    ref.read(confirmedAppointmentProvider.notifier).state = appointment;
-    // The draft's job is done — clear it so a stale mode/date/slot doesn't
-    // leak into the next booking attempt.
+   ref.read(appointmentsProvider.notifier).add(appointment);   
     ref.read(bookingDraftProvider.notifier).reset();
 
     setState(() {
@@ -65,14 +50,6 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
     });
   }
 
-  /// Opens the selected payment provider's checkout and returns true once
-  /// payment succeeds. Currently routes to a stub screen so the flow can
-  /// be tested end-to-end — swap the stub's internals for the real
-  /// SDK/WebView call per provider once wired up:
-  ///   - eSewa: esewa_flutter_sdk, or a WebView loading a backend-signed
-  ///     checkout form (eSewa v2 requires HMAC-signed requests — can't be
-  ///     done purely client-side).
-  ///   - Khalti: khalti_flutter's KhaltiPayment.pay(...).
   Future<bool> _openPaymentCheckout(PaymentMethod method) async {
     final result = await context.push<bool>(
       AppRoutes.paymentCheckout,

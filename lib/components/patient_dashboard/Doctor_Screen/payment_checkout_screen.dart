@@ -14,18 +14,23 @@ class PaymentCheckoutScreen extends StatefulWidget {
 }
 
 class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
-  bool _isProcessing = false;
+  bool _isSuccess = false;
 
-  Future<void> _simulatePayment() async {
-    setState(() => _isProcessing = true);
+  @override
+  void initState() {
+    super.initState();
+    _runFakeCheckout();
+  }
 
-    // TODO: replace this whole method with the real provider call:
-    //   eSewa -> launch esewa_flutter_sdk checkout, or a WebView loading
-    //   the backend-signed payment URL.
-    //   Khalti -> KhaltiPayment.pay(config: ..., onSuccess: ..., onFailure: ...)
-    await Future.delayed(const Duration(seconds: 2));
-
+  Future<void> _runFakeCheckout() async {
+    await Future.delayed(const Duration(seconds: 10));
     if (!mounted) return;
+
+    setState(() => _isSuccess = true);
+
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+
     context.pop(true); // true = payment succeeded
   }
 
@@ -41,50 +46,63 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
               SizedBox(height: 8.h),
               Row(
                 children: [
-                  NeuCircleButton(
-                    size: 36,
-                    icon: Icons.close_rounded,
-                    onTap: () => context.pop(false), // false = cancelled
-                  ),
+                  if (!_isSuccess)
+                    NeuCircleButton(
+                      size: 36,
+                      icon: Icons.close_rounded,
+                      onTap: () => context.pop(false), // false = cancelled
+                    ),
                   SizedBox(width: 14.w),
                   Text('${widget.method.label} checkout', style: AppTextStyles.h2),
                 ],
               ),
               const Spacer(),
-              Container(
-                width: 84.w,
-                height: 84.w,
-                decoration: BoxDecoration(
-                  color: kNeuBg,
-                  shape: BoxShape.circle,
-                  boxShadow: neuShadows(distance: 6, blur: 14),
-                ),
-                child: Icon(
-                  Icons.account_balance_wallet_rounded,
-                  size: 38.sp,
-                  color: AppColors.navy,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Text(
-                'Redirecting to ${widget.method.label}...',
-                style: AppTextStyles.h3,
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'This is a placeholder screen for testing the flow. Once '
-                'payment is wired up, this becomes the real '
-                '${widget.method.label} checkout.',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.bodySecondary,
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: _isSuccess
+                    ? Column(
+                        key: const ValueKey('payment-success'),
+                        children: [
+                          const NeuSuccessCheck(),
+                          SizedBox(height: 20.h),
+                          Text('Payment successful', style: AppTextStyles.h2),
+                        ],
+                      )
+                    : Column(
+                        key: const ValueKey('payment-processing'),
+                        children: [
+                          Container(
+                            width: 84.w,
+                            height: 84.w,
+                            decoration: BoxDecoration(
+                              color: kNeuBg,
+                              shape: BoxShape.circle,
+                              boxShadow: neuShadows(distance: 6, blur: 14),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(24.w),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation(AppColors.navy),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                          Text(
+                            'Processing payment...',
+                            style: AppTextStyles.h3,
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Please wait while we confirm your '
+                            '${widget.method.label} payment.',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.bodySecondary,
+                          ),
+                        ],
+                      ),
               ),
               const Spacer(),
-              NeuPillButton(
-                enabled: !_isProcessing,
-                loading: _isProcessing,
-                onTap: _simulatePayment,
-                label: 'Simulate successful payment',
-              ),
               SizedBox(height: 24.h),
             ],
           ),

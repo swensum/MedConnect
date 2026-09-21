@@ -9,6 +9,7 @@ import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/patient_home_widgets.dart';
 
 import 'package:med_connect/models/patient_home_models.dart';
+import 'package:med_connect/screen/Dashboard/appointments_tab.dart';
 
 class PatientHomeShell extends StatefulWidget {
   const PatientHomeShell({super.key, required this.patientName});
@@ -55,7 +56,7 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
           index: _tabIndex,
           children: [
             _PatientHomeTab(patientName: widget.patientName),
-            const _PlaceholderTab(label: 'Appointments'),
+            const AppointmentsTab(),
            const _PlaceholderTab(label: 'Records'),
             const _PlaceholderTab(label: 'Profile'),
           ],
@@ -93,7 +94,7 @@ class _PatientHomeTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(confirmedAppointmentProvider);
+     final appointment = ref.watch(nextAppointmentProvider);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 100.h),
@@ -109,7 +110,12 @@ class _PatientHomeTab extends ConsumerWidget {
           SizedBox(height: 22.h),
           _searchBar(context),
           SizedBox(height: 28.h),
-         TodayAppointmentCard(appointment:todaysAppointment),
+        TodayAppointmentCard(
+            appointment: appointment,
+            onTap: () {
+              
+            },
+          ),
           SizedBox(height: 28.h),
           Text('What do you need today?', style: AppTextStyles.h3),
           SizedBox(height: 14.h),

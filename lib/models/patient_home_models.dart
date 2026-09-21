@@ -61,11 +61,12 @@ class DoctorPreview {
 
   int get reviewCount => reviews.length;
 }
-
 class AppointmentPreview {
   const AppointmentPreview({
+    required this.id,
     required this.doctorName,
     required this.specialization,
+    required this.date,
     required this.dayNumber,
     required this.monthYear,
     required this.weekday,
@@ -73,22 +74,32 @@ class AppointmentPreview {
     this.consultationMode,
   });
 
+  final String id;
   final String doctorName;
   final String specialization;
+  final DateTime date;
   final String dayNumber;
   final String monthYear;
   final String weekday;
   final String time;
   final String? consultationMode;
 
-   static const _months = [
+  bool get isPast {
+    final today = DateTime.now();
+    final justDate = DateTime(date.year, date.month, date.day);
+    final justToday = DateTime(today.year, today.month, today.day);
+    return justDate.isBefore(justToday);
+  }
+
+  static const _months = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
   static const _weekdays = [
     'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
   ];
-   factory AppointmentPreview.fromBooking({
+
+  factory AppointmentPreview.fromBooking({
     required String doctorName,
     required String specialization,
     required DateTime date,
@@ -96,8 +107,10 @@ class AppointmentPreview {
     required String consultationMode,
   }) {
     return AppointmentPreview(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
       doctorName: doctorName,
       specialization: specialization,
+      date: date,
       dayNumber: '${date.day}',
       monthYear: '${_months[date.month - 1]} ${date.year}',
       weekday: _weekdays[date.weekday - 1],
@@ -107,14 +120,6 @@ class AppointmentPreview {
   }
 }
 
-const AppointmentPreview todaysAppointment = AppointmentPreview(
-  doctorName: 'Dr. Anita Sharma',
-  specialization: 'Cardiologist',
-  dayNumber: '19',
-  monthYear: 'Sep 2026',
-  weekday: 'Friday',
-  time: '4:30 PM',
-);
 
 const List<DoctorPreview> allDoctors = [
   DoctorPreview(
