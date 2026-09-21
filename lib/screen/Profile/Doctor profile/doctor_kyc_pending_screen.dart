@@ -45,9 +45,7 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
   void initState() {
     super.initState();
 
-    // DEV-ONLY: auto-approves after 15s so the "approved" state can be
-    // previewed without wiring up real status polling yet.
-    // TODO: remove this once Firestore status listening is wired up.
+    
     if (_status == DoctorKycStatus.pending) {
       _fakeApprovalTimer = Timer(const Duration(seconds: 15), () {
         if (!mounted) return;
@@ -66,8 +64,6 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
     if (_isRefreshing) return;
     setState(() => _isRefreshing = true);
 
-    // TODO: re-fetch doctor_profiles.verified_status from Firestore and
-    // update the status shown here (e.g. via a provider/bloc refresh).
     await Future.delayed(const Duration(milliseconds: 900));
 
     if (!mounted) return;

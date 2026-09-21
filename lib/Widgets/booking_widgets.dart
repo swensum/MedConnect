@@ -39,7 +39,7 @@ class DateStrip extends StatelessWidget {
         clipBehavior: Clip.none,
         padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
         itemCount: days.length,
-        separatorBuilder: (_, __) => SizedBox(width: 10.w),
+        separatorBuilder: (_, _) => SizedBox(width: 10.w),
         itemBuilder: (context, i) {
           final day = days[i];
           final selected = selectedDate != null && _isSameDay(day, selectedDate!);

@@ -80,8 +80,7 @@ class AppointmentPreview {
   final String time;
 }
 
-// TODO: swap for the real next-upcoming appointment once wired up.
-const AppointmentPreview? todaysAppointment = AppointmentPreview(
+const AppointmentPreview todaysAppointment = AppointmentPreview(
   doctorName: 'Dr. Anita Sharma',
   specialization: 'Cardiologist',
   dayNumber: '19',
@@ -299,7 +298,6 @@ class HealthTip {
   final String text;
 }
 
-// TODO: swap for a real tip-of-the-day source once wired up.
 const HealthTip todaysHealthTip = HealthTip(
   label: 'Hydration',
   text:

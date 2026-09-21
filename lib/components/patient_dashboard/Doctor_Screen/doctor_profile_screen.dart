@@ -47,7 +47,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                     size: 36,
                     icon: Icons.share_outlined,
                     onTap: () {
-                      // TODO: share doctor profile link.
+                     
                     },
                   ),
                 ],
@@ -121,7 +121,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                         name: doctor.workplaceName!,
                         address: doctor.workplaceAddress ?? '',
                         onTap: () {
-                          // TODO: open map / hospital detail screen.
+                         
                         },
                       ),
                       SizedBox(height: 26.h),
@@ -149,7 +149,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                         if (doctor.reviews.isNotEmpty)
                           GestureDetector(
                             onTap: () {
-                              // TODO: navigate to full reviews list screen.
+                             
                             },
                             child: Text(
                               'See all',

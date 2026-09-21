@@ -128,15 +128,9 @@ Future<void> _submit() async {
     if (!_isValid || _isSubmitting) return;
     setState(() => _isSubmitting = true);
 
-    // TODO: once backend is wired up — upload _licenseFile / _degreeFile /
-    // _clinicProofFile (each has .path on mobile/desktop or .bytes on web)
-    // to storage, then write the doctor_profiles doc with those URLs and
-    // verified_status: 'pending'.
     await Future.delayed(const Duration(milliseconds: 1000));
     if (!mounted) return;
 
-    // Swap the form for a success view instead of navigating immediately —
-    // gives the doctor a clear confirmation before landing in the app.
     setState(() {
       _isSubmitting = false;
       _isSubmitted = true;

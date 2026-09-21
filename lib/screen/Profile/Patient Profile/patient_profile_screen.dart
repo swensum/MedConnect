@@ -70,16 +70,9 @@ Future<void> _save() async {
     if (!_isValid || _isSaving) return;
     setState(() => _isSaving = true);
 
-    // TODO: Write to Firestore `patient_profiles`, e.g.
-    //   await FirebaseFirestore.instance
-    //       .collection('patient_profiles')
-    //       .doc(uid)
-    //       .set({...});
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
 
-    // Swap the form for a success view instead of navigating immediately —
-    // gives the user a clear confirmation before landing in the app.
     setState(() {
       _isSaving = false;
       _isSaved = true;

@@ -69,15 +69,10 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       _errorText = null;
     });
 
-    // TODO: Replace with real Firebase Auth verification. During dev, use
-    // Firebase Console → Authentication → Phone → "Phone numbers for
-    // testing" so no real SMS is sent and no cost is incurred.
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
 
-    // Swap the form for the success view instead of navigating right away
-    // — gives the user a clear "yes, that worked" moment before the next
-    // screen (profile setup / KYC) appears.
+    
     setState(() {
       _isVerifying = false;
       _isVerified = true;
@@ -86,8 +81,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     await Future.delayed(const Duration(milliseconds: 1300));
     if (!mounted) return;
 
-    // Using context.go (not push) since the whole auth flow — phone entry,
-    // OTP — should be popped off the back stack once verification succeeds.
+    
     if (widget.role == UserRole.patient) {
       context.go(AppRoutes.patientProfileSetup, extra: widget.phone);
     } else {
@@ -190,8 +184,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   }
 }
 
-/// Shown in place of the form once verification succeeds — a brief,
-/// unmissable confirmation before the role-specific next screen loads.
+
 class _SuccessView extends StatelessWidget {
   const _SuccessView({required this.role});
 

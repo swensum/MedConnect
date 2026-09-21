@@ -5,8 +5,6 @@ import 'package:med_connect/Theme/theme.dart';
 
 import 'package:med_connect/models/patient_home_models.dart';
 
-// TODO: move these into AppColors in Theme/theme.dart so the rest of the
-// app can reuse the same emergency/tip accents.
 const kEmergencyColor = Color(0xFFD2484A);
 const kEmergencyTint = Color(0xFFFBE7E7);
 const kTipColor = Color(0xFF2E9E6E);
@@ -200,21 +198,15 @@ class QuickActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // Extra height gives the boxShadow room to render fully instead
-      // of being clipped at the top/bottom edge of the ListView viewport.
       height: 96.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        // Default is Clip.hardEdge, which slices off anything (like
-        // shadows) that extends past the viewport bounds. Clip.none
-        // lets shadows render in full.
+        
         clipBehavior: Clip.none,
-        // Padding here (instead of on a parent) keeps the first and
-        // last tile's shadow from being flush against — and cut off
-        // by — the edge of whatever container this sits inside.
+        
         padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
         itemCount: actions.length,
-        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        separatorBuilder: (_, _) => SizedBox(width: 12.w),
         itemBuilder: (context, i) {
           final a = actions[i];
           final iconColor = a.isEmergency ? kEmergencyColor : AppColors.navy;
@@ -347,7 +339,7 @@ class HospitalRow extends StatelessWidget {
         clipBehavior: Clip.none,
         padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
         itemCount: hospitals.length,
-        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        separatorBuilder: (_, _) => SizedBox(width: 12.w),
         itemBuilder: (context, i) => HospitalCard(
           hospital: hospitals[i],
           onTap: () => onTapHospital?.call(hospitals[i]),

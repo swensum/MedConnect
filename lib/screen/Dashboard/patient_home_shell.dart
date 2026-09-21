@@ -117,11 +117,11 @@ class _PatientHomeTab extends StatelessWidget {
   actions: quickActions,
   onTapAction: (a) {
     if (a.isEmergency) {
-      // TODO: launch emergency call / ambulance flow.
+      
       return;
     }
     if (a.label == 'Doctor') {
-      // "Doctor" isn't a specialization — it means "browse all doctors".
+     
       context.push(AppRoutes.doctorDiscovery);
       return;
     }
@@ -136,7 +136,7 @@ class _PatientHomeTab extends StatelessWidget {
               Text('Hospitals near you', style: AppTextStyles.h3),
               GestureDetector(
                 onTap: () {
-                  // TODO: navigate to full hospitals/clinics list screen.
+                  
                 },
                 child: Text(
                   'See all',
@@ -152,7 +152,7 @@ class _PatientHomeTab extends StatelessWidget {
           HospitalRow(
             hospitals: nearbyHospitals,
             onTapHospital: (h) {
-              // TODO: navigate to hospital detail screen.
+            
             },
           ),
           SizedBox(height: 28.h),
@@ -166,7 +166,7 @@ class _PatientHomeTab extends StatelessWidget {
               Text('Exercises from your doctor', style: AppTextStyles.h3),
               GestureDetector(
                 onTap: () {
-                  // TODO: navigate to full exercise plan screen.
+                 
                 },
                 child: Text(
                   'See all',
@@ -185,7 +185,7 @@ class _PatientHomeTab extends StatelessWidget {
               child: ExerciseListItem(
                 exercise: e,
                 onTap: () {
-                  // TODO: navigate to exercise detail screen.
+                  
                 },
               ),
             ),
@@ -215,7 +215,7 @@ class _PatientHomeTab extends StatelessWidget {
           size: 46,
           icon: Icons.notifications_none_rounded,
           onTap: () {
-            // TODO: navigate to notifications screen.
+           
           },
         ),
       ],

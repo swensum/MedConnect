@@ -6,8 +6,10 @@ import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/booking_widgets.dart';
+import 'package:med_connect/Widgets/doctor_profile_widgets.dart'; // NEW — for WorkplaceCard
+
 import 'package:med_connect/models/booking_models.dart';
-import 'package:med_connect/providers/booking_providers.dart'; // lowercase — must match doctor_profile_screen.dart
+import 'package:med_connect/providers/booking_providers.dart';
 import 'package:med_connect/providers/doctor_providers.dart';
 
 class BookAppointmentScreen extends ConsumerStatefulWidget {
@@ -20,7 +22,6 @@ class BookAppointmentScreen extends ConsumerStatefulWidget {
 
 class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final TextEditingController _noteController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -47,9 +48,11 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         ),
       );
     }
-final slotGroups = (draft.date != null && draft.consultationMode != null)
-    ? mockSlotsFor(draft.date!, draft.consultationMode!)
-    : <String, List<TimeSlot>>{};
+
+    final slotGroups = (draft.date != null && draft.consultationMode != null)
+        ? mockSlotsFor(draft.date!, draft.consultationMode!)
+        : <String, List<TimeSlot>>{};
+
     return Scaffold(
       backgroundColor: kNeuBg,
       body: SafeArea(
@@ -149,6 +152,21 @@ final slotGroups = (draft.date != null && draft.consultationMode != null)
                       ),
                     ],
 
+                    // ── NEW BLOCK — only shows when "In-clinic" is picked ──
+                    if (draft.consultationMode == 'In-clinic' &&
+                        doctor.workplaceName != null) ...[
+                      Text('Visit location', style: AppTextStyles.h3),
+                      SizedBox(height: 12.h),
+                      WorkplaceCard(
+                        name: doctor.workplaceName!,
+                        address: doctor.workplaceAddress ?? '',
+                      ),
+                      SizedBox(height: 14.h),
+                      const PriorityNoteCard(),
+                      SizedBox(height: 26.h),
+                    ],
+                    // ── END NEW BLOCK ──
+
                     Text('Select date', style: AppTextStyles.h3),
                     SizedBox(height: 12.h),
                     DateStrip(
@@ -157,20 +175,26 @@ final slotGroups = (draft.date != null && draft.consultationMode != null)
                     ),
                     SizedBox(height: 22.h),
 
-                    Text('Select time', style: AppTextStyles.h3),
-                    SizedBox(height: 14.h),
-                    ...slotGroups.entries.map(
-                      (entry) => Padding(
-                        padding: EdgeInsets.only(bottom: 18.h),
-                        child: SlotSection(
-                          label: entry.key,
-                          slots: entry.value,
-                          selectedSlot: draft.slot,
-                          onSelect: notifier.selectSlot,
+                    // ── CHANGED — "Select time" now only shows once a
+                    // consultation mode has been picked, since slots
+                    // depend on which mode's hours to display. ──
+                    if (draft.consultationMode != null) ...[
+                      Text('Select time', style: AppTextStyles.h3),
+                      SizedBox(height: 14.h),
+                      ...slotGroups.entries.map(
+                        (entry) => Padding(
+                          padding: EdgeInsets.only(bottom: 18.h),
+                          child: SlotSection(
+                            label: entry.key,
+                            slots: entry.value,
+                            selectedSlot: draft.slot,
+                            onSelect: notifier.selectSlot,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8.h),
+                      SizedBox(height: 8.h),
+                    ],
+                    // ── END CHANGED ──
 
                     Text(
                       'Note for the doctor (optional)',

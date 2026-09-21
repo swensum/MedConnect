@@ -135,7 +135,7 @@ class _DoctorDiscoveryScreenState
                     clipBehavior: Clip.none,
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     itemCount: filters.length,
-                    separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                    separatorBuilder: (_, _) => SizedBox(width: 10.w),
                     itemBuilder: (context, i) {
                       final f = filters[i];
                       return NeuChip(
@@ -172,7 +172,7 @@ class _DoctorDiscoveryScreenState
                       24.h + bottomInset,
                     ),
                     itemCount: results.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                    separatorBuilder: (_, _) => SizedBox(height: 12.h),
                     itemBuilder: (context, i) {
                       final doctor = results[i];
                       return DoctorCard(
