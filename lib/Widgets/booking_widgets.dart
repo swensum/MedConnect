@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Theme/theme.dart';
+import 'package:med_connect/Widgets/patient_home_widgets.dart';
 import 'package:med_connect/models/booking_models.dart';
 
 const List<String> _weekdayShort = [
   'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
 ];
 
-/// Horizontal strip of the next 14 days for quick date selection —
-/// lighter-weight than opening the full wheel date picker, since
-/// appointments are usually booked in the near future.
 class DateStrip extends StatelessWidget {
   const DateStrip({
     super.key,
@@ -161,6 +159,38 @@ class SlotSection extends StatelessWidget {
           }).toList(),
         ),
       ],
+    );
+  }
+}
+class PriorityNoteCard extends StatelessWidget {
+  const PriorityNoteCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: kTipTint,
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.bolt_rounded, size: 17.sp, color: kTipColor),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              'Booking online reserves your spot — you\'ll get priority '
+              'check-in ahead of walk-in patients.',
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.textPrimary,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

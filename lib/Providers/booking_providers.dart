@@ -17,14 +17,15 @@ class BookingDraftNotifier extends StateNotifier<BookingDraft> {
   }
 
   void selectSlot(String slot) => state = state.copyWith(slot: slot);
-  void selectMode(String mode) => state = state.copyWith(consultationMode: mode);
+  void selectMode(String mode) {
+  state = BookingDraft(
+    date: state.date,
+    slot: null,
+    consultationMode: mode,
+    note: state.note,
+  );
+}
   void setNote(String note) => state = state.copyWith(note: note);
-
-  /// Wipes the draft completely — called before starting a new booking
-  /// (from the doctor profile screen) so a finished/abandoned booking
-  /// never leaks into the next one. Intentionally NOT called from the
-  /// booking screen itself, so back-and-forth navigation within the
-  /// SAME booking attempt doesn't lose your picks.
   void reset() => state = const BookingDraft();
 }
 

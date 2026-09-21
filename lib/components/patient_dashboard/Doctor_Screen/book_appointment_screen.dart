@@ -21,9 +21,6 @@ class BookAppointmentScreen extends ConsumerStatefulWidget {
 class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
   final TextEditingController _noteController = TextEditingController();
 
-  // No initState logic needed — the doctor profile screen always
-  // resets + pre-fills bookingDraftProvider before navigating here.
-  // This screen only reads and updates that shared state.
 
   @override
   void dispose() {
@@ -50,9 +47,9 @@ class _BookAppointmentScreenState extends ConsumerState<BookAppointmentScreen> {
         ),
       );
     }
-
-    final slotGroups = draft.date != null ? mockSlotsFor(draft.date!) : {};
-
+final slotGroups = (draft.date != null && draft.consultationMode != null)
+    ? mockSlotsFor(draft.date!, draft.consultationMode!)
+    : <String, List<TimeSlot>>{};
     return Scaffold(
       backgroundColor: kNeuBg,
       body: SafeArea(

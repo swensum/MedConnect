@@ -3,8 +3,24 @@ class TimeSlot {
   final String time;
   final bool isAvailable;
 }
+Map<String, List<TimeSlot>> mockSlotsFor(DateTime date, String mode) {
+  if (mode == 'In-clinic') {
+    return {
+      'Morning': const [
+        TimeSlot('10:00 AM'),
+        TimeSlot('10:30 AM'),
+        TimeSlot('11:00 AM'),
+      ],
+      'Evening': const [
+        TimeSlot('05:00 PM'),
+        TimeSlot('05:30 PM'),
+        TimeSlot('06:00 PM'),
+        TimeSlot('06:30 PM'),
+      ],
+    };
+  }
 
-Map<String, List<TimeSlot>> mockSlotsFor(DateTime date) {
+  // Video call — wider spread across the day.
   return {
     'Morning': const [
       TimeSlot('09:00 AM'),
@@ -26,6 +42,7 @@ Map<String, List<TimeSlot>> mockSlotsFor(DateTime date) {
     ],
   };
 }
+
 
 class BookingDraft {
   const BookingDraft({

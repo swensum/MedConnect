@@ -104,10 +104,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                     TodaySlotsRow(
                       slots: doctor.todaySlots,
                       onTapSlot: (slot) {
-                        // Every entry into booking starts fully fresh —
-                        // required since a booking = payment, so nothing
-                        // from a previous/abandoned attempt should carry
-                        // over once you're back on the profile screen.
+                       
                         ref.read(bookingDraftProvider.notifier)
                           ..reset()
                           ..selectDate(DateTime.now())

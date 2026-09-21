@@ -197,7 +197,7 @@ Future<void> _save() async {
                     controller: _cityController,
                     style: AppTextStyles.body,
                     textCapitalization: TextCapitalization.words,
-                    decoration: _bareInput('Enter City'),
+                    decoration: bareInputDecoration('Enter City'),
                   ),
                 ),
                 SizedBox(height: 28.h),
@@ -232,7 +232,7 @@ Future<void> _save() async {
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                               style: AppTextStyles.body,
-                              decoration: _bareInput('Enter Height'),
+                              decoration: bareInputDecoration('Enter Height'),
                             ),
                           ),
                         ],
@@ -253,7 +253,7 @@ Future<void> _save() async {
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                               style: AppTextStyles.body,
-                              decoration: _bareInput('Enter Weight'),
+                              decoration: bareInputDecoration('Enter Weight'),
                             ),
                           ),
                         ],
@@ -293,18 +293,6 @@ Future<void> _save() async {
     );
   }
 
-  InputDecoration _bareInput(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: AppTextStyles.bodySecondary,
-      border: InputBorder.none,
-      enabledBorder: InputBorder.none,
-      focusedBorder: InputBorder.none,
-      filled: false,
-      isDense: true,
-      contentPadding: EdgeInsets.zero,
-    );
-  }
 }
 
 /// Shown in place of the form once the profile save succeeds.

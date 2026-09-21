@@ -194,7 +194,7 @@ Future<void> _submit() async {
                     controller: _nameController,
                     style: AppTextStyles.body,
                     textCapitalization: TextCapitalization.words,
-                    decoration: _bareInput('Enter you name'),
+                    decoration: bareInputDecoration('Enter you name'),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -226,7 +226,7 @@ Future<void> _submit() async {
                               style: AppTextStyles.body,
                               textCapitalization: TextCapitalization.words,
                               decoration:
-                                  _bareInput('Enter your specialization'),
+                                  bareInputDecoration('Enter your specialization'),
                             ),
                           ),
                         )
@@ -240,7 +240,7 @@ Future<void> _submit() async {
                   child: TextField(
                     controller: _licenseController,
                     style: AppTextStyles.body,
-                    decoration: _bareInput('Enter medical licence no.'),
+                    decoration: bareInputDecoration('Enter medical licence no.'),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -262,7 +262,7 @@ Future<void> _submit() async {
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                               style: AppTextStyles.body,
-                              decoration: _bareInput('Enter Exp..'),
+                              decoration: bareInputDecoration('Enter Exp..'),
                             ),
                           ),
                         ],
@@ -283,7 +283,7 @@ Future<void> _submit() async {
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                               style: AppTextStyles.body,
-                              decoration: _bareInput('Enter Fee'),
+                              decoration: bareInputDecoration('Enter Fee'),
                             ),
                           ),
                         ],
@@ -341,18 +341,6 @@ Future<void> _submit() async {
     );
   }
 
-  InputDecoration _bareInput(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: AppTextStyles.bodySecondary,
-      border: InputBorder.none,
-      enabledBorder: InputBorder.none,
-      focusedBorder: InputBorder.none,
-      filled: false,
-      isDense: true,
-      contentPadding: EdgeInsets.zero,
-    );
-  }
 }
 
 /// Shown in place of the form once the KYC docs are submitted.
