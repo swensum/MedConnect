@@ -70,6 +70,7 @@ class AppointmentPreview {
     required this.monthYear,
     required this.weekday,
     required this.time,
+    this.consultationMode,
   });
 
   final String doctorName;
@@ -78,6 +79,32 @@ class AppointmentPreview {
   final String monthYear;
   final String weekday;
   final String time;
+  final String? consultationMode;
+
+   static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+  static const _weekdays = [
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+  ];
+   factory AppointmentPreview.fromBooking({
+    required String doctorName,
+    required String specialization,
+    required DateTime date,
+    required String time,
+    required String consultationMode,
+  }) {
+    return AppointmentPreview(
+      doctorName: doctorName,
+      specialization: specialization,
+      dayNumber: '${date.day}',
+      monthYear: '${_months[date.month - 1]} ${date.year}',
+      weekday: _weekdays[date.weekday - 1],
+      time: time,
+      consultationMode: consultationMode,
+    );
+  }
 }
 
 const AppointmentPreview todaysAppointment = AppointmentPreview(

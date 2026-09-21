@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/appointment_providers.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/patient_home_widgets.dart';
@@ -84,25 +86,23 @@ class _PlaceholderTab extends StatelessWidget {
     );
   }
 }
-
-class _PatientHomeTab extends StatelessWidget {
+class _PatientHomeTab extends ConsumerWidget {
   const _PatientHomeTab({required this.patientName});
 
   final String patientName;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(confirmedAppointmentProvider);
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 100.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LocationRow(
-           
             location: 'Biratnagar, Koshi',
-            onTap: () {
-             
-            },
+            onTap: () {},
           ),
           SizedBox(height: 16.h),
           _header(),

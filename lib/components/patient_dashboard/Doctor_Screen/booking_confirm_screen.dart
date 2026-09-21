@@ -1,0 +1,350 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Routers/app_router.dart';
+import 'package:med_connect/Theme/theme.dart';
+import 'package:med_connect/Widgets/payment_widgets.dart';
+import 'package:med_connect/models/patient_home_models.dart';
+import 'package:med_connect/models/payment_models.dart';
+import 'package:med_connect/providers/appointment_providers.dart';
+import 'package:med_connect/providers/booking_providers.dart';
+import 'package:med_connect/providers/doctor_providers.dart';
+import 'package:med_connect/providers/payment_providers.dart';
+
+class BookingConfirmScreen extends ConsumerStatefulWidget {
+  const BookingConfirmScreen({super.key});
+
+  @override
+  ConsumerState<BookingConfirmScreen> createState() =>
+      _BookingConfirmScreenState();
+}
+
+class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
+  bool _isConfirming = false;
+  bool _isConfirmed = false;
+
+  Future<void> _confirm(AppointmentPreview appointment) async {
+    if (_isConfirming) return;
+
+    final method = ref.read(selectedPaymentMethodProvider);
+
+    // eSewa/Khalti need a successful checkout before the booking is
+    // actually confirmed — cash skips straight through.
+    if (method.requiresOnlineCheckout) {
+      final paid = await _openPaymentCheckout(method);
+      if (!paid || !mounted) return; // cancelled/failed — stay on this screen
+    }
+
+    setState(() => _isConfirming = true);
+
+    // TODO: write the appointment doc to Firestore here, including
+    // payment status/method, e.g.
+    //   await FirebaseFirestore.instance.collection('appointments').add({
+    //     'doctor_id': doctor.id,
+    //     'date': draft.date,
+    //     'slot': draft.slot,
+    //     'consultation_mode': draft.consultationMode,
+    //     'note': draft.note,
+    //     'payment_method': method.name,
+    //     'payment_status': method == PaymentMethod.cash ? 'pending' : 'paid',
+    //   });
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+
+    // The Home tab's card should now reflect this booking.
+    ref.read(confirmedAppointmentProvider.notifier).state = appointment;
+    // The draft's job is done — clear it so a stale mode/date/slot doesn't
+    // leak into the next booking attempt.
+    ref.read(bookingDraftProvider.notifier).reset();
+
+    setState(() {
+      _isConfirming = false;
+      _isConfirmed = true;
+    });
+  }
+
+  /// Opens the selected payment provider's checkout and returns true once
+  /// payment succeeds. Currently routes to a stub screen so the flow can
+  /// be tested end-to-end — swap the stub's internals for the real
+  /// SDK/WebView call per provider once wired up:
+  ///   - eSewa: esewa_flutter_sdk, or a WebView loading a backend-signed
+  ///     checkout form (eSewa v2 requires HMAC-signed requests — can't be
+  ///     done purely client-side).
+  ///   - Khalti: khalti_flutter's KhaltiPayment.pay(...).
+  Future<bool> _openPaymentCheckout(PaymentMethod method) async {
+    final result = await context.push<bool>(
+      AppRoutes.paymentCheckout,
+      extra: method,
+    );
+    return result ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final doctor = ref.watch(selectedDoctorProvider);
+    final draft = ref.watch(bookingDraftProvider);
+
+    if (doctor == null || !draft.isComplete) {
+      return Scaffold(
+        backgroundColor: kNeuBg,
+        body: SafeArea(
+          child: Center(
+            child: Text(
+              'Nothing to confirm.',
+              style: AppTextStyles.bodySecondary,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final appointment = AppointmentPreview.fromBooking(
+      doctorName: doctor.name,
+      specialization: doctor.specialization,
+      date: draft.date!,
+      time: draft.slot!,
+      consultationMode: draft.consultationMode!,
+    );
+
+    return Scaffold(
+      backgroundColor: kNeuBg,
+      body: SafeArea(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: _isConfirmed
+              ? _SuccessView(appointment: appointment)
+              : _summaryView(doctor, draft, appointment),
+        ),
+      ),
+    );
+  }
+
+  Widget _summaryView(doctor, draft, AppointmentPreview appointment) {
+    return Column(
+      key: const ValueKey('booking-summary'),
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 0),
+          child: Row(
+            children: [
+              NeuCircleButton(
+                size: 36,
+                icon: Icons.arrow_back_rounded,
+                onTap: () => context.pop(),
+              ),
+              SizedBox(width: 14.w),
+              Text('Confirm booking', style: AppTextStyles.h2),
+            ],
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ---- Appointment summary card ----
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(18.w),
+                  decoration: BoxDecoration(
+                    color: kNeuBg,
+                    borderRadius: BorderRadius.circular(18.r),
+                    boxShadow: neuShadows(distance: 4, blur: 10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 46.w,
+                            height: 46.w,
+                            decoration: BoxDecoration(
+                              color: kNeuBg,
+                              shape: BoxShape.circle,
+                              boxShadow:
+                                  neuShadows(distance: 3, blur: 7, inset: true),
+                            ),
+                            child: Icon(Icons.person_rounded,
+                                size: 21.sp, color: AppColors.navy),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  doctor.name,
+                                  style: AppTextStyles.body
+                                      .copyWith(fontWeight: FontWeight.w700),
+                                ),
+                                Text(doctor.specialization,
+                                    style: AppTextStyles.caption),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        child: Divider(
+                          height: 1,
+                          color: AppColors.mutedBlue.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      _summaryRow(
+                        Icons.videocam_outlined,
+                        'Mode',
+                        draft.consultationMode!,
+                      ),
+                      SizedBox(height: 12.h),
+                      _summaryRow(
+                        Icons.calendar_today_outlined,
+                        'Date',
+                        '${appointment.weekday}, ${appointment.dayNumber} '
+                            '${appointment.monthYear}',
+                      ),
+                      SizedBox(height: 12.h),
+                      _summaryRow(
+                        Icons.access_time_rounded,
+                        'Time',
+                        draft.slot!,
+                      ),
+                      if (draft.note.trim().isNotEmpty) ...[
+                        SizedBox(height: 12.h),
+                        _summaryRow(
+                          Icons.notes_rounded,
+                          'Note',
+                          draft.note.trim(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                SizedBox(height: 26.h),
+
+                // ---- Payment method ----
+                Text('Payment method', style: AppTextStyles.h3),
+                SizedBox(height: 12.h),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final selectedMethod =
+                        ref.watch(selectedPaymentMethodProvider);
+                    return PaymentMethodSelector(
+                      selected: selectedMethod,
+                      onSelect: (m) => ref
+                          .read(selectedPaymentMethodProvider.notifier)
+                          .state = m,
+                    );
+                  },
+                ),
+                SizedBox(height: 8.h),
+
+                // ---- Fee ----
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: kNeuBg,
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: neuShadows(distance: 4, blur: 9, inset: true),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Consultation fee', style: AppTextStyles.bodySecondary),
+                      Text(
+                        'Rs. ${doctor.fee}',
+                        style: AppTextStyles.body.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.navy,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 24.h),
+          child: Consumer(
+            builder: (context, ref, _) {
+              final method = ref.watch(selectedPaymentMethodProvider);
+              return NeuPillButton(
+                enabled: !_isConfirming,
+                loading: _isConfirming,
+                onTap: () => _confirm(appointment),
+                label: method.requiresOnlineCheckout
+                    ? 'Pay with ${method.label}'
+                    : 'Confirm booking',
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _summaryRow(IconData icon, String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16.sp, color: AppColors.textSecondary),
+        SizedBox(width: 10.w),
+        SizedBox(
+          width: 70.w,
+          child: Text(label, style: AppTextStyles.caption),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: AppTextStyles.body
+                .copyWith(fontWeight: FontWeight.w600, fontSize: 13.sp),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SuccessView extends StatelessWidget {
+  const _SuccessView({required this.appointment});
+  final AppointmentPreview appointment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      key: const ValueKey('booking-success'),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const NeuSuccessCheck(),
+            SizedBox(height: 20.h),
+            Text('Appointment booked!', style: AppTextStyles.h2),
+            SizedBox(height: 6.h),
+            Text(
+              '${appointment.doctorName} · ${appointment.weekday}, '
+              '${appointment.time}',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodySecondary,
+            ),
+            SizedBox(height: 28.h),
+            NeuPillButton(
+              enabled: true,
+              onTap: () => context.go(AppRoutes.patientHome),
+              label: 'Go to home',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

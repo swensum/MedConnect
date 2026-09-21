@@ -103,14 +103,13 @@ class DoctorProfileScreen extends ConsumerWidget {
                     SizedBox(height: 12.h),
                     TodaySlotsRow(
                       slots: doctor.todaySlots,
-                      onTapSlot: (slot) {
-                       
-                        ref.read(bookingDraftProvider.notifier)
-                          ..reset()
-                          ..selectDate(DateTime.now())
-                          ..selectSlot(slot);
-                        context.push(AppRoutes.bookAppointment);
-                      },
+                     onTapSlot: (slot) {
+  ref.read(bookingDraftProvider.notifier)
+    ..selectMode('Video call')
+    ..selectDate(DateTime.now())
+    ..selectSlot(slot);
+  context.push(AppRoutes.bookAppointment);
+},
                     ),
                     SizedBox(height: 26.h),
 

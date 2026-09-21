@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/book_appointment_screen.dart';
+import 'package:med_connect/components/patient_dashboard/Doctor_Screen/booking_confirm_screen.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_discovery_screen.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_profile_screen.dart';
+import 'package:med_connect/components/patient_dashboard/Doctor_Screen/payment_checkout_screen.dart';
+import 'package:med_connect/models/payment_models.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
@@ -29,6 +32,7 @@ class AppRoutes {
    static const String doctorProfile = '/doctor-profile';
    static const String bookAppointment = '/book-appointment';
 static const String bookingConfirm = '/booking-confirm';
+static const String paymentCheckout = '/payment-checkout';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -160,6 +164,18 @@ GoRoute(
   path: AppRoutes.bookAppointment,
   pageBuilder: (context, state) =>
       slidePage(const BookAppointmentScreen(), state),
+),
+ GoRoute(
+        path: AppRoutes.bookingConfirm,
+        pageBuilder: (context, state) =>
+            slidePage(const BookingConfirmScreen(), state),
+      ),
+      GoRoute(
+  path: AppRoutes.paymentCheckout,
+  pageBuilder: (context, state) {
+    final method = state.extra as PaymentMethod;
+    return slidePage(PaymentCheckoutScreen(method: method), state);
+  },
 ),
     ],
   );
