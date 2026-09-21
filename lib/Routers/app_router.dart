@@ -5,6 +5,7 @@ import 'package:med_connect/components/patient_dashboard/Doctor_Screen/booking_c
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_discovery_screen.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/doctor_profile_screen.dart';
 import 'package:med_connect/components/patient_dashboard/Doctor_Screen/payment_checkout_screen.dart';
+import 'package:med_connect/models/patient_home_models.dart';
 import 'package:med_connect/models/payment_models.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
@@ -173,8 +174,12 @@ GoRoute(
       GoRoute(
   path: AppRoutes.paymentCheckout,
   pageBuilder: (context, state) {
-    final method = state.extra as PaymentMethod;
-    return slidePage(PaymentCheckoutScreen(method: method), state);
+    final (method, appointment) =
+        state.extra as (PaymentMethod, AppointmentPreview);
+    return slidePage(
+      PaymentCheckoutScreen(method: method, appointment: appointment),
+      state,
+    );
   },
 ),
     ],

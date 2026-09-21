@@ -1,19 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/appointment_providers.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
+import 'package:med_connect/models/patient_home_models.dart';
 import 'package:med_connect/models/payment_models.dart';
+import 'package:med_connect/providers/booking_providers.dart';
 
-class PaymentCheckoutScreen extends StatefulWidget {
-  const PaymentCheckoutScreen({super.key, required this.method});
+class PaymentCheckoutScreen extends ConsumerStatefulWidget {
+  const PaymentCheckoutScreen({
+    super.key,
+    required this.method,
+    required this.appointment,
+  });
+
   final PaymentMethod method;
+  final AppointmentPreview appointment;
 
   @override
-  State<PaymentCheckoutScreen> createState() => _PaymentCheckoutScreenState();
+  ConsumerState<PaymentCheckoutScreen> createState() =>
+      _PaymentCheckoutScreenState();
 }
 
-class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
+class _PaymentCheckoutScreenState
+    extends ConsumerState<PaymentCheckoutScreen> {
   bool _isSuccess = false;
 
   @override
@@ -24,14 +37,19 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
 
   Future<void> _runFakeCheckout() async {
     await Future.delayed(const Duration(seconds: 10));
+
     if (!mounted) return;
 
     setState(() => _isSuccess = true);
 
-    await Future.delayed(const Duration(milliseconds: 900));
+    ref.read(appointmentsProvider.notifier).add(widget.appointment);
+    ref.read(bookingDraftProvider.notifier).reset();
+
+    await Future.delayed(const Duration(milliseconds: 1400));
+
     if (!mounted) return;
 
-    context.pop(true); // true = payment succeeded
+    context.go(AppRoutes.patientHome);
   }
 
   @override
@@ -42,67 +60,92 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 8.h),
-              Row(
-                children: [
-                  if (!_isSuccess)
-                    NeuCircleButton(
-                      size: 36,
-                      icon: Icons.close_rounded,
-                      onTap: () => context.pop(false), // false = cancelled
-                    ),
-                  SizedBox(width: 14.w),
-                  Text('${widget.method.label} checkout', style: AppTextStyles.h2),
-                ],
-              ),
               const Spacer(),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: _isSuccess
-                    ? Column(
-                        key: const ValueKey('payment-success'),
-                        children: [
-                          const NeuSuccessCheck(),
-                          SizedBox(height: 20.h),
-                          Text('Payment successful', style: AppTextStyles.h2),
-                        ],
-                      )
-                    : Column(
-                        key: const ValueKey('payment-processing'),
-                        children: [
-                          Container(
-                            width: 84.w,
-                            height: 84.w,
-                            decoration: BoxDecoration(
-                              color: kNeuBg,
-                              shape: BoxShape.circle,
-                              boxShadow: neuShadows(distance: 6, blur: 14),
+
+              // Full width keeps both states centered
+              SizedBox(
+                width: double.infinity,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _isSuccess
+                      ? Column(
+                          key: const ValueKey('payment-success'),
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const NeuSuccessCheck(),
+
+                            SizedBox(height: 20.h),
+
+                            Text(
+                              'Payment successful',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.h2,
                             ),
-                            child: Padding(
-                              padding: EdgeInsets.all(24.w),
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation(AppColors.navy),
+
+                            SizedBox(height: 8.h),
+
+                            Text(
+                              'Taking you home...',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
                               ),
                             ),
-                          ),
-                          SizedBox(height: 20.h),
-                          Text(
-                            'Processing payment...',
-                            style: AppTextStyles.h3,
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            'Please wait while we confirm your '
-                            '${widget.method.label} payment.',
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.bodySecondary,
-                          ),
-                        ],
-                      ),
+                          ],
+                        )
+                      : Column(
+                          key: const ValueKey('payment-processing'),
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 84.w,
+                              height: 84.w,
+                              decoration: BoxDecoration(
+                                color: kNeuBg,
+                                shape: BoxShape.circle,
+                                boxShadow: neuShadows(
+                                  distance: 6,
+                                  blur: 14,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(24.w),
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation(
+                                    AppColors.navy,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 20.h),
+
+                            Text(
+                              'Processing payment...',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.h3,
+                            ),
+
+                            SizedBox(height: 8.h),
+
+                            Text(
+                              'Please wait while we confirm your '
+                              '${widget.method.label} payment.',
+                              textAlign: TextAlign.center,
+                              style: AppTextStyles.bodySecondary,
+                            ),
+                          ],
+                        ),
+                ),
               ),
+
               const Spacer(),
+
               SizedBox(height: 24.h),
             ],
           ),

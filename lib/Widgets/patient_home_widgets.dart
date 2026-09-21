@@ -43,7 +43,6 @@ class LocationRow extends StatelessWidget {
     );
   }
 }
-
 class TodayAppointmentCard extends StatelessWidget {
   const TodayAppointmentCard({
     super.key,
@@ -51,29 +50,13 @@ class TodayAppointmentCard extends StatelessWidget {
     this.onTap,
   });
 
-  /// Null shows the empty state instead.
+  /// Null shows the empty-state message inside the same card design.
   final AppointmentPreview? appointment;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final appt = appointment;
-
-    if (appt == null) {
-      return Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(18.w),
-        decoration: BoxDecoration(
-          color: kNeuBg,
-          borderRadius: BorderRadius.circular(18.r),
-          boxShadow: neuShadows(distance: 4, blur: 10, inset: true),
-        ),
-        child: Text(
-          'No upcoming appointments — book one with a doctor near you.',
-          style: AppTextStyles.bodySecondary,
-        ),
-      );
-    }
 
     return GestureDetector(
       onTap: onTap,
@@ -121,50 +104,9 @@ class TodayAppointmentCard extends StatelessWidget {
               // Main content, padded as before.
               Padding(
                 padding: EdgeInsets.all(20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    Text(
-                      'Your next appointment',
-                      style: AppTextStyles.caption.copyWith(
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.4,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                    SizedBox(height: 30.h),
-
-                    Text(
-                      appt.dayNumber,
-                      style: AppTextStyles.h1.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 40.sp,
-                        height: 1.0,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    Text(
-                      '${appt.monthYear} • ${appt.weekday}',
-                      style: AppTextStyles.body.copyWith(
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      appt.time,
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15.sp,
-                      ),
-                    ),
-                  ],
-                ),
+                child: appt == null
+                    ? _emptyContent()
+                    : _appointmentContent(appt),
               ),
 
               // Stethoscope image — positioned and sized independently
@@ -184,8 +126,84 @@ class TodayAppointmentCard extends StatelessWidget {
       ),
     );
   }
-}
 
+  Widget _appointmentContent(AppointmentPreview appt) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Your next appointment',
+          style: AppTextStyles.caption.copyWith(
+            color: Colors.white70,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.4,
+            fontSize: 14.sp,
+          ),
+        ),
+        SizedBox(height: 30.h),
+
+        Text(
+          appt.dayNumber,
+          style: AppTextStyles.h1.copyWith(
+            color: AppColors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 40.sp,
+            height: 1.0,
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Text(
+          '${appt.monthYear} • ${appt.weekday}',
+          style: AppTextStyles.body.copyWith(
+            color: Colors.white70,
+            fontWeight: FontWeight.w500,
+            fontSize: 13.sp,
+          ),
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          appt.time,
+          style: AppTextStyles.body.copyWith(
+            color: AppColors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 15.sp,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _emptyContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Your next appointment',
+          style: AppTextStyles.caption.copyWith(
+            color: Colors.white70,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.4,
+            fontSize: 14.sp,
+          ),
+        ),
+        SizedBox(height: 60.h),
+        SizedBox(
+          
+          width: 160.w,
+          child: Text(
+            'No upcoming appointments — book one with a doctor near you.',
+            style: AppTextStyles.body.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 /// Horizontal row of shortcut tiles for "What do you need today?".
 /// Replaces the old SpecializationRow — same shape, but drives the icon
 /// and label to `kEmergencyColor` when [QuickAction.isEmergency] is true.

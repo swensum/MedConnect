@@ -9,7 +9,6 @@ import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/payment_widgets.dart';
 import 'package:med_connect/models/patient_home_models.dart';
 import 'package:med_connect/models/payment_models.dart';
-import 'package:med_connect/providers/appointment_providers.dart';
 import 'package:med_connect/providers/booking_providers.dart';
 import 'package:med_connect/providers/doctor_providers.dart';
 import 'package:med_connect/providers/payment_providers.dart';
@@ -26,40 +25,50 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
   bool _isConfirming = false;
   bool _isConfirmed = false;
 
-    Future<void> _confirm(AppointmentPreview appointment) async {
+  AppointmentPreview? _confirmedAppointment;
+
+  Future<void> _confirm(AppointmentPreview appointment) async {
     if (_isConfirming) return;
 
     final method = ref.read(selectedPaymentMethodProvider);
 
     if (method.requiresOnlineCheckout) {
-      final paid = await _openPaymentCheckout(method);
-      if (!paid || !mounted) return;
-    }
+  context.push(AppRoutes.paymentCheckout, extra: (method, appointment));
+  return;
+}
 
+    // Cash — nothing external to wait on, confirm right here.
     setState(() => _isConfirming = true);
-
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
 
-   ref.read(appointmentsProvider.notifier).add(appointment);   
+    ref.read(appointmentsProvider.notifier).add(appointment);
     ref.read(bookingDraftProvider.notifier).reset();
 
     setState(() {
+      _confirmedAppointment = appointment;
       _isConfirming = false;
       _isConfirmed = true;
     });
-  }
 
-  Future<bool> _openPaymentCheckout(PaymentMethod method) async {
-    final result = await context.push<bool>(
-      AppRoutes.paymentCheckout,
-      extra: method,
-    );
-    return result ?? false;
+    // Brief success moment, then auto-navigate home — same behavior
+    // requested for the payment path.
+    await Future.delayed(const Duration(milliseconds: 1400));
+    if (!mounted) return;
+    context.go(AppRoutes.patientHome);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isConfirmed && _confirmedAppointment != null) {
+      return Scaffold(
+        backgroundColor: kNeuBg,
+        body: SafeArea(
+          child: _SuccessView(appointment: _confirmedAppointment!),
+        ),
+      );
+    }
+
     final doctor = ref.watch(selectedDoctorProvider);
     final draft = ref.watch(bookingDraftProvider);
 
@@ -88,12 +97,7 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
     return Scaffold(
       backgroundColor: kNeuBg,
       body: SafeArea(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
-          child: _isConfirmed
-              ? _SuccessView(appointment: appointment)
-              : _summaryView(doctor, draft, appointment),
-        ),
+        child: _summaryView(doctor, draft, appointment),
       ),
     );
   }
@@ -122,7 +126,6 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ---- Appointment summary card ----
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(18.w),
@@ -203,7 +206,6 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
                 ),
                 SizedBox(height: 26.h),
 
-                // ---- Payment method ----
                 Text('Payment method', style: AppTextStyles.h3),
                 SizedBox(height: 12.h),
                 Consumer(
@@ -220,7 +222,6 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
                 ),
                 SizedBox(height: 8.h),
 
-                // ---- Fee ----
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.all(16.w),
@@ -313,11 +314,12 @@ class _SuccessView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: AppTextStyles.bodySecondary,
             ),
-            SizedBox(height: 28.h),
-            NeuPillButton(
-              enabled: true,
-              onTap: () => context.go(AppRoutes.patientHome),
-              label: 'Go to home',
+            SizedBox(height: 16.h),
+            Text(
+              'Taking you home...',
+              style: AppTextStyles.caption.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
         ),
