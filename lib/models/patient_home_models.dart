@@ -61,10 +61,10 @@ class DoctorPreview {
 
   int get reviewCount => reviews.length;
 }
-
 class AppointmentPreview {
   const AppointmentPreview({
     required this.id,
+    required this.doctorId, // NEW
     required this.doctorName,
     required this.specialization,
     required this.date,
@@ -76,6 +76,7 @@ class AppointmentPreview {
   });
 
   final String id;
+  final String doctorId; // NEW
   final String doctorName;
   final String specialization;
   final DateTime date;
@@ -93,30 +94,15 @@ class AppointmentPreview {
   }
 
   static const _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
   static const _weekdays = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
   ];
 
   factory AppointmentPreview.fromBooking({
+    required String doctorId, // NEW
     required String doctorName,
     required String specialization,
     required DateTime date,
@@ -125,6 +111,7 @@ class AppointmentPreview {
   }) {
     return AppointmentPreview(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
+      doctorId: doctorId,
       doctorName: doctorName,
       specialization: specialization,
       date: date,
@@ -136,7 +123,6 @@ class AppointmentPreview {
     );
   }
 }
-
 const List<DoctorPreview> allDoctors = [
   DoctorPreview(
     id: 'anita-sharma',
