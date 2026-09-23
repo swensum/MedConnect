@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/appointment_providers.dart';
 import 'package:med_connect/providers/booking_providers.dart'; // lowercase — must match book_appointment_screen.dart
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
@@ -12,7 +13,61 @@ import 'package:med_connect/providers/doctor_providers.dart';
 
 class DoctorProfileScreen extends ConsumerWidget {
   const DoctorProfileScreen({super.key});
+ bool _canStartBooking(
+    BuildContext context,
+    WidgetRef ref,
+    DoctorPreview doctor,
+  ) {
+    final existing =
+        ref.read(appointmentsProvider.notifier).upcomingWithDoctor(doctor.id);
 
+    if (existing == null) return true;
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: kNeuBg,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18.r),
+        ),
+        title: Text('Appointment already booked', style: AppTextStyles.h3),
+        content: Text(
+          'You already have an appointment with ${doctor.name} on '
+          '${existing.weekday}, ${existing.dayNumber} ${existing.monthYear} '
+          'at ${existing.time}. Please complete or cancel that one before '
+          'booking a new appointment with the same doctor.',
+          style: AppTextStyles.bodySecondary,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'Close',
+              style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // close dialog
+              context.pop(); // leave profile screen
+              // TODO: also switch the bottom nav to the Appointments tab —
+              // needs a shared tab-index provider/controller if this
+              // screen isn't nested directly under PatientHomeShell.
+            },
+            child: Text(
+              'View appointment',
+              style: AppTextStyles.body.copyWith(
+                color: AppColors.navy,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return false;
+  }
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final doctor = ref.watch(selectedDoctorProvider);
@@ -111,15 +166,16 @@ class DoctorProfileScreen extends ConsumerWidget {
                     Text("Today's availability", style: AppTextStyles.h3),
                     SizedBox(height: 12.h),
                     TodaySlotsRow(
-                      slots: doctor.todaySlots,
-                      onTapSlot: (slot) {
-                        ref.read(bookingDraftProvider.notifier)
-                          ..selectMode('Video call')
-                          ..selectDate(DateTime.now())
-                          ..selectSlot(slot);
-                        context.push(AppRoutes.bookAppointment);
-                      },
-                    ),
+  slots: doctor.todaySlots,
+  onTapSlot: (slot) {
+    if (!_canStartBooking(context, ref, doctor)) return;
+    ref.read(bookingDraftProvider.notifier)
+      ..selectMode('Video call')
+      ..selectDate(DateTime.now())
+      ..selectSlot(slot);
+    context.push(AppRoutes.bookAppointment);
+  },
+),
                     SizedBox(height: 26.h),
 
                     if (doctor.workplaceName != null) ...[
@@ -187,15 +243,16 @@ class DoctorProfileScreen extends ConsumerWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 24.h),
               child: NeuPillButton(
-                enabled: true,
-                onTap: () {
-                  ref.read(bookingDraftProvider.notifier)
-                    ..reset()
-                    ..selectDate(DateTime.now());
-                  context.push(AppRoutes.bookAppointment);
-                },
-                label: 'Book appointment',
-              ),
+  enabled: true,
+  onTap: () {
+    if (!_canStartBooking(context, ref, doctor)) return;
+    ref.read(bookingDraftProvider.notifier)
+      ..reset()
+      ..selectDate(DateTime.now());
+    context.push(AppRoutes.bookAppointment);
+  },
+  label: 'Book appointment',
+),
             ),
           ],
         ),

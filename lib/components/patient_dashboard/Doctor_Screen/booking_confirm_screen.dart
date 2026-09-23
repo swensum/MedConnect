@@ -87,6 +87,7 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
     }
 
     final appointment = AppointmentPreview.fromBooking(
+      doctorId: doctor.id,
       doctorName: doctor.name,
       specialization: doctor.specialization,
       date: draft.date!,

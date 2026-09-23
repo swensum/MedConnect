@@ -223,9 +223,6 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
   }
 }
 
-/// Three-step progress indicator: Submitted -> Under review -> Approved.
-/// Each step is either done (filled navy + check), current (pulsing ring),
-/// or upcoming (muted outline).
 class _StatusTimeline extends StatelessWidget {
   const _StatusTimeline({required this.status});
 

@@ -494,10 +494,6 @@ const List<String> _neuMonthNames = [
   'Dec',
 ];
 
-/// Opens a neumorphic wheel-style date picker (day / month / year columns)
-/// as a bottom sheet, matching the look of NeuPillButton / NeuInsetSurface
-/// instead of the stock Material date picker dialog. Returns null if the
-/// user dismisses without confirming.
 Future<DateTime?> showNeuDatePicker(
   BuildContext context, {
   required DateTime initialDate,
