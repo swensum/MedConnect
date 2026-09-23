@@ -27,8 +27,6 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           routerConfig: AppRouter.router,
           builder: (context, child) {
-          
-           
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: overlayFor(AppColors.paleBlue),
               child: child!,

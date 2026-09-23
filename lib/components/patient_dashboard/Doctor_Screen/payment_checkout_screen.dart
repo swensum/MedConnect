@@ -25,8 +25,7 @@ class PaymentCheckoutScreen extends ConsumerStatefulWidget {
       _PaymentCheckoutScreenState();
 }
 
-class _PaymentCheckoutScreenState
-    extends ConsumerState<PaymentCheckoutScreen> {
+class _PaymentCheckoutScreenState extends ConsumerState<PaymentCheckoutScreen> {
   bool _isSuccess = false;
 
   @override
@@ -107,10 +106,7 @@ class _PaymentCheckoutScreenState
                               decoration: BoxDecoration(
                                 color: kNeuBg,
                                 shape: BoxShape.circle,
-                                boxShadow: neuShadows(
-                                  distance: 6,
-                                  blur: 14,
-                                ),
+                                boxShadow: neuShadows(distance: 6, blur: 14),
                               ),
                               child: Padding(
                                 padding: EdgeInsets.all(24.w),

@@ -44,8 +44,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               _RoleCard(
                 icon: Icons.person_outline,
                 title: "I'm a Patient",
-                subtitle:
-                    'Find doctors, book consultations, and track health.',
+                subtitle: 'Find doctors, book consultations, and track health.',
                 selected: _selectedRole == UserRole.patient,
                 onTap: () => setState(() => _selectedRole = UserRole.patient),
               ),

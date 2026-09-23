@@ -3,6 +3,7 @@ class TimeSlot {
   final String time;
   final bool isAvailable;
 }
+
 Map<String, List<TimeSlot>> mockSlotsFor(DateTime date, String mode) {
   if (mode == 'In-clinic') {
     return {
@@ -43,7 +44,6 @@ Map<String, List<TimeSlot>> mockSlotsFor(DateTime date, String mode) {
   };
 }
 
-
 class BookingDraft {
   const BookingDraft({
     this.date,
@@ -57,7 +57,8 @@ class BookingDraft {
   final String? consultationMode;
   final String note;
 
-  bool get isComplete => date != null && slot != null && consultationMode != null;
+  bool get isComplete =>
+      date != null && slot != null && consultationMode != null;
 
   BookingDraft copyWith({
     DateTime? date,

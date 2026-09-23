@@ -11,16 +11,20 @@ const Color kNeuBg = AppColors.paleBlue;
 
 /// Two soft, large-blur shadows — dark bottom-right + light top-left — is
 /// the neumorphic trick. `inset` swaps the corners to fake a "pressed/
-/// carved in" surface.
+/// carved in" surface. Only looks right when the element sits flush on
+/// kNeuBg (or another same-color surface) — the white highlight shadow
+/// needs a matching background to blend into.
 List<BoxShadow> neuShadows({
   required double distance,
   required double blur,
   bool inset = false,
 }) {
-  final darkOffset =
-      inset ? Offset(-distance, -distance) : Offset(distance, distance);
-  final lightOffset =
-      inset ? Offset(distance, distance) : Offset(-distance, -distance);
+  final darkOffset = inset
+      ? Offset(-distance, -distance)
+      : Offset(distance, distance);
+  final lightOffset = inset
+      ? Offset(distance, distance)
+      : Offset(-distance, -distance);
 
   return [
     BoxShadow(
@@ -37,6 +41,22 @@ List<BoxShadow> neuShadows({
     ),
   ];
 }
+
+/// A single soft dark shadow for elements that float over a dimmed
+/// scrim/barrier (dialogs, sheets shown with a barrier) rather than
+/// sitting flush on the page background. neuShadows()'s white highlight
+/// shadow has nothing matching to blend into over a dark backdrop and
+/// reads as a bright glow — this avoids that.
+List<BoxShadow> neuFloatingShadow({double blur = 24, double distance = 8}) {
+  return [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.18),
+      offset: Offset(0, distance),
+      blurRadius: blur,
+    ),
+  ];
+}
+
 InputDecoration bareInputDecoration(String hint) {
   return InputDecoration(
     hintText: hint,
@@ -49,6 +69,7 @@ InputDecoration bareInputDecoration(String hint) {
     contentPadding: EdgeInsets.zero,
   );
 }
+
 class NeuPillButton extends StatefulWidget {
   const NeuPillButton({
     super.key,
@@ -265,7 +286,7 @@ class NeuChip extends StatelessWidget {
           label,
           style: AppTextStyles.body.copyWith(
             fontSize: 13.sp,
-            fontWeight:  FontWeight.w600,
+            fontWeight: FontWeight.w600,
             color: selected ? AppColors.white : AppColors.navy,
           ),
         ),
@@ -459,8 +480,18 @@ class NeuSuccessCheck extends StatelessWidget {
 }
 
 const List<String> _neuMonthNames = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
 /// Opens a neumorphic wheel-style date picker (day / month / year columns)
@@ -484,6 +515,11 @@ Future<DateTime?> showNeuDatePicker(
     ),
   );
 }
+
+/// A raised neumorphic circle with a continuously pulsing icon — use this
+/// for "in progress / waiting" states (KYC review, payment processing,
+/// etc.) as opposed to NeuSuccessCheck's one-shot bounce for completed
+/// states.
 class NeuPulseIcon extends StatefulWidget {
   const NeuPulseIcon({
     super.key,
@@ -621,6 +657,7 @@ class NeuBottomNavBar extends StatelessWidget {
     );
   }
 }
+
 class _NeuDatePickerSheet extends StatefulWidget {
   const _NeuDatePickerSheet({
     required this.initialDate,
@@ -665,49 +702,50 @@ class _NeuDatePickerSheetState extends State<_NeuDatePickerSheet> {
   }
 
   Widget _wheel({
-  required FixedExtentScrollController controller,
-  required int itemCount,
-  required String Function(int index) labelBuilder,
-  required ValueChanged<int> onChanged,
-}) {
-  return Expanded(
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        // Your neumorphic highlight box, behind the picker.
-        Container(
-          height: 40.h,
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
-          decoration: BoxDecoration(
-            color: kNeuBg,
-            borderRadius: BorderRadius.circular(10.r),
-            boxShadow: neuShadows(distance: 3, blur: 6, inset: true),
+    required FixedExtentScrollController controller,
+    required int itemCount,
+    required String Function(int index) labelBuilder,
+    required ValueChanged<int> onChanged,
+  }) {
+    return Expanded(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Highlight box sits behind the picker so the picker's own text
+          // renders on top of it instead of being covered.
+          Container(
+            height: 40.h,
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
+            decoration: BoxDecoration(
+              color: kNeuBg,
+              borderRadius: BorderRadius.circular(10.r),
+              boxShadow: neuShadows(distance: 3, blur: 6, inset: true),
+            ),
           ),
-        ),
-        CupertinoPicker(
-          selectionOverlay: null,          // <-- kill the default grey bar
-          backgroundColor: Colors.transparent,
-          diameterRatio: 3.0,
-          useMagnifier: false,
-          scrollController: controller,
-          itemExtent: 40.h,
-          onSelectedItemChanged: onChanged,
-          children: List.generate(itemCount, (i) {
-            return Center(
-              child: Text(
-                labelBuilder(i),
-                style: AppTextStyles.body.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.navy,
+          CupertinoPicker(
+            selectionOverlay: null, // kill the default grey iOS bar
+            backgroundColor: Colors.transparent,
+            diameterRatio: 3.0,
+            useMagnifier: false,
+            scrollController: controller,
+            itemExtent: 40.h,
+            onSelectedItemChanged: onChanged,
+            children: List.generate(itemCount, (i) {
+              return Center(
+                child: Text(
+                  labelBuilder(i),
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.navy,
+                  ),
                 ),
-              ),
-            );
-          }),
-        ),
-      ],
-    ),
-  );
-}
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -738,11 +776,18 @@ class _NeuDatePickerSheetState extends State<_NeuDatePickerSheet> {
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Row(
                 children: [
-                  Text('Select date of birth', style: AppTextStyles.h2.copyWith(fontSize: 17.sp)),
+                  Text(
+                    'Select date of birth',
+                    style: AppTextStyles.h2.copyWith(fontSize: 17.sp),
+                  ),
                   const Spacer(),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.close_rounded, size: 20.sp, color: AppColors.textSecondary),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      size: 20.sp,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -786,6 +831,117 @@ class _NeuDatePickerSheetState extends State<_NeuDatePickerSheet> {
                 enabled: true,
                 onTap: _confirm,
                 label: 'Confirm',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A neumorphic confirmation dialog — same soft-surface language as the
+/// rest of the app, instead of the stock Material AlertDialog. Use for
+/// any destructive/irreversible action (cancel appointment, delete, etc).
+///
+/// Returns true if the destructive action was confirmed, false/null
+/// otherwise.
+Future<bool?> showNeuConfirmDialog(
+  BuildContext context, {
+  required String title,
+  required String message,
+  String confirmLabel = 'Confirm',
+  String cancelLabel = 'Go back',
+  IconData icon = Icons.warning_amber_rounded,
+  Color? iconColor,
+}) {
+  return showDialog<bool>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.25),
+    builder: (dialogContext) => _NeuConfirmDialog(
+      title: title,
+      message: message,
+      confirmLabel: confirmLabel,
+      cancelLabel: cancelLabel,
+      icon: icon,
+      iconColor: iconColor,
+    ),
+  );
+}
+
+class _NeuConfirmDialog extends StatelessWidget {
+  const _NeuConfirmDialog({
+    required this.title,
+    required this.message,
+    required this.confirmLabel,
+    required this.cancelLabel,
+    required this.icon,
+    this.iconColor,
+  });
+
+  final String title;
+  final String message;
+  final String confirmLabel;
+  final String cancelLabel;
+  final IconData icon;
+  final Color? iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 20.h),
+        decoration: BoxDecoration(
+          color: kNeuBg,
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: neuFloatingShadow(),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 60.w,
+              height: 60.w,
+              decoration: BoxDecoration(
+                color: kNeuBg,
+                shape: BoxShape.circle,
+                boxShadow: neuShadows(distance: 3, blur: 8, inset: true),
+              ),
+              child: Icon(
+                icon,
+                size: 26.sp,
+                color: iconColor ?? AppColors.danger,
+              ),
+            ),
+            SizedBox(height: 18.h),
+            Text(title, textAlign: TextAlign.center, style: AppTextStyles.h3),
+            SizedBox(height: 8.h),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodySecondary.copyWith(height: 1.45),
+            ),
+            SizedBox(height: 24.h),
+            NeuPillButton(
+              enabled: true,
+              height: 48,
+              onTap: () => Navigator.of(context).pop(true),
+              label: confirmLabel,
+            ),
+            SizedBox(height: 10.h),
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(false),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.h),
+                child: Text(
+                  cancelLabel,
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ),
             ),
           ],

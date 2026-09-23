@@ -8,7 +8,14 @@ import 'package:med_connect/Theme/theme.dart';
 
 const List<String> _genders = ['Male', 'Female', 'Other'];
 const List<String> _bloodTypes = [
-  'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-',
+  'A+',
+  'A-',
+  'B+',
+  'B-',
+  'AB+',
+  'AB-',
+  'O+',
+  'O-',
 ];
 
 class PatientProfileSetupScreen extends StatefulWidget {
@@ -66,7 +73,8 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> {
     );
     if (picked != null) setState(() => _dob = picked);
   }
-Future<void> _save() async {
+
+  Future<void> _save() async {
     if (!_isValid || _isSaving) return;
     setState(() => _isSaving = true);
 
@@ -87,6 +95,7 @@ Future<void> _save() async {
       extra: _nameController.text.trim(),
     );
   }
+
   String get _dobLabel {
     if (_dob == null) return 'Select your date of birth';
     return '${_dob!.day.toString().padLeft(2, '0')}'
@@ -98,7 +107,7 @@ Future<void> _save() async {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kNeuBg,
-     
+
       body: SafeArea(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),
@@ -135,7 +144,7 @@ Future<void> _save() async {
                     controller: _nameController,
                     style: AppTextStyles.body,
                     textCapitalization: TextCapitalization.words,
-                   decoration: bareInputDecoration('Enter your name'),
+                    decoration: bareInputDecoration('Enter your name'),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -197,8 +206,11 @@ Future<void> _save() async {
 
                 Row(
                   children: [
-                    Icon(Icons.info_outline,
-                        size: 14.sp, color: AppColors.textSecondary),
+                    Icon(
+                      Icons.info_outline,
+                      size: 14.sp,
+                      color: AppColors.textSecondary,
+                    ),
                     SizedBox(width: 6.w),
                     Text(
                       'Optional — you can add these later',
@@ -285,7 +297,6 @@ Future<void> _save() async {
       ],
     );
   }
-
 }
 
 /// Shown in place of the form once the profile save succeeds.

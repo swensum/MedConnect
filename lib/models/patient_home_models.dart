@@ -61,6 +61,7 @@ class DoctorPreview {
 
   int get reviewCount => reviews.length;
 }
+
 class AppointmentPreview {
   const AppointmentPreview({
     required this.id,
@@ -92,11 +93,27 @@ class AppointmentPreview {
   }
 
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   static const _weekdays = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
   ];
 
   factory AppointmentPreview.fromBooking({
@@ -120,7 +137,6 @@ class AppointmentPreview {
   }
 }
 
-
 const List<DoctorPreview> allDoctors = [
   DoctorPreview(
     id: 'anita-sharma',
@@ -129,7 +145,8 @@ const List<DoctorPreview> allDoctors = [
     experienceYears: 12,
     fee: 800,
     rating: 4.8,
-    bio: 'Specializes in heart disease prevention and management, with '
+    bio:
+        'Specializes in heart disease prevention and management, with '
         'over a decade of clinical experience in cardiac care.',
     workplaceName: 'Koshi Zonal Hospital',
     workplaceAddress: 'Biratnagar-4, Koshi Province',
@@ -139,7 +156,8 @@ const List<DoctorPreview> allDoctors = [
       DoctorReview(
         patientName: 'Sunil R.',
         rating: 5,
-        comment: 'Very thorough and explained everything clearly. '
+        comment:
+            'Very thorough and explained everything clearly. '
             'Didn\'t feel rushed at all.',
         timeAgo: '2 weeks ago',
       ),
@@ -239,7 +257,8 @@ const List<DoctorPreview> allDoctors = [
       DoctorReview(
         patientName: 'Deepak S.',
         rating: 5,
-        comment: 'Extremely knowledgeable, took time to answer all my '
+        comment:
+            'Extremely knowledgeable, took time to answer all my '
             'questions.',
         timeAgo: '1 week ago',
       ),
@@ -314,11 +333,7 @@ class HospitalPreview {
 
 const List<HospitalPreview> nearbyHospitals = [
   HospitalPreview(name: 'Koshi Zonal Hospital', distanceKm: 1.8, isOpen: true),
-  HospitalPreview(
-    name: 'Nobel Medical College',
-    distanceKm: 3.2,
-    isOpen: true,
-  ),
+  HospitalPreview(name: 'Nobel Medical College', distanceKm: 3.2, isOpen: true),
   HospitalPreview(name: 'City Care Clinic', distanceKm: 0.8, isOpen: true),
 ];
 

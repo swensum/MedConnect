@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:med_connect/models/booking_models.dart';
 
@@ -18,18 +17,19 @@ class BookingDraftNotifier extends StateNotifier<BookingDraft> {
 
   void selectSlot(String slot) => state = state.copyWith(slot: slot);
   void selectMode(String mode) {
-  state = BookingDraft(
-    date: state.date,
-    slot: null,
-    consultationMode: mode,
-    note: state.note,
-  );
-}
+    state = BookingDraft(
+      date: state.date,
+      slot: null,
+      consultationMode: mode,
+      note: state.note,
+    );
+  }
+
   void setNote(String note) => state = state.copyWith(note: note);
   void reset() => state = const BookingDraft();
 }
 
 final bookingDraftProvider =
     StateNotifierProvider<BookingDraftNotifier, BookingDraft>(
-  (ref) => BookingDraftNotifier(),
-);
+      (ref) => BookingDraftNotifier(),
+    );

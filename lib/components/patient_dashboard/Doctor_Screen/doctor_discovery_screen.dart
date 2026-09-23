@@ -17,8 +17,7 @@ class DoctorDiscoveryScreen extends ConsumerStatefulWidget {
       _DoctorDiscoveryScreenState();
 }
 
-class _DoctorDiscoveryScreenState
-    extends ConsumerState<DoctorDiscoveryScreen> {
+class _DoctorDiscoveryScreenState extends ConsumerState<DoctorDiscoveryScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -97,8 +96,11 @@ class _DoctorDiscoveryScreenState
                     height: 54.h,
                     child: Row(
                       children: [
-                        Icon(Icons.search_rounded,
-                            size: 19.sp, color: AppColors.textSecondary),
+                        Icon(
+                          Icons.search_rounded,
+                          size: 19.sp,
+                          color: AppColors.textSecondary,
+                        ),
                         SizedBox(width: 10.w),
                         Expanded(
                           child: TextField(
@@ -119,8 +121,11 @@ class _DoctorDiscoveryScreenState
                         if (_searchController.text.isNotEmpty)
                           GestureDetector(
                             onTap: () => _searchController.clear(),
-                            child: Icon(Icons.close_rounded,
-                                size: 18.sp, color: AppColors.textSecondary),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 18.sp,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                       ],
                     ),
@@ -141,9 +146,11 @@ class _DoctorDiscoveryScreenState
                       return NeuChip(
                         label: f,
                         selected: selectedSpecialization == f,
-                        onTap: () => ref
-                            .read(specializationFilterProvider.notifier)
-                            .state = f,
+                        onTap: () =>
+                            ref
+                                    .read(specializationFilterProvider.notifier)
+                                    .state =
+                                f,
                       );
                     },
                   ),
@@ -198,8 +205,11 @@ class _DoctorDiscoveryScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off_rounded,
-                size: 40.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.search_off_rounded,
+              size: 40.sp,
+              color: AppColors.textSecondary,
+            ),
             SizedBox(height: 12.h),
             Text(
               'No doctors match your search',

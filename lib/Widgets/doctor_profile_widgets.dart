@@ -144,8 +144,11 @@ class WorkplaceCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: neuShadows(distance: 2, blur: 5, inset: true),
               ),
-              child: Icon(Icons.local_hospital_rounded,
-                  size: 20.sp, color: AppColors.navy),
+              child: Icon(
+                Icons.local_hospital_rounded,
+                size: 20.sp,
+                color: AppColors.navy,
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -163,8 +166,11 @@ class WorkplaceCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded,
-                size: 18.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18.sp,
+              color: AppColors.textSecondary,
+            ),
           ],
         ),
       ),
@@ -200,8 +206,11 @@ class ReviewCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: neuShadows(distance: 2, blur: 4, inset: true),
                 ),
-                child: Icon(Icons.person_rounded,
-                    size: 16.sp, color: AppColors.navy),
+                child: Icon(
+                  Icons.person_rounded,
+                  size: 16.sp,
+                  color: AppColors.navy,
+                ),
               ),
               SizedBox(width: 10.w),
               Expanded(
@@ -213,11 +222,17 @@ class ReviewCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(Icons.star_rounded, size: 14.sp, color: Colors.amber.shade700),
+              Icon(
+                Icons.star_rounded,
+                size: 14.sp,
+                color: Colors.amber.shade700,
+              ),
               SizedBox(width: 3.w),
               Text(
                 review.rating.toStringAsFixed(1),
-                style: AppTextStyles.caption.copyWith(fontWeight: FontWeight.w700),
+                style: AppTextStyles.caption.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),

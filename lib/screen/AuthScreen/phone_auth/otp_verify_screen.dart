@@ -72,7 +72,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
 
-    
     setState(() {
       _isVerifying = false;
       _isVerified = true;
@@ -81,7 +80,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     await Future.delayed(const Duration(milliseconds: 1300));
     if (!mounted) return;
 
-    
     if (widget.role == UserRole.patient) {
       context.go(AppRoutes.patientProfileSetup, extra: widget.phone);
     } else {
@@ -109,9 +107,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           padding: EdgeInsetsGeometry.symmetric(horizontal: 24.w),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 250),
-            child: _isVerified
-                ? _SuccessView(role: widget.role)
-                : _buildForm(),
+            child: _isVerified ? _SuccessView(role: widget.role) : _buildForm(),
           ),
         ),
       ),
@@ -184,7 +180,6 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   }
 }
 
-
 class _SuccessView extends StatelessWidget {
   const _SuccessView({required this.role});
 
@@ -228,7 +223,8 @@ class _OtpInput extends StatefulWidget {
   State<_OtpInput> createState() => __OtpInputState();
 }
 
-class __OtpInputState extends State<_OtpInput> with SingleTickerProviderStateMixin {
+class __OtpInputState extends State<_OtpInput>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   late final AnimationController _cursorController;

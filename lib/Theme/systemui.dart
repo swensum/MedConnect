@@ -10,7 +10,9 @@ SystemUiOverlayStyle overlayFor(Color backgroundColor) {
     statusBarBrightness: isDarkBg ? Brightness.dark : Brightness.light,
     statusBarIconBrightness: isDarkBg ? Brightness.light : Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarIconBrightness: isDarkBg ? Brightness.light : Brightness.dark,
+    systemNavigationBarIconBrightness: isDarkBg
+        ? Brightness.light
+        : Brightness.dark,
     systemNavigationBarContrastEnforced: false,
     systemStatusBarContrastEnforced: false,
   );

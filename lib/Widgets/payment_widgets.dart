@@ -78,7 +78,9 @@ class PaymentMethodTile extends StatelessWidget {
                   Text(
                     method.sublabel,
                     style: AppTextStyles.caption.copyWith(
-                      color: selected ? Colors.white70 : AppColors.textSecondary,
+                      color: selected
+                          ? Colors.white70
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ],

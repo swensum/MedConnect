@@ -52,9 +52,7 @@ class _AppointmentsTabState extends ConsumerState<AppointmentsTab> {
                       return AppointmentListCard(
                         appointment: appt,
                         onCancel: _showUpcoming
-                            ? () => ref
-                                .read(appointmentsProvider.notifier)
-                                .cancel(appt.id)
+                            ? () => _confirmCancel(appt.id)
                             : null,
                         onBookAgain: !_showUpcoming
                             ? () {
@@ -69,6 +67,24 @@ class _AppointmentsTabState extends ConsumerState<AppointmentsTab> {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmCancel(String appointmentId) async {
+    final confirmed = await showNeuConfirmDialog(
+      context,
+      title: 'Cancel appointment?',
+      message:
+          'You have already paid for this appointment. Cancelling may '
+          'be subject to the clinic\'s refund policy. Are you sure you want '
+          'to continue?',
+      confirmLabel: 'Cancel appointment',
+      cancelLabel: 'Keep appointment',
+      icon: Icons.event_busy_rounded,
+    );
+
+    if (confirmed == true && mounted) {
+      ref.read(appointmentsProvider.notifier).cancel(appointmentId);
+    }
   }
 
   Widget _toggle() {
@@ -111,9 +127,17 @@ class _AppointmentsTabState extends ConsumerState<AppointmentsTab> {
       ),
       child: Row(
         children: [
-          tab('Upcoming', _showUpcoming, () => setState(() => _showUpcoming = true)),
+          tab(
+            'Upcoming',
+            _showUpcoming,
+            () => setState(() => _showUpcoming = true),
+          ),
           SizedBox(width: 6.w),
-          tab('Past', !_showUpcoming, () => setState(() => _showUpcoming = false)),
+          tab(
+            'Past',
+            !_showUpcoming,
+            () => setState(() => _showUpcoming = false),
+          ),
         ],
       ),
     );
@@ -126,7 +150,11 @@ class _AppointmentsTabState extends ConsumerState<AppointmentsTab> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.calendar_today_outlined, size: 40.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.calendar_today_outlined,
+              size: 40.sp,
+              color: AppColors.textSecondary,
+            ),
             SizedBox(height: 12.h),
             Text(
               _showUpcoming

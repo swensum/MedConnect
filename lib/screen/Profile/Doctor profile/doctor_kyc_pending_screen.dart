@@ -29,8 +29,7 @@ class DoctorKycPendingScreen extends StatefulWidget {
   final VoidCallback? onContinue;
 
   @override
-  State<DoctorKycPendingScreen> createState() =>
-      _DoctorKycPendingScreenState();
+  State<DoctorKycPendingScreen> createState() => _DoctorKycPendingScreenState();
 }
 
 class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
@@ -45,7 +44,6 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
   void initState() {
     super.initState();
 
-    
     if (_status == DoctorKycStatus.pending) {
       _fakeApprovalTimer = Timer(const Duration(seconds: 15), () {
         if (!mounted) return;
@@ -280,27 +278,29 @@ class _StatusTimeline extends StatelessWidget {
                 ),
               ),
               child: isDone
-                  ? Icon(Icons.check_rounded,
-                      size: 15.sp, color: AppColors.white)
+                  ? Icon(
+                      Icons.check_rounded,
+                      size: 15.sp,
+                      color: AppColors.white,
+                    )
                   : isCurrent
-                      ? Padding(
-                          padding: EdgeInsets.all(8.w),
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation(AppColors.white),
-                          ),
-                        )
-                      : null,
+                  ? Padding(
+                      padding: EdgeInsets.all(8.w),
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(AppColors.white),
+                      ),
+                    )
+                  : null,
             ),
             SizedBox(height: 6.h),
             Text(
               _labels[step],
               style: AppTextStyles.caption.copyWith(
-                fontWeight:
-                    isCurrent ? FontWeight.w700 : FontWeight.w500,
-                color:
-                    isDone || isCurrent ? AppColors.navy : AppColors.textSecondary,
+                fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                color: isDone || isCurrent
+                    ? AppColors.navy
+                    : AppColors.textSecondary,
               ),
             ),
           ],

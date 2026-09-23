@@ -16,12 +16,13 @@ class AppointmentsNotifier extends StateNotifier<List<AppointmentPreview>> {
 
 final appointmentsProvider =
     StateNotifierProvider<AppointmentsNotifier, List<AppointmentPreview>>(
-  (ref) => AppointmentsNotifier(),
-);
+      (ref) => AppointmentsNotifier(),
+    );
 
 /// The single nearest upcoming appointment, for the Home tab's card.
 final nextAppointmentProvider = Provider<AppointmentPreview?>((ref) {
-  final upcoming = ref.watch(appointmentsProvider).where((a) => !a.isPast).toList()
-    ..sort((a, b) => a.date.compareTo(b.date));
+  final upcoming =
+      ref.watch(appointmentsProvider).where((a) => !a.isPast).toList()
+        ..sort((a, b) => a.date.compareTo(b.date));
   return upcoming.isEmpty ? null : upcoming.first;
 });

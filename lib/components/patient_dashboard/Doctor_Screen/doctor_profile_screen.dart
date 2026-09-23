@@ -22,7 +22,10 @@ class DoctorProfileScreen extends ConsumerWidget {
         backgroundColor: kNeuBg,
         body: SafeArea(
           child: Center(
-            child: Text('No doctor selected.', style: AppTextStyles.bodySecondary),
+            child: Text(
+              'No doctor selected.',
+              style: AppTextStyles.bodySecondary,
+            ),
           ),
         ),
       );
@@ -46,9 +49,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                   NeuCircleButton(
                     size: 36,
                     icon: Icons.share_outlined,
-                    onTap: () {
-                     
-                    },
+                    onTap: () {},
                   ),
                 ],
               ),
@@ -70,8 +71,11 @@ class DoctorProfileScreen extends ConsumerWidget {
                               shape: BoxShape.circle,
                               boxShadow: neuShadows(distance: 6, blur: 14),
                             ),
-                            child: Icon(Icons.person_rounded,
-                                size: 46.sp, color: AppColors.navy),
+                            child: Icon(
+                              Icons.person_rounded,
+                              size: 46.sp,
+                              color: AppColors.navy,
+                            ),
                           ),
                           SizedBox(height: 14.h),
                           Row(
@@ -79,13 +83,18 @@ class DoctorProfileScreen extends ConsumerWidget {
                             children: [
                               Text(doctor.name, style: AppTextStyles.h2),
                               SizedBox(width: 6.w),
-                              Icon(Icons.verified_rounded,
-                                  size: 18.sp, color: AppColors.navy),
+                              Icon(
+                                Icons.verified_rounded,
+                                size: 18.sp,
+                                color: AppColors.navy,
+                              ),
                             ],
                           ),
                           SizedBox(height: 4.h),
-                          Text(doctor.specialization,
-                              style: AppTextStyles.bodySecondary),
+                          Text(
+                            doctor.specialization,
+                            style: AppTextStyles.bodySecondary,
+                          ),
                         ],
                       ),
                     ),
@@ -103,13 +112,13 @@ class DoctorProfileScreen extends ConsumerWidget {
                     SizedBox(height: 12.h),
                     TodaySlotsRow(
                       slots: doctor.todaySlots,
-                     onTapSlot: (slot) {
-  ref.read(bookingDraftProvider.notifier)
-    ..selectMode('Video call')
-    ..selectDate(DateTime.now())
-    ..selectSlot(slot);
-  context.push(AppRoutes.bookAppointment);
-},
+                      onTapSlot: (slot) {
+                        ref.read(bookingDraftProvider.notifier)
+                          ..selectMode('Video call')
+                          ..selectDate(DateTime.now())
+                          ..selectSlot(slot);
+                        context.push(AppRoutes.bookAppointment);
+                      },
                     ),
                     SizedBox(height: 26.h),
 
@@ -119,9 +128,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                       WorkplaceCard(
                         name: doctor.workplaceName!,
                         address: doctor.workplaceAddress ?? '',
-                        onTap: () {
-                         
-                        },
+                        onTap: () {},
                       ),
                       SizedBox(height: 26.h),
                     ],
@@ -147,9 +154,7 @@ class DoctorProfileScreen extends ConsumerWidget {
                         ),
                         if (doctor.reviews.isNotEmpty)
                           GestureDetector(
-                            onTap: () {
-                             
-                            },
+                            onTap: () {},
                             child: Text(
                               'See all',
                               style: AppTextStyles.caption.copyWith(
@@ -167,7 +172,9 @@ class DoctorProfileScreen extends ConsumerWidget {
                         style: AppTextStyles.bodySecondary,
                       )
                     else
-                      ...doctor.reviews.take(2).map(
+                      ...doctor.reviews
+                          .take(2)
+                          .map(
                             (r) => Padding(
                               padding: EdgeInsets.only(bottom: 12.h),
                               child: ReviewCard(review: r),
@@ -210,8 +217,10 @@ class DoctorProfileScreen extends ConsumerWidget {
             children: [
               Icon(icon, size: 18.sp, color: AppColors.navy),
               SizedBox(height: 6.h),
-              Text(value,
-                  style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700)),
+              Text(
+                value,
+                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
+              ),
               SizedBox(height: 2.h),
               Text(label, style: AppTextStyles.caption),
             ],
@@ -224,7 +233,11 @@ class DoctorProfileScreen extends ConsumerWidget {
       children: [
         stat(Icons.star_rounded, doctor.rating.toStringAsFixed(1), 'Rating'),
         SizedBox(width: 10.w),
-        stat(Icons.work_history_outlined, '${doctor.experienceYears} yrs', 'Experience'),
+        stat(
+          Icons.work_history_outlined,
+          '${doctor.experienceYears} yrs',
+          'Experience',
+        ),
         SizedBox(width: 10.w),
         stat(Icons.payments_outlined, 'Rs. ${doctor.fee}', 'Fee'),
       ],

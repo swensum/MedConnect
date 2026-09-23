@@ -43,6 +43,7 @@ class LocationRow extends StatelessWidget {
     );
   }
 }
+
 class TodayAppointmentCard extends StatelessWidget {
   const TodayAppointmentCard({
     super.key,
@@ -188,7 +189,6 @@ class TodayAppointmentCard extends StatelessWidget {
         ),
         SizedBox(height: 60.h),
         SizedBox(
-          
           width: 160.w,
           child: Text(
             'No upcoming appointments — book one with a doctor near you.',
@@ -204,6 +204,7 @@ class TodayAppointmentCard extends StatelessWidget {
     );
   }
 }
+
 /// Horizontal row of shortcut tiles for "What do you need today?".
 /// Replaces the old SpecializationRow — same shape, but drives the icon
 /// and label to `kEmergencyColor` when [QuickAction.isEmergency] is true.
@@ -219,9 +220,9 @@ class QuickActionRow extends StatelessWidget {
       height: 96.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        
+
         clipBehavior: Clip.none,
-        
+
         padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
         itemCount: actions.length,
         separatorBuilder: (_, _) => SizedBox(width: 12.w),

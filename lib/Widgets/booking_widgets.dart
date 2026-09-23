@@ -6,7 +6,13 @@ import 'package:med_connect/Widgets/patient_home_widgets.dart';
 import 'package:med_connect/models/booking_models.dart';
 
 const List<String> _weekdayShort = [
-  'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+  'Sun',
 ];
 
 class DateStrip extends StatelessWidget {
@@ -42,7 +48,8 @@ class DateStrip extends StatelessWidget {
         separatorBuilder: (_, _) => SizedBox(width: 10.w),
         itemBuilder: (context, i) {
           final day = days[i];
-          final selected = selectedDate != null && _isSameDay(day, selectedDate!);
+          final selected =
+              selectedDate != null && _isSameDay(day, selectedDate!);
           return GestureDetector(
             onTap: () => onSelect(day),
             child: AnimatedContainer(
@@ -66,7 +73,9 @@ class DateStrip extends StatelessWidget {
                     style: AppTextStyles.caption.copyWith(
                       fontSize: 10.5.sp,
                       fontWeight: FontWeight.w600,
-                      color: selected ? Colors.white70 : AppColors.textSecondary,
+                      color: selected
+                          ? Colors.white70
+                          : AppColors.textSecondary,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -130,8 +139,8 @@ class SlotSection extends StatelessWidget {
                   color: selected
                       ? AppColors.navy
                       : s.isAvailable
-                          ? kNeuBg
-                          : kNeuBg.withValues(alpha: 0.6),
+                      ? kNeuBg
+                      : kNeuBg.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: s.isAvailable
                       ? neuShadows(
@@ -149,9 +158,11 @@ class SlotSection extends StatelessWidget {
                     color: selected
                         ? AppColors.white
                         : s.isAvailable
-                            ? AppColors.navy
-                            : AppColors.textSecondary.withValues(alpha: 0.5),
-                    decoration: s.isAvailable ? null : TextDecoration.lineThrough,
+                        ? AppColors.navy
+                        : AppColors.textSecondary.withValues(alpha: 0.5),
+                    decoration: s.isAvailable
+                        ? null
+                        : TextDecoration.lineThrough,
                   ),
                 ),
               ),
@@ -162,6 +173,7 @@ class SlotSection extends StatelessWidget {
     );
   }
 }
+
 class PriorityNoteCard extends StatelessWidget {
   const PriorityNoteCard({super.key});
 

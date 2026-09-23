@@ -55,9 +55,9 @@ class PhoneAuthScreen extends StatefulWidget {
 class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   String _fullPhoneNumber = '';
   bool _isValid = false;
- bool _isSending = false;
+  bool _isSending = false;
 
- Future<void> _sendOtp() async {
+  Future<void> _sendOtp() async {
     if (!_isValid || _isSending) return;
     setState(() => _isSending = true);
 
@@ -68,7 +68,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
     context.push(AppRoutes.otpVerify, extra: (_fullPhoneNumber, widget.role));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +105,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               ),
               const Spacer(),
               NeuPillButton(
-                 enabled: _isValid && !_isSending,
+                enabled: _isValid && !_isSending,
                 loading: _isSending,
                 onTap: _sendOtp,
                 label: 'Send OTP',
@@ -217,7 +216,7 @@ class _PhoneInputFieldState extends State<_PhoneInputField> {
               controller: _controller,
               keyboardType: TextInputType.phone,
               style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-             decoration: bareInputDecoration('98XXXXXXXX'),
+              decoration: bareInputDecoration('98XXXXXXXX'),
             ),
           ),
         ],
@@ -244,10 +243,14 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
       _filtered = q.isEmpty
           ? _countryCodes
           : _countryCodes
-              .where((c) =>
-                  c.name.toLowerCase().contains(q) ||
-                  c.code.replaceAll('+', '').contains(q.replaceAll('+', '')))
-              .toList();
+                .where(
+                  (c) =>
+                      c.name.toLowerCase().contains(q) ||
+                      c.code
+                          .replaceAll('+', '')
+                          .contains(q.replaceAll('+', '')),
+                )
+                .toList();
     });
   }
 
@@ -286,11 +289,18 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Row(
                   children: [
-                    Text('Select country', style: AppTextStyles.h1.copyWith(fontSize: 18.sp)),
+                    Text(
+                      'Select country',
+                      style: AppTextStyles.h1.copyWith(fontSize: 18.sp),
+                    ),
                     const Spacer(),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close_rounded, size: 20.sp, color: AppColors.textSecondary),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        size: 20.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -308,14 +318,20 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.search_rounded, size: 18.sp, color: AppColors.textSecondary),
+                      Icon(
+                        Icons.search_rounded,
+                        size: 18.sp,
+                        color: AppColors.textSecondary,
+                      ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: TextField(
                           controller: _searchController,
                           onChanged: _onSearchChanged,
                           style: AppTextStyles.body,
-                          decoration: bareInputDecoration('Search country or code'),
+                          decoration: bareInputDecoration(
+                            'Search country or code',
+                          ),
                         ),
                       ),
                     ],
@@ -333,18 +349,25 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                       )
                     : ListView.builder(
                         controller: scrollController,
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
                         itemCount: _filtered.length,
                         itemBuilder: (context, index) {
                           final country = _filtered[index];
-                          final isSelected = country.code == widget.selected.code &&
+                          final isSelected =
+                              country.code == widget.selected.code &&
                               country.name == widget.selected.name;
                           return InkWell(
                             borderRadius: BorderRadius.circular(14.r),
                             onTap: () => Navigator.of(context).pop(country),
                             child: Container(
                               margin: EdgeInsets.symmetric(vertical: 4.h),
-                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 12.h,
+                              ),
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? AppColors.navy.withValues(alpha: 0.08)
@@ -353,13 +376,18 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                               ),
                               child: Row(
                                 children: [
-                                  Text(country.flag, style: TextStyle(fontSize: 22.sp)),
+                                  Text(
+                                    country.flag,
+                                    style: TextStyle(fontSize: 22.sp),
+                                  ),
                                   SizedBox(width: 12.w),
                                   Expanded(
                                     child: Text(
                                       country.name,
                                       style: AppTextStyles.body.copyWith(
-                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
                                       ),
                                     ),
                                   ),
@@ -372,7 +400,11 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                                   ),
                                   if (isSelected) ...[
                                     SizedBox(width: 8.w),
-                                    Icon(Icons.check_rounded, size: 18.sp, color: AppColors.navy),
+                                    Icon(
+                                      Icons.check_rounded,
+                                      size: 18.sp,
+                                      color: AppColors.navy,
+                                    ),
                                   ],
                                 ],
                               ),

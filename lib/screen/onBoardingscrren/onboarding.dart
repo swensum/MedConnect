@@ -19,26 +19,22 @@ class _OnboardingSlide {
 final List<_OnboardingSlide> _slides = [
   const _OnboardingSlide(
     title: 'Find the right doctor',
-    body:
-        'Search verified doctors by specialty, city, and availability, then check ratings before you book.',
+    body: 'Search verified doctors by specialty, city, and availability, then check ratings before you book.',
     visual: _DoctorDiscoveryVisual(),
   ),
   const _OnboardingSlide(
     title: 'Consult from anywhere',
-    body:
-        'Chat or video call your doctor and share medical reports or X-rays instantly during the session.',
+    body: 'Chat or video call your doctor and share medical reports or X-rays instantly during the session.',
     visual: _ConsultVisual(),
   ),
   const _OnboardingSlide(
     title: 'Track your health',
-    body:
-        'Log your vitals and follow exercise plans your doctor assigns, so you only see what is relevant to you.',
+    body: 'Log your vitals and follow exercise plans your doctor assigns, so you only see what is relevant to you.',
     visual: _VitalsVisual(),
   ),
   const _OnboardingSlide(
     title: 'Give blood, save lives',
-    body:
-        'Register as a donor or find a matching donor nearby when someone needs blood urgently.',
+    body: 'Register as a donor or find a matching donor nearby when someone needs blood urgently.',
     visual: _DonationVisual(),
   ),
 ];
@@ -181,10 +177,7 @@ class _VitalsVisual extends StatelessWidget {
         children: [
           Icon(icon, size: 20, color: AppColors.navy),
           const Spacer(),
-          Text(
-            value,
-            style: AppTextStyles.h3.copyWith(color: AppColors.navy),
-          ),
+          Text(value, style: AppTextStyles.h3.copyWith(color: AppColors.navy)),
           const SizedBox(height: 2),
           Text(label, style: AppTextStyles.caption),
         ],
@@ -204,11 +197,7 @@ class _VitalsVisual extends StatelessWidget {
           const SizedBox(width: 12),
           Transform.translate(
             offset: const Offset(0, -14),
-            child: _statCard(
-              Icons.directions_walk,
-              '4,210',
-              'Steps today',
-            ),
+            child: _statCard(Icons.directions_walk, '4,210', 'Steps today'),
           ),
         ],
       ),
@@ -266,16 +255,8 @@ class _DonationVisual extends StatelessWidget {
               color: AppColors.navy,
             ),
           ),
-          const Positioned(
-            top: 18,
-            left: 34,
-            child: _BloodTag(label: 'A+'),
-          ),
-          const Positioned(
-            top: 18,
-            right: 34,
-            child: _BloodTag(label: 'O-'),
-          ),
+          const Positioned(top: 18, left: 34, child: _BloodTag(label: 'A+')),
+          const Positioned(top: 18, right: 34, child: _BloodTag(label: 'O-')),
         ],
       ),
     );
@@ -408,7 +389,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   opacity: _isLastPage ? 0.0 : 1.0,
                   child: GestureDetector(
                     onTap: _isLastPage ? null : _skip,
-                    child: Text('Skip', style: AppTextStyles.bodySecondary.copyWith(fontWeight: FontWeight.w600)),
+                    child: Text(
+                      'Skip',
+                      style: AppTextStyles.bodySecondary.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -431,14 +417,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       double page = index.toDouble();
                       if (_pageController.hasClients &&
                           _pageController.position.haveDimensions) {
-                        page = _pageController.page ??
-                            _currentPage.toDouble();
+                        page = _pageController.page ?? _currentPage.toDouble();
                       }
                       final delta = (page - index);
-                      final scale =
-                          1 - (delta.abs() * 0.18).clamp(0.0, 0.3);
-                      final opacity =
-                          1 - (delta.abs() * 0.7).clamp(0.0, 1.0);
+                      final scale = 1 - (delta.abs() * 0.18).clamp(0.0, 0.3);
+                      final opacity = 1 - (delta.abs() * 0.7).clamp(0.0, 1.0);
 
                       return Opacity(
                         opacity: opacity,
@@ -465,8 +448,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               child: Text(
                                 slide.title,
                                 textAlign: TextAlign.center,
-                                style:
-                                    AppTextStyles.h1.copyWith(fontSize: 24),
+                                style: AppTextStyles.h1.copyWith(fontSize: 24),
                               ),
                             ),
                           ),

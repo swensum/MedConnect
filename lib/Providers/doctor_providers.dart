@@ -21,7 +21,8 @@ final filteredDoctorsProvider = Provider<List<DoctorPreview>>((ref) {
   return doctors.where((d) {
     final matchesFilter =
         specialization == 'All' || d.specialization == specialization;
-    final matchesQuery = query.isEmpty ||
+    final matchesQuery =
+        query.isEmpty ||
         d.name.toLowerCase().contains(query) ||
         d.specialization.toLowerCase().contains(query);
     return matchesFilter && matchesQuery;

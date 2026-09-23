@@ -124,7 +124,8 @@ class _DoctorKycScreenState extends State<DoctorKycScreen> {
       }
     }
   }
-Future<void> _submit() async {
+
+  Future<void> _submit() async {
     if (!_isValid || _isSubmitting) return;
     setState(() => _isSubmitting = true);
 
@@ -146,6 +147,7 @@ Future<void> _submit() async {
       extra: DoctorKycStatus.pending,
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -219,8 +221,9 @@ Future<void> _submit() async {
                               controller: _otherSpecializationController,
                               style: AppTextStyles.body,
                               textCapitalization: TextCapitalization.words,
-                              decoration:
-                                  bareInputDecoration('Enter your specialization'),
+                              decoration: bareInputDecoration(
+                                'Enter your specialization',
+                              ),
                             ),
                           ),
                         )
@@ -234,7 +237,9 @@ Future<void> _submit() async {
                   child: TextField(
                     controller: _licenseController,
                     style: AppTextStyles.body,
-                    decoration: bareInputDecoration('Enter medical licence no.'),
+                    decoration: bareInputDecoration(
+                      'Enter medical licence no.',
+                    ),
                   ),
                 ),
                 SizedBox(height: 20.h),
@@ -334,7 +339,6 @@ Future<void> _submit() async {
       ],
     );
   }
-
 }
 
 /// Shown in place of the form once the KYC docs are submitted.

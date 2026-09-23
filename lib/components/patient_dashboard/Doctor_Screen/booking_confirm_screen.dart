@@ -33,9 +33,9 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
     final method = ref.read(selectedPaymentMethodProvider);
 
     if (method.requiresOnlineCheckout) {
-  context.push(AppRoutes.paymentCheckout, extra: (method, appointment));
-  return;
-}
+      context.push(AppRoutes.paymentCheckout, extra: (method, appointment));
+      return;
+    }
 
     // Cash — nothing external to wait on, confirm right here.
     setState(() => _isConfirming = true);
@@ -96,9 +96,7 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
 
     return Scaffold(
       backgroundColor: kNeuBg,
-      body: SafeArea(
-        child: _summaryView(doctor, draft, appointment),
-      ),
+      body: SafeArea(child: _summaryView(doctor, draft, appointment)),
     );
   }
 
@@ -145,11 +143,17 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
                             decoration: BoxDecoration(
                               color: kNeuBg,
                               shape: BoxShape.circle,
-                              boxShadow:
-                                  neuShadows(distance: 3, blur: 7, inset: true),
+                              boxShadow: neuShadows(
+                                distance: 3,
+                                blur: 7,
+                                inset: true,
+                              ),
                             ),
-                            child: Icon(Icons.person_rounded,
-                                size: 21.sp, color: AppColors.navy),
+                            child: Icon(
+                              Icons.person_rounded,
+                              size: 21.sp,
+                              color: AppColors.navy,
+                            ),
                           ),
                           SizedBox(width: 12.w),
                           Expanded(
@@ -158,11 +162,14 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
                               children: [
                                 Text(
                                   doctor.name,
-                                  style: AppTextStyles.body
-                                      .copyWith(fontWeight: FontWeight.w700),
+                                  style: AppTextStyles.body.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                                Text(doctor.specialization,
-                                    style: AppTextStyles.caption),
+                                Text(
+                                  doctor.specialization,
+                                  style: AppTextStyles.caption,
+                                ),
                               ],
                             ),
                           ),
@@ -210,13 +217,16 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
                 SizedBox(height: 12.h),
                 Consumer(
                   builder: (context, ref, _) {
-                    final selectedMethod =
-                        ref.watch(selectedPaymentMethodProvider);
+                    final selectedMethod = ref.watch(
+                      selectedPaymentMethodProvider,
+                    );
                     return PaymentMethodSelector(
                       selected: selectedMethod,
-                      onSelect: (m) => ref
-                          .read(selectedPaymentMethodProvider.notifier)
-                          .state = m,
+                      onSelect: (m) =>
+                          ref
+                                  .read(selectedPaymentMethodProvider.notifier)
+                                  .state =
+                              m,
                     );
                   },
                 ),
@@ -233,7 +243,10 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Consultation fee', style: AppTextStyles.bodySecondary),
+                      Text(
+                        'Consultation fee',
+                        style: AppTextStyles.bodySecondary,
+                      ),
                       Text(
                         'Rs. ${doctor.fee}',
                         style: AppTextStyles.body.copyWith(
@@ -282,8 +295,10 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
         Expanded(
           child: Text(
             value,
-            style: AppTextStyles.body
-                .copyWith(fontWeight: FontWeight.w600, fontSize: 13.sp),
+            style: AppTextStyles.body.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 13.sp,
+            ),
           ),
         ),
       ],

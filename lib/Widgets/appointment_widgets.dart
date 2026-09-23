@@ -45,7 +45,11 @@ class AppointmentListCard extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: neuShadows(distance: 3, blur: 7, inset: true),
                   ),
-                  child: Icon(Icons.person_rounded, size: 21.sp, color: AppColors.navy),
+                  child: Icon(
+                    Icons.person_rounded,
+                    size: 21.sp,
+                    color: AppColors.navy,
+                  ),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
@@ -54,15 +58,23 @@ class AppointmentListCard extends StatelessWidget {
                     children: [
                       Text(
                         appointment.doctorName,
-                        style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
+                        style: AppTextStyles.body.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      Text(appointment.specialization, style: AppTextStyles.caption),
+                      Text(
+                        appointment.specialization,
+                        style: AppTextStyles.caption,
+                      ),
                     ],
                   ),
                 ),
                 if (appointment.consultationMode != null)
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
                       color: kNeuBg,
                       borderRadius: BorderRadius.circular(10.r),
@@ -72,7 +84,9 @@ class AppointmentListCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isVideo ? Icons.videocam_outlined : Icons.local_hospital_outlined,
+                          isVideo
+                              ? Icons.videocam_outlined
+                              : Icons.local_hospital_outlined,
                           size: 12.sp,
                           color: AppColors.navy,
                         ),
@@ -92,18 +106,29 @@ class AppointmentListCard extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 12.h),
-              child: Divider(height: 1, color: AppColors.mutedBlue.withValues(alpha: 0.4)),
+              child: Divider(
+                height: 1,
+                color: AppColors.mutedBlue.withValues(alpha: 0.4),
+              ),
             ),
             Row(
               children: [
-                Icon(Icons.calendar_today_outlined, size: 14.sp, color: AppColors.textSecondary),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 14.sp,
+                  color: AppColors.textSecondary,
+                ),
                 SizedBox(width: 6.w),
                 Text(
                   '${appointment.weekday}, ${appointment.dayNumber} ${appointment.monthYear}',
                   style: AppTextStyles.caption,
                 ),
                 SizedBox(width: 14.w),
-                Icon(Icons.access_time_rounded, size: 14.sp, color: AppColors.textSecondary),
+                Icon(
+                  Icons.access_time_rounded,
+                  size: 14.sp,
+                  color: AppColors.textSecondary,
+                ),
                 SizedBox(width: 6.w),
                 Text(appointment.time, style: AppTextStyles.caption),
               ],
@@ -122,7 +147,11 @@ class AppointmentListCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: kNeuBg,
                             borderRadius: BorderRadius.circular(12.r),
-                            boxShadow: neuShadows(distance: 2, blur: 5, inset: true),
+                            boxShadow: neuShadows(
+                              distance: 2,
+                              blur: 5,
+                              inset: true,
+                            ),
                           ),
                           child: Text(
                             'Cancel',

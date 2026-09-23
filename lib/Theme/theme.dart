@@ -25,7 +25,6 @@ class AppFonts {
   static const body = 'Inter';
 }
 
-
 class AppTextStyles {
   AppTextStyles._();
 
@@ -103,9 +102,9 @@ class AppTheme {
         centerTitle: false,
         titleTextStyle: AppTextStyles.h2,
         systemOverlayStyle: SystemUiOverlayStyle(
-    statusBarBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.light,
-  ),
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -123,8 +122,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: AppColors.mutedBlue),

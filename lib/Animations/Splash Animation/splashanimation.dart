@@ -36,10 +36,7 @@ class _SplashLogoAnimationState extends State<SplashLogoAnimation>
     );
 
     _entranceScale = Tween<double>(begin: 1.4, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic),
     );
 
     _entranceOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -54,12 +51,16 @@ class _SplashLogoAnimationState extends State<SplashLogoAnimation>
       duration: widget.breathingDuration,
     );
 
-    _breathingScale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.03), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 1.03, end: 1.0), weight: 50),
-    ]).animate(
-      CurvedAnimation(parent: _breathingController, curve: Curves.easeInOut),
-    );
+    _breathingScale =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.03), weight: 50),
+          TweenSequenceItem(tween: Tween(begin: 1.03, end: 1.0), weight: 50),
+        ]).animate(
+          CurvedAnimation(
+            parent: _breathingController,
+            curve: Curves.easeInOut,
+          ),
+        );
 
     _entranceController.forward().whenComplete(() {
       if (mounted) _breathingController.repeat();
@@ -78,7 +79,8 @@ class _SplashLogoAnimationState extends State<SplashLogoAnimation>
     return AnimatedBuilder(
       animation: Listenable.merge([_entranceController, _breathingController]),
       builder: (context, child) {
-        final scale = _entranceScale.value *
+        final scale =
+            _entranceScale.value *
             (_entranceController.isCompleted ? _breathingScale.value : 1.0);
         return Opacity(
           opacity: _entranceOpacity.value,

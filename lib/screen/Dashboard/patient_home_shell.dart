@@ -34,11 +34,11 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
       activeIcon: Icons.calendar_month_rounded,
       label: 'Appointments',
     ),
-   NeuBottomNavItem(
-    icon: Icons.assignment_outlined,
-    activeIcon: Icons.assignment_rounded,
-    label: 'Records',
-  ),
+    NeuBottomNavItem(
+      icon: Icons.assignment_outlined,
+      activeIcon: Icons.assignment_rounded,
+      label: 'Records',
+    ),
     NeuBottomNavItem(
       icon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
@@ -57,14 +57,16 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
           children: [
             _PatientHomeTab(patientName: widget.patientName),
             const AppointmentsTab(),
-           const _PlaceholderTab(label: 'Records'),
+            const _PlaceholderTab(label: 'Records'),
             const _PlaceholderTab(label: 'Profile'),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom * 0.1, // half the usual inset
+          bottom:
+              MediaQuery.of(context).padding.bottom *
+              0.1, // half the usual inset
         ),
         child: NeuBottomNavBar(
           items: _items,
@@ -87,6 +89,7 @@ class _PlaceholderTab extends StatelessWidget {
     );
   }
 }
+
 class _PatientHomeTab extends ConsumerWidget {
   const _PatientHomeTab({required this.patientName});
 
@@ -94,56 +97,44 @@ class _PatientHomeTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-     final appointment = ref.watch(nextAppointmentProvider);
+    final appointment = ref.watch(nextAppointmentProvider);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 100.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LocationRow(
-            location: 'Biratnagar, Koshi',
-            onTap: () {},
-          ),
+          LocationRow(location: 'Biratnagar, Koshi', onTap: () {}),
           SizedBox(height: 16.h),
           _header(),
           SizedBox(height: 22.h),
           _searchBar(context),
           SizedBox(height: 28.h),
-        TodayAppointmentCard(
-            appointment: appointment,
-            onTap: () {
-              
-            },
-          ),
+          TodayAppointmentCard(appointment: appointment, onTap: () {}),
           SizedBox(height: 28.h),
           Text('What do you need today?', style: AppTextStyles.h3),
           SizedBox(height: 14.h),
           QuickActionRow(
-  actions: quickActions,
-  onTapAction: (a) {
-    if (a.isEmergency) {
-      
-      return;
-    }
-    if (a.label == 'Doctor') {
-     
-      context.push(AppRoutes.doctorDiscovery);
-      return;
-    }
-   
-    context.push(AppRoutes.doctorDiscovery, extra: a.label);
-  },
-),
+            actions: quickActions,
+            onTapAction: (a) {
+              if (a.isEmergency) {
+                return;
+              }
+              if (a.label == 'Doctor') {
+                context.push(AppRoutes.doctorDiscovery);
+                return;
+              }
+
+              context.push(AppRoutes.doctorDiscovery, extra: a.label);
+            },
+          ),
           SizedBox(height: 28.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Hospitals near you', style: AppTextStyles.h3),
               GestureDetector(
-                onTap: () {
-                  
-                },
+                onTap: () {},
                 child: Text(
                   'See all',
                   style: AppTextStyles.caption.copyWith(
@@ -155,12 +146,7 @@ class _PatientHomeTab extends ConsumerWidget {
             ],
           ),
           SizedBox(height: 14.h),
-          HospitalRow(
-            hospitals: nearbyHospitals,
-            onTapHospital: (h) {
-            
-            },
-          ),
+          HospitalRow(hospitals: nearbyHospitals, onTapHospital: (h) {}),
           SizedBox(height: 28.h),
           Text("Today's health tip", style: AppTextStyles.h3),
           SizedBox(height: 14.h),
@@ -171,9 +157,7 @@ class _PatientHomeTab extends ConsumerWidget {
             children: [
               Text('Exercises from your doctor', style: AppTextStyles.h3),
               GestureDetector(
-                onTap: () {
-                 
-                },
+                onTap: () {},
                 child: Text(
                   'See all',
                   style: AppTextStyles.caption.copyWith(
@@ -188,12 +172,7 @@ class _PatientHomeTab extends ConsumerWidget {
           ...recommendedExercises.map(
             (e) => Padding(
               padding: EdgeInsets.only(bottom: 12.h),
-              child: ExerciseListItem(
-                exercise: e,
-                onTap: () {
-                  
-                },
-              ),
+              child: ExerciseListItem(exercise: e, onTap: () {}),
             ),
           ),
         ],
@@ -220,9 +199,7 @@ class _PatientHomeTab extends ConsumerWidget {
         NeuCircleButton(
           size: 46,
           icon: Icons.notifications_none_rounded,
-          onTap: () {
-           
-          },
+          onTap: () {},
         ),
       ],
     );
@@ -235,7 +212,11 @@ class _PatientHomeTab extends ConsumerWidget {
         height: 54.h,
         child: Row(
           children: [
-            Icon(Icons.search_rounded, size: 19.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.search_rounded,
+              size: 19.sp,
+              color: AppColors.textSecondary,
+            ),
             SizedBox(width: 10.w),
             Expanded(
               child: Text(

@@ -27,13 +27,13 @@ class AppRoutes {
   static const otpVerify = '/otp-verify';
   static const patientProfileSetup = '/patient-profile-setup';
   static const doctorKyc = '/doctor-kyc';
-   static const String kycPendingReview = '/kyc-pending-review';
-   static const String patientHome = '/patient-home';
-   static const String doctorDiscovery = '/doctor-discovery';
-   static const String doctorProfile = '/doctor-profile';
-   static const String bookAppointment = '/book-appointment';
-static const String bookingConfirm = '/booking-confirm';
-static const String paymentCheckout = '/payment-checkout';
+  static const String kycPendingReview = '/kyc-pending-review';
+  static const String patientHome = '/patient-home';
+  static const String doctorDiscovery = '/doctor-discovery';
+  static const String doctorProfile = '/doctor-profile';
+  static const String bookAppointment = '/book-appointment';
+  static const String bookingConfirm = '/booking-confirm';
+  static const String paymentCheckout = '/payment-checkout';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -48,12 +48,16 @@ CustomTransitionPage slidePage(Widget child, GoRouterState state) {
         end: Offset.zero,
       ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
 
-      final outgoing = Tween<Offset>(
-        begin: Offset.zero,
-        end: const Offset(-0.15, 0),
-      ).animate(
-        CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeOutCubic),
-      );
+      final outgoing =
+          Tween<Offset>(
+            begin: Offset.zero,
+            end: const Offset(-0.15, 0),
+          ).animate(
+            CurvedAnimation(
+              parent: secondaryAnimation,
+              curve: Curves.easeOutCubic,
+            ),
+          );
 
       return SlideTransition(
         position: outgoing,
@@ -67,7 +71,7 @@ class AppRouter {
   AppRouter._();
 
   static final GoRouter router = GoRouter(
-   initialLocation: AppRoutes.patientProfileSetup,
+    initialLocation: AppRoutes.patientProfileSetup,
     routes: [
       // No slide here — splash has its own pulse/zoom entrance.
       GoRoute(
@@ -100,19 +104,16 @@ class AppRouter {
           return slidePage(OtpVerifyScreen(phone: phone, role: role), state);
         },
       ),
-       GoRoute(
+      GoRoute(
         path: AppRoutes.patientProfileSetup,
         pageBuilder: (context, state) {
           final phone = state.extra is String
-        ? state.extra as String
-        : '9800000000';
-          return slidePage(
-            PatientProfileSetupScreen(phone: phone),
-            state,
-          );
+              ? state.extra as String
+              : '9800000000';
+          return slidePage(PatientProfileSetupScreen(phone: phone), state);
         },
       ),
-       GoRoute(
+      GoRoute(
         path: AppRoutes.doctorKyc,
         pageBuilder: (context, state) {
           final phone = state.extra as String;
@@ -125,10 +126,7 @@ class AppRouter {
           final status = state.extra is DoctorKycStatus
               ? state.extra as DoctorKycStatus
               : DoctorKycStatus.pending;
-          return slidePage(
-            DoctorKycPendingScreen(status: status),
-            state,
-          );
+          return slidePage(DoctorKycPendingScreen(status: status), state);
         },
       ),
       GoRoute(
@@ -137,51 +135,48 @@ class AppRouter {
           final patientName = state.extra is String
               ? state.extra as String
               : 'there';
+          return slidePage(PatientHomeShell(patientName: patientName), state);
+        },
+      ),
+      // inside AppRouter.router routes list, after the patientHome route
+      GoRoute(
+        path: AppRoutes.doctorDiscovery,
+        pageBuilder: (context, state) {
+          final initialSpecialization = state.extra is String
+              ? state.extra as String
+              : null;
           return slidePage(
-            PatientHomeShell(patientName: patientName),
+            DoctorDiscoveryScreen(initialSpecialization: initialSpecialization),
             state,
           );
         },
       ),
-      // inside AppRouter.router routes list, after the patientHome route
-GoRoute(
-  path: AppRoutes.doctorDiscovery,
-  pageBuilder: (context, state) {
-    final initialSpecialization = state.extra is String
-        ? state.extra as String
-        : null;
-    return slidePage(
-      DoctorDiscoveryScreen(initialSpecialization: initialSpecialization),
-      state,
-    );
-  },
-),
-GoRoute(
-  path: AppRoutes.doctorProfile,
-  pageBuilder: (context, state) =>
-      slidePage(const DoctorProfileScreen(), state),
-),
       GoRoute(
-  path: AppRoutes.bookAppointment,
-  pageBuilder: (context, state) =>
-      slidePage(const BookAppointmentScreen(), state),
-),
- GoRoute(
+        path: AppRoutes.doctorProfile,
+        pageBuilder: (context, state) =>
+            slidePage(const DoctorProfileScreen(), state),
+      ),
+      GoRoute(
+        path: AppRoutes.bookAppointment,
+        pageBuilder: (context, state) =>
+            slidePage(const BookAppointmentScreen(), state),
+      ),
+      GoRoute(
         path: AppRoutes.bookingConfirm,
         pageBuilder: (context, state) =>
             slidePage(const BookingConfirmScreen(), state),
       ),
       GoRoute(
-  path: AppRoutes.paymentCheckout,
-  pageBuilder: (context, state) {
-    final (method, appointment) =
-        state.extra as (PaymentMethod, AppointmentPreview);
-    return slidePage(
-      PaymentCheckoutScreen(method: method, appointment: appointment),
-      state,
-    );
-  },
-),
+        path: AppRoutes.paymentCheckout,
+        pageBuilder: (context, state) {
+          final (method, appointment) =
+              state.extra as (PaymentMethod, AppointmentPreview);
+          return slidePage(
+            PaymentCheckoutScreen(method: method, appointment: appointment),
+            state,
+          );
+        },
+      ),
     ],
   );
 }
