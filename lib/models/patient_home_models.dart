@@ -61,6 +61,7 @@ class DoctorPreview {
 
   int get reviewCount => reviews.length;
 }
+
 class AppointmentPreview {
   const AppointmentPreview({
     required this.id,
@@ -94,11 +95,27 @@ class AppointmentPreview {
   }
 
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   static const _weekdays = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
   ];
 
   factory AppointmentPreview.fromBooking({
@@ -123,6 +140,7 @@ class AppointmentPreview {
     );
   }
 }
+
 const List<DoctorPreview> allDoctors = [
   DoctorPreview(
     id: 'anita-sharma',

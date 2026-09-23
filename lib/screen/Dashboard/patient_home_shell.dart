@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Providers/appointment_providers.dart';
+import 'package:med_connect/Providers/nav_providers.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/patient_home_widgets.dart';
@@ -11,17 +12,10 @@ import 'package:med_connect/Widgets/patient_home_widgets.dart';
 import 'package:med_connect/models/patient_home_models.dart';
 import 'package:med_connect/screen/Dashboard/appointments_tab.dart';
 
-class PatientHomeShell extends StatefulWidget {
+class PatientHomeShell extends ConsumerWidget {
   const PatientHomeShell({super.key, required this.patientName});
 
   final String patientName;
-
-  @override
-  State<PatientHomeShell> createState() => _PatientHomeShellState();
-}
-
-class _PatientHomeShellState extends State<PatientHomeShell> {
-  int _tabIndex = 0;
 
   static const _items = [
     NeuBottomNavItem(
@@ -47,15 +41,16 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabIndex = ref.watch(patientTabIndexProvider);
     return Scaffold(
       backgroundColor: kNeuBg,
       body: SafeArea(
         bottom: false,
         child: IndexedStack(
-          index: _tabIndex,
+          index: tabIndex,
           children: [
-            _PatientHomeTab(patientName: widget.patientName),
+            _PatientHomeTab(patientName: patientName),
             const AppointmentsTab(),
             const _PlaceholderTab(label: 'Records'),
             const _PlaceholderTab(label: 'Profile'),
@@ -70,8 +65,8 @@ class _PatientHomeShellState extends State<PatientHomeShell> {
         ),
         child: NeuBottomNavBar(
           items: _items,
-          currentIndex: _tabIndex,
-          onTap: (i) => setState(() => _tabIndex = i),
+          currentIndex: tabIndex,
+          onTap: (i) => ref.read(patientTabIndexProvider.notifier).state = i,
         ),
       ),
     );
