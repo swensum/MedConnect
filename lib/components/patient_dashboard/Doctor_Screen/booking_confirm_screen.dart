@@ -101,7 +101,11 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
     );
   }
 
-  Widget _summaryView(doctor, draft, AppointmentPreview appointment) {
+  Widget _summaryView(
+    dynamic doctor,
+    dynamic draft,
+    AppointmentPreview appointment,
+  ) {
     return Column(
       key: const ValueKey('booking-summary'),
       children: [
