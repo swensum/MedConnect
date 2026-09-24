@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
+import 'package:med_connect/models/patient_profile_model.dart';
+import 'package:med_connect/providers/patient_profile_providers.dart';
 
 const List<String> _genders = ['Male', 'Female', 'Other'];
 const List<String> _bloodTypes = [
@@ -18,17 +21,18 @@ const List<String> _bloodTypes = [
   'O-',
 ];
 
-class PatientProfileSetupScreen extends StatefulWidget {
+class PatientProfileSetupScreen extends ConsumerStatefulWidget {
   const PatientProfileSetupScreen({super.key, required this.phone});
 
   final String phone;
 
   @override
-  State<PatientProfileSetupScreen> createState() =>
+  ConsumerState<PatientProfileSetupScreen> createState() =>
       _PatientProfileSetupScreenState();
 }
 
-class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> {
+class _PatientProfileSetupScreenState
+    extends ConsumerState<PatientProfileSetupScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
@@ -78,8 +82,24 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> {
     if (!_isValid || _isSaving) return;
     setState(() => _isSaving = true);
 
+    // TODO: Write to Firestore `patient_profiles` here too, once backend
+    // is wired up — the provider write below is what feeds the Profile
+    // tab for now.
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
+
+    // Save into the shared provider so the Profile tab (and anywhere
+    // else in the app) can read this patient's details.
+    ref.read(patientProfileProvider.notifier).state = PatientProfile(
+      name: _nameController.text.trim(),
+      phone: widget.phone,
+      dob: _dob!,
+      gender: _gender!,
+      city: _cityController.text.trim(),
+      heightCm: int.tryParse(_heightController.text.trim()),
+      weightKg: int.tryParse(_weightController.text.trim()),
+      bloodType: _bloodType,
+    );
 
     setState(() {
       _isSaving = false;

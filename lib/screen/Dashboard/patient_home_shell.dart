@@ -11,6 +11,7 @@ import 'package:med_connect/Widgets/patient_home_widgets.dart';
 
 import 'package:med_connect/models/patient_home_models.dart';
 import 'package:med_connect/screen/Dashboard/appointments_tab.dart';
+import 'package:med_connect/screen/Dashboard/profile_tab.dart';
 
 class PatientHomeShell extends ConsumerWidget {
   const PatientHomeShell({super.key, required this.patientName});
@@ -53,7 +54,7 @@ class PatientHomeShell extends ConsumerWidget {
             _PatientHomeTab(patientName: patientName),
             const AppointmentsTab(),
             const _PlaceholderTab(label: 'Records'),
-            const _PlaceholderTab(label: 'Profile'),
+            const ProfileTab(),
           ],
         ),
       ),
