@@ -6,7 +6,7 @@ import 'package:med_connect/Theme/theme.dart';
 
 import 'package:med_connect/Widgets/profile_widgets.dart';
 import 'package:med_connect/models/health_metric_model.dart';
-import 'package:med_connect/providers/appointment_providers.dart';
+import 'package:med_connect/Providers/appointment_providers.dart';
 import 'package:med_connect/providers/patient_profile_providers.dart';
 
 class ProfileTab extends ConsumerWidget {
@@ -118,8 +118,13 @@ class ProfileTab extends ConsumerWidget {
               ),
             ),
           ],
-
-          // ---- Today's health metrics ----
+SizedBox(height: 16.h),
+HealthStatusCard(
+  healthScore: 78, 
+  onViewDetail: () {
+   
+  },
+),
           SizedBox(height: 26.h),
           
          HealthMetricsRow(metrics: mockHealthMetrics),

@@ -180,8 +180,7 @@ class UpcomingAppointmentCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Avatar — stretches to roughly match the row's full height
-              // via IntrinsicHeight + CrossAxisAlignment.stretch above.
+              // Avatar
               AspectRatio(
                 aspectRatio: 1,
                 child: Container(
@@ -197,7 +196,7 @@ class UpcomingAppointmentCard extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 14.w),
+              SizedBox(width: 12.w),
 
               // Name / specialization (top) + date / time (bottom).
               Expanded(
@@ -220,26 +219,39 @@ class UpcomingAppointmentCard extends StatelessWidget {
                         SizedBox(height: 2.h),
                         Text(
                           appointment.specialization,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.caption,
                         ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today_outlined,
-                            size: 12.sp, color: AppColors.textSecondary),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '${appointment.dayNumber} ${appointment.monthYear}',
-                          style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
-                        ),
-                        SizedBox(width: 10.w),
-                        Icon(Icons.access_time_rounded,
-                            size: 12.sp, color: AppColors.textSecondary),
-                        SizedBox(width: 4.w),
-                        Text(
-                          appointment.time,
-                          style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
+                        SizedBox(height: 8.h), // gap between specialization and date/time
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.calendar_today_outlined,
+                                size: 11.sp, color: AppColors.textSecondary),
+                            SizedBox(width: 3.w),
+                            Flexible(
+                              child: Text(
+                                '${appointment.dayNumber} '
+                                    '${appointment.monthYear.split(' ').first}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(Icons.access_time_rounded,
+                                size: 11.sp, color: AppColors.textSecondary),
+                            SizedBox(width: 3.w),
+                            Flexible(
+                              child: Text(
+                                appointment.time,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -248,7 +260,7 @@ class UpcomingAppointmentCard extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
 
-              // Status tag, pinned to the far right.
+              // Status tag, pinned to the top-right corner.
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
@@ -270,6 +282,185 @@ class UpcomingAppointmentCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+/// Circular percentage ring — now also shows "Health score" inside the
+/// ring, stacked below the percentage.
+class _HealthScoreRing extends StatelessWidget {
+  const _HealthScoreRing({required this.percent, required this.size});
+
+  final int percent; // 0-100
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        painter: _RingPainter(percent: percent / 100),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$percent%',
+                style: AppTextStyles.body.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 17.sp,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                'Health Score',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.caption.copyWith(
+                  color: Colors.white70,
+                  fontSize: 8.5.sp,
+                  fontWeight: FontWeight.w600,
+                  height: 1.1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter({required this.percent});
+  final double percent; // 0.0 - 1.0
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.shortestSide - 7) / 2;
+
+    final trackPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.18)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round;
+
+    final progressPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawCircle(center, radius, trackPaint);
+
+    const startAngle = -1.5708; // -90deg, start from top
+    final sweepAngle = 6.28319 * percent; // 2*pi * percent
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      sweepAngle,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _RingPainter oldDelegate) =>
+      oldDelegate.percent != percent;
+}
+
+class HealthStatusCard extends StatelessWidget {
+  const HealthStatusCard({
+    super.key,
+    required this.healthScore,
+    this.onViewDetail,
+  });
+
+  final int healthScore; // 0-100
+  final VoidCallback? onViewDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.w), // was 18.w
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.navy,
+            Color.lerp(AppColors.navy, Colors.black, 0.85)!,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(22.r),
+        boxShadow: neuShadows(distance: 3, blur: 8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // ---- Left: text + button ----
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Your health overview',
+                  style: AppTextStyles.h3.copyWith(
+                    color: Colors.white,
+                    fontSize: 16.sp, // was 15.sp
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'Stay updated with your health status',
+                  style: AppTextStyles.caption.copyWith(
+                    color: Colors.white70,
+                    fontSize: 12.sp, // was 11.5.sp
+                    height: 1.4,
+                  ),
+                ),
+                SizedBox(height: 18.h), // was 14.h
+                GestureDetector(
+                  onTap: onViewDetail,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'View detail',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.navy,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                        SizedBox(width: 5.w),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 13.sp,
+                          color: AppColors.navy,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 16.w),
+
+          // ---- Right: ring (score + label now inside it) ----
+          _HealthScoreRing(percent: healthScore, size: 105.w), // was 72.w
+        ],
       ),
     );
   }
