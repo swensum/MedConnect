@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/nav_providers.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 
 import 'package:med_connect/Widgets/profile_widgets.dart';
@@ -23,7 +26,7 @@ class ProfileTab extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Profile', style: AppTextStyles.h1),
-          SizedBox(height: 22.h),
+          SizedBox(height: 18.h),
 
           // ---- Header card ----
           Container(
@@ -44,9 +47,17 @@ class ProfileTab extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: kNeuBg,
                         shape: BoxShape.circle,
-                        boxShadow: neuShadows(distance: 3, blur: 8, inset: true),
+                        boxShadow: neuShadows(
+                          distance: 3,
+                          blur: 8,
+                          inset: true,
+                        ),
                       ),
-                      child: Icon(Icons.person_rounded, size: 30.sp, color: AppColors.navy),
+                      child: Icon(
+                        Icons.person_rounded,
+                        size: 30.sp,
+                        color: AppColors.navy,
+                      ),
                     ),
                     SizedBox(width: 14.w),
                     Expanded(
@@ -68,10 +79,7 @@ class ProfileTab extends ConsumerWidget {
                     NeuCircleButton(
                       size: 38,
                       icon: Icons.edit_outlined,
-                      onTap: () {
-                        // TODO: navigate to profile setup screen in edit
-                        // mode, pre-filled with current values.
-                      },
+                      onTap: () {},
                     ),
                   ],
                 ),
@@ -106,7 +114,11 @@ class ProfileTab extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, size: 16.sp, color: AppColors.textSecondary),
+                  Icon(
+                    Icons.info_outline,
+                    size: 16.sp,
+                    color: AppColors.textSecondary,
+                  ),
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
@@ -118,55 +130,59 @@ class ProfileTab extends ConsumerWidget {
               ),
             ),
           ],
-SizedBox(height: 16.h),
-HealthStatusCard(
-  healthScore: 78, 
-  onViewDetail: () {
-   
-  },
-),
+          SizedBox(height: 16.h),
+          HealthStatusCard(healthScore: 78, onViewDetail: () {}),
           SizedBox(height: 26.h),
-          
-         HealthMetricsRow(metrics: mockHealthMetrics),
 
-          // ---- Upcoming appointment ----
-         // ---- Upcoming appointment ----
-SizedBox(height: 26.h),
-Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Text('Upcoming appointment', style: AppTextStyles.h3),
-    if (nextAppointment != null)
-      GestureDetector(
-        onTap: () {
-          // TODO: jump to the Appointments tab (patientTabIndexProvider = 1)
-        },
-        child: Text(
-          'See all',
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.navy,
-            fontWeight: FontWeight.w700,
+          HealthMetricsRow(metrics: mockHealthMetrics),
+
+          SizedBox(height: 26.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Upcoming appointment', style: AppTextStyles.h3),
+              if (nextAppointment != null)
+                GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    'See all',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.navy,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ),
-      ),
-  ],
-),
-SizedBox(height: 12.h),
-nextAppointment == null
-    ? Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: kNeuBg,
-          borderRadius: BorderRadius.circular(18.r),
-          boxShadow: neuShadows(distance: 4, blur: 10, inset: true),
-        ),
-        child: Text(
-          'No upcoming appointments.',
-          style: AppTextStyles.bodySecondary,
-        ),
-      )
-    : UpcomingAppointmentCard(appointment: nextAppointment),
+          SizedBox(height: 12.h),
+          nextAppointment == null
+              ? Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: kNeuBg,
+                    borderRadius: BorderRadius.circular(18.r),
+                    boxShadow: neuShadows(distance: 4, blur: 10, inset: true),
+                  ),
+                  child: Text(
+                    'No upcoming appointments.',
+                    style: AppTextStyles.bodySecondary,
+                  ),
+                )
+              : UpcomingAppointmentCard(appointment: nextAppointment),
+          SizedBox(height: 20.h),
+          BookConsultationBanner(
+            onBookTap: () => context.push(AppRoutes.doctorDiscovery),
+          ),
+          SizedBox(height: 26.h),
+          Text('Health records', style: AppTextStyles.h3),
+          SizedBox(height: 12.h),
+          HealthRecordsRow(
+            categories: recordCategories,
+            onTapCategory: (category) {
+              ref.read(patientTabIndexProvider.notifier).state = 2;
+            },
+          ),
 
           SizedBox(height: 26.h),
           Text('Account', style: AppTextStyles.h3),

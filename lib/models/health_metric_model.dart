@@ -40,3 +40,35 @@ const List<HealthMetric> mockHealthMetrics = [
     accentColor: Color(0xFFD2484A),
   ),
 ];
+
+class RecordCategory {
+  const RecordCategory({
+    required this.icon,
+    required this.title,
+    required this.count,
+  });
+
+  final IconData icon;
+  final String title;
+  final int count; // number of documents in that category
+}
+
+// TODO: swap for real counts once Records data is wired up.
+const List<RecordCategory> recordCategories = [
+  RecordCategory(
+    icon: Icons.medication_outlined,
+    title: 'Prescriptions',
+    count: 4,
+  ),
+  RecordCategory(icon: Icons.biotech_outlined, title: 'Lab reports', count: 2),
+  RecordCategory(
+    icon: Icons.description_outlined,
+    title: 'Diagnosis notes',
+    count: 3,
+  ),
+  RecordCategory(
+    icon: Icons.vaccines_outlined,
+    title: 'Vaccinations',
+    count: 1,
+  ),
+];

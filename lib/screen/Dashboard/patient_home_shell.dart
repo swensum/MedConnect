@@ -45,30 +45,30 @@ class PatientHomeShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tabIndex = ref.watch(patientTabIndexProvider);
     return Scaffold(
-  backgroundColor: kNeuBg,
-  extendBody: true,
+      backgroundColor: kNeuBg,
+      extendBody: true,
 
-  body: SafeArea(
-    bottom: false,
-    child: IndexedStack(
-      index: tabIndex,
-      children: [
-        _PatientHomeTab(patientName: patientName),
-        const AppointmentsTab(),
-        const _PlaceholderTab(label: 'Records'),
-        const ProfileTab(),
-      ],
-    ),
-  ),
+      body: SafeArea(
+        bottom: false,
+        child: IndexedStack(
+          index: tabIndex,
+          children: [
+            _PatientHomeTab(patientName: patientName),
+            const AppointmentsTab(),
+            const _PlaceholderTab(label: 'Records'),
+            const ProfileTab(),
+          ],
+        ),
+      ),
 
-  bottomNavigationBar: NeuBottomNavBar(
-    items: _items,
-    currentIndex: tabIndex,
-    onTap: (i) {
-      ref.read(patientTabIndexProvider.notifier).state = i;
-    },
-  ),
-);
+      bottomNavigationBar: NeuBottomNavBar(
+        items: _items,
+        currentIndex: tabIndex,
+        onTap: (i) {
+          ref.read(patientTabIndexProvider.notifier).state = i;
+        },
+      ),
+    );
   }
 }
 

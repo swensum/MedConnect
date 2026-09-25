@@ -85,17 +85,24 @@ class ProfileMenuTile extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 13.5.sp,
-                  color: isDestructive ? AppColors.danger : AppColors.textPrimary,
+                  color: isDestructive
+                      ? AppColors.danger
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
-            Icon(Icons.chevron_right_rounded, size: 18.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 18.sp,
+              color: AppColors.textSecondary,
+            ),
           ],
         ),
       ),
     );
   }
 }
+
 class HealthMetricsRow extends StatelessWidget {
   const HealthMetricsRow({super.key, required this.metrics});
   final List<HealthMetric> metrics;
@@ -154,6 +161,7 @@ class HealthMetricsRow extends StatelessWidget {
     );
   }
 }
+
 class UpcomingAppointmentCard extends StatelessWidget {
   const UpcomingAppointmentCard({
     super.key,
@@ -223,32 +231,44 @@ class UpcomingAppointmentCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.caption,
                         ),
-                        SizedBox(height: 8.h), // gap between specialization and date/time
+                        SizedBox(
+                          height: 8.h,
+                        ), // gap between specialization and date/time
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.calendar_today_outlined,
-                                size: 11.sp, color: AppColors.textSecondary),
+                            Icon(
+                              Icons.calendar_today_outlined,
+                              size: 11.sp,
+                              color: AppColors.textSecondary,
+                            ),
                             SizedBox(width: 3.w),
                             Flexible(
                               child: Text(
                                 '${appointment.dayNumber} '
-                                    '${appointment.monthYear.split(' ').first}',
+                                '${appointment.monthYear.split(' ').first}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
+                                style: AppTextStyles.caption.copyWith(
+                                  fontSize: 10.5.sp,
+                                ),
                               ),
                             ),
                             SizedBox(width: 8.w),
-                            Icon(Icons.access_time_rounded,
-                                size: 11.sp, color: AppColors.textSecondary),
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 11.sp,
+                              color: AppColors.textSecondary,
+                            ),
                             SizedBox(width: 3.w),
                             Flexible(
                               child: Text(
                                 appointment.time,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
+                                style: AppTextStyles.caption.copyWith(
+                                  fontSize: 10.5.sp,
+                                ),
                               ),
                             ),
                           ],
@@ -264,7 +284,10 @@ class UpcomingAppointmentCard extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 5.h,
+                  ),
                   decoration: BoxDecoration(
                     color: kTipTint,
                     borderRadius: BorderRadius.circular(20.r),
@@ -286,6 +309,7 @@ class UpcomingAppointmentCard extends StatelessWidget {
     );
   }
 }
+
 /// Circular percentage ring — now also shows "Health score" inside the
 /// ring, stacked below the percentage.
 class _HealthScoreRing extends StatelessWidget {
@@ -427,7 +451,10 @@ class HealthStatusCard extends StatelessWidget {
                 GestureDetector(
                   onTap: onViewDetail,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 10.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12.r),
@@ -460,6 +487,171 @@ class HealthStatusCard extends StatelessWidget {
 
           // ---- Right: ring (score + label now inside it) ----
           _HealthScoreRing(percent: healthScore, size: 105.w), // was 72.w
+        ],
+      ),
+    );
+  }
+}
+
+class HealthRecordsRow extends StatelessWidget {
+  const HealthRecordsRow({
+    super.key,
+    required this.categories,
+    this.onTapCategory,
+  });
+
+  final List<RecordCategory> categories;
+  final void Function(RecordCategory category)? onTapCategory;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 115.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        itemBuilder: (context, i) {
+          final c = categories[i];
+          return GestureDetector(
+            onTap: () => onTapCategory?.call(c),
+            child: Container(
+              width: 115.w,
+              padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 10.w),
+              decoration: BoxDecoration(
+                color: kNeuBg,
+                borderRadius: BorderRadius.circular(16.r),
+                boxShadow: neuShadows(distance: 4, blur: 9),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 36.w,
+                    height: 36.w,
+                    decoration: BoxDecoration(
+                      color: kNeuBg,
+                      shape: BoxShape.circle,
+                      boxShadow: neuShadows(distance: 2, blur: 5, inset: true),
+                    ),
+                    child: Icon(c.icon, size: 20.sp, color: AppColors.navy),
+                  ),
+                  SizedBox(height: 15.h),
+                  Text(
+                    c.title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.caption.copyWith(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                      height: 1.2,
+                    ),
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    '${c.count} file${c.count == 1 ? '' : 's'}',
+                    style: AppTextStyles.caption.copyWith(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class BookConsultationBanner extends StatelessWidget {
+  const BookConsultationBanner({super.key, this.onBookTap});
+
+  final VoidCallback? onBookTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(18.w),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF2EA6D6), Color(0xFF3D7DF6)],
+        ),
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: neuShadows(distance: 3, blur: 8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Feeling unwell?',
+                  style: AppTextStyles.h3.copyWith(
+                    color: Colors.white,
+                    fontSize: 15.sp,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  'Talk to a certified doctor online or visit a clinic '
+                  'near you — book a consultation in minutes.',
+                  style: AppTextStyles.caption.copyWith(
+                    color: Colors.white70,
+                    fontSize: 11.5.sp,
+                    height: 1.4,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                GestureDetector(
+                  onTap: onBookTap,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Book now',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.navy,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                        SizedBox(width: 5.w),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 13.sp,
+                          color: AppColors.navy,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Icon(
+            Icons.local_hospital_rounded,
+            size: 56.sp,
+            color: Colors.white.withValues(alpha: 0.22),
+          ),
         ],
       ),
     );
