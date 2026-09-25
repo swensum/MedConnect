@@ -567,7 +567,6 @@ class HealthRecordsRow extends StatelessWidget {
     );
   }
 }
-
 class BookConsultationBanner extends StatelessWidget {
   const BookConsultationBanner({super.key, this.onBookTap});
 
@@ -577,12 +576,15 @@ class BookConsultationBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(18.w),
+      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h), // shorter than before
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF2EA6D6), Color(0xFF3D7DF6)],
+          colors: [
+            AppColors.navy,
+            Color.lerp(AppColors.navy, Colors.black, 0.85)!,
+          ],
         ),
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: neuShadows(distance: 3, blur: 8),
@@ -597,60 +599,50 @@ class BookConsultationBanner extends StatelessWidget {
                   'Feeling unwell?',
                   style: AppTextStyles.h3.copyWith(
                     color: Colors.white,
-                    fontSize: 15.sp,
+                    fontSize: 14.sp,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 3.h),
                 Text(
-                  'Talk to a certified doctor online or visit a clinic '
-                  'near you — book a consultation in minutes.',
+                  'Book a consultation with a doctor in minutes.',
                   style: AppTextStyles.caption.copyWith(
                     color: Colors.white70,
-                    fontSize: 11.5.sp,
-                    height: 1.4,
-                  ),
-                ),
-                SizedBox(height: 14.h),
-                GestureDetector(
-                  onTap: onBookTap,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 10.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Book now',
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.navy,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                        SizedBox(width: 5.w),
-                        Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 13.sp,
-                          color: AppColors.navy,
-                        ),
-                      ],
-                    ),
+                    fontSize: 11.sp,
+                    height: 1.3,
                   ),
                 ),
               ],
             ),
           ),
           SizedBox(width: 10.w),
-          Icon(
-            Icons.local_hospital_rounded,
-            size: 56.sp,
-            color: Colors.white.withValues(alpha: 0.22),
+          GestureDetector(
+            onTap: onBookTap,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Book now',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.navy,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11.5.sp,
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 12.sp,
+                    color: AppColors.navy,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

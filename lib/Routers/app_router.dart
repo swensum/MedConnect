@@ -13,6 +13,7 @@ import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
 import 'package:med_connect/screen/Dashboard/patient_home_shell.dart';
 import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_screen.dart';
 import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_pending_screen.dart';
+import 'package:med_connect/screen/Profile/Patient%20Profile/edit_profile_screen.dart';
 import 'package:med_connect/screen/Profile/Patient%20Profile/patient_profile_screen.dart';
 import 'package:med_connect/screen/onBoardingscrren/onboarding.dart';
 import 'package:med_connect/screen/splash_screen.dart';
@@ -34,6 +35,7 @@ class AppRoutes {
   static const String bookAppointment = '/book-appointment';
   static const String bookingConfirm = '/booking-confirm';
   static const String paymentCheckout = '/payment-checkout';
+  static const String editProfile = '/edit-profile';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -177,6 +179,11 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+  path: AppRoutes.editProfile,
+  pageBuilder: (context, state) =>
+      slidePage(const EditProfileScreen(), state),
+),
     ],
   );
 }

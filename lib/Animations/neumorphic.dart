@@ -4,16 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
 
-/// Shared surface token for every neumorphic screen. Keeping this in one
-/// place means a background change is a one-line edit, not a find-replace
-/// across every auth screen.
 const Color kNeuBg = AppColors.paleBlue;
 
-/// Two soft, large-blur shadows — dark bottom-right + light top-left — is
-/// the neumorphic trick. `inset` swaps the corners to fake a "pressed/
-/// carved in" surface. Only looks right when the element sits flush on
-/// kNeuBg (or another same-color surface) — the white highlight shadow
-/// needs a matching background to blend into.
 List<BoxShadow> neuShadows({
   required double distance,
   required double blur,
@@ -41,12 +33,6 @@ List<BoxShadow> neuShadows({
     ),
   ];
 }
-
-/// A single soft dark shadow for elements that float over a dimmed
-/// scrim/barrier (dialogs, sheets shown with a barrier) rather than
-/// sitting flush on the page background. neuShadows()'s white highlight
-/// shadow has nothing matching to blend into over a dark backdrop and
-/// reads as a bright glow — this avoids that.
 List<BoxShadow> neuFloatingShadow({double blur = 24, double distance = 8}) {
   return [
     BoxShadow(
@@ -163,8 +149,6 @@ class _NeuPillButtonState extends State<NeuPillButton> {
   }
 }
 
-/// A raised neumorphic circular icon button — used for a compact "next"
-/// action instead of a full-width pill (e.g. mid-onboarding navigation).
 class NeuCircleButton extends StatefulWidget {
   const NeuCircleButton({
     super.key,
@@ -215,8 +199,7 @@ class _NeuCircleButtonState extends State<NeuCircleButton> {
   }
 }
 
-/// An inset ("carved in") neumorphic container — the standard surface for
-/// anything the user types into or selects within.
+
 class NeuInsetSurface extends StatelessWidget {
   const NeuInsetSurface({
     super.key,
@@ -247,8 +230,6 @@ class NeuInsetSurface extends StatelessWidget {
   }
 }
 
-/// A small raised chip used for single-select options (gender, blood type).
-/// Selected chips press inward and take the navy fill.
 class NeuChip extends StatelessWidget {
   const NeuChip({
     super.key,
@@ -317,8 +298,6 @@ class NeuFieldLabel extends StatelessWidget {
   }
 }
 
-/// Small raised pill confirming which role the user picked on the role
-/// selection screen. Reused across phone entry, OTP, and doctor KYC.
 class RoleBadge extends StatelessWidget {
   const RoleBadge({super.key, required this.role});
 
@@ -441,9 +420,6 @@ class NeuUploadTile extends StatelessWidget {
   }
 }
 
-/// A raised neumorphic circle with a checkmark that pops in with a small,
-/// satisfying bounce. Use this for any "action succeeded" moment — OTP
-/// verified, booking confirmed, KYC submitted, etc. — not just here.
 class NeuSuccessCheck extends StatelessWidget {
   const NeuSuccessCheck({super.key, this.size = 96});
 
@@ -511,11 +487,6 @@ Future<DateTime?> showNeuDatePicker(
     ),
   );
 }
-
-/// A raised neumorphic circle with a continuously pulsing icon — use this
-/// for "in progress / waiting" states (KYC review, payment processing,
-/// etc.) as opposed to NeuSuccessCheck's one-shot bounce for completed
-/// states.
 class NeuPulseIcon extends StatefulWidget {
   const NeuPulseIcon({
     super.key,
@@ -583,9 +554,6 @@ class NeuBottomNavItem {
   final String label;
 }
 
-/// A floating, pill-shaped bottom nav bar consistent with the neumorphic
-/// language elsewhere in the app. The active tab expands into a filled
-/// navy pill with a label; inactive tabs are icon-only.
 class NeuBottomNavBar extends StatelessWidget {
   const NeuBottomNavBar({
     super.key,
@@ -836,12 +804,6 @@ class _NeuDatePickerSheetState extends State<_NeuDatePickerSheet> {
   }
 }
 
-/// A neumorphic confirmation dialog — same soft-surface language as the
-/// rest of the app, instead of the stock Material AlertDialog. Use for
-/// any destructive/irreversible action (cancel appointment, delete, etc).
-///
-/// Returns true if the destructive action was confirmed, false/null
-/// otherwise.
 Future<bool?> showNeuConfirmDialog(
   BuildContext context, {
   required String title,

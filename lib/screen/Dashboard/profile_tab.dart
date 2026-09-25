@@ -69,8 +69,8 @@ class ProfileTab extends ConsumerWidget {
                             style: AppTextStyles.h3,
                           ),
                           SizedBox(height: 2.h),
-                          Text(
-                            profile?.phone ?? '',
+                           Text(
+                            profile?.city ?? '',
                             style: AppTextStyles.bodySecondary,
                           ),
                         ],
@@ -79,7 +79,7 @@ class ProfileTab extends ConsumerWidget {
                     NeuCircleButton(
                       size: 38,
                       icon: Icons.edit_outlined,
-                      onTap: () {},
+                 onTap: () => context.push(AppRoutes.editProfile),
                     ),
                   ],
                 ),
@@ -94,7 +94,7 @@ class ProfileTab extends ConsumerWidget {
                         value: profile.bloodType ?? '—',
                       ),
                       SizedBox(width: 10.w),
-                      ProfileStatChip(label: 'City', value: profile.city),
+                      ProfileStatChip(label: 'Gender', value: profile.gender),
                     ],
                   ),
                 ],
