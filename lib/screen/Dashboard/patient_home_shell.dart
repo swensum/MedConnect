@@ -111,16 +111,20 @@ class _PatientHomeTab extends ConsumerWidget {
           QuickActionRow(
             actions: quickActions,
             onTapAction: (a) {
-              if (a.isEmergency) {
-                return;
-              }
-              if (a.label == 'Doctor') {
-                context.push(AppRoutes.doctorDiscovery);
-                return;
-              }
+  if (a.isEmergency) {
+    return;
+  }
+  if (a.label == 'Doctor') {
+    context.push(AppRoutes.doctorDiscovery);
+    return;
+  }
+  if (a.label == 'Lab tests') {
+    context.push(AppRoutes.labTestDiscovery);
+    return;
+  }
 
-              context.push(AppRoutes.doctorDiscovery, extra: a.label);
-            },
+  context.push(AppRoutes.doctorDiscovery, extra: a.label);
+},
           ),
           SizedBox(height: 28.h),
           Row(
