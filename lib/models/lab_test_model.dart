@@ -5,6 +5,8 @@ class LabTest {
     required this.category,
     required this.price,
     required this.sampleType,
+    required this.labName,
+    required this.labAddress,
     this.reportTime = '24 hrs',
     this.homeSampleAvailable = true,
     this.description,
@@ -15,12 +17,19 @@ class LabTest {
   final String category;
   final int price;
   final String sampleType; // e.g. 'Blood', 'Urine'
+  final String labName; // hospital/lab/diagnostic center offering this test
+  final String labAddress;
   final String reportTime;
+
+  /// If true, a technician can come collect the sample at the patient's
+  /// home instead of the patient visiting labName in person.
   final bool homeSampleAvailable;
   final String? description;
 }
 
-// TODO: swap for real lab/test catalog once backend is wired up.
+// TODO: swap for real lab/test catalog once backend is wired up — once
+// there's a location, recommend the nearest labName/labAddress per test
+// rather than this fixed mock assignment.
 const List<LabTest> allLabTests = [
   LabTest(
     id: 'cbc',
@@ -28,6 +37,8 @@ const List<LabTest> allLabTests = [
     category: 'Blood',
     price: 450,
     sampleType: 'Blood',
+    labName: 'Koshi Zonal Hospital',
+    labAddress: 'Biratnagar-4, Koshi Province',
     reportTime: '12 hrs',
     description: 'Measures red cells, white cells, and platelets to check '
         'overall health and detect a range of disorders.',
@@ -38,6 +49,8 @@ const List<LabTest> allLabTests = [
     category: 'Blood',
     price: 900,
     sampleType: 'Blood',
+    labName: 'Nobel Medical College',
+    labAddress: 'Kanchanbari, Biratnagar',
     reportTime: '24 hrs',
     description: 'Checks cholesterol and triglyceride levels to assess '
         'heart disease risk.',
@@ -48,6 +61,8 @@ const List<LabTest> allLabTests = [
     category: 'Diabetes',
     price: 250,
     sampleType: 'Blood',
+    labName: 'City Care Clinic',
+    labAddress: 'Main Road, Biratnagar-2',
     reportTime: '6 hrs',
   ),
   LabTest(
@@ -56,6 +71,8 @@ const List<LabTest> allLabTests = [
     category: 'Diabetes',
     price: 700,
     sampleType: 'Blood',
+    labName: 'Koshi Zonal Hospital',
+    labAddress: 'Biratnagar-4, Koshi Province',
     reportTime: '24 hrs',
     description: 'Average blood sugar level over the past 2-3 months.',
   ),
@@ -65,6 +82,8 @@ const List<LabTest> allLabTests = [
     category: 'Hormone',
     price: 1200,
     sampleType: 'Blood',
+    labName: 'Nobel Medical College',
+    labAddress: 'Kanchanbari, Biratnagar',
     reportTime: '24 hrs',
   ),
   LabTest(
@@ -73,6 +92,8 @@ const List<LabTest> allLabTests = [
     category: 'Urine',
     price: 300,
     sampleType: 'Urine',
+    labName: 'City Care Clinic',
+    labAddress: 'Main Road, Biratnagar-2',
     reportTime: '12 hrs',
     homeSampleAvailable: false,
   ),
@@ -82,6 +103,8 @@ const List<LabTest> allLabTests = [
     category: 'Blood',
     price: 950,
     sampleType: 'Blood',
+    labName: 'Koshi Zonal Hospital',
+    labAddress: 'Biratnagar-4, Koshi Province',
     reportTime: '24 hrs',
   ),
   LabTest(
@@ -90,6 +113,8 @@ const List<LabTest> allLabTests = [
     category: 'Vitamin',
     price: 1500,
     sampleType: 'Blood',
+    labName: 'Nobel Medical College',
+    labAddress: 'Kanchanbari, Biratnagar',
     reportTime: '48 hrs',
   ),
   LabTest(
@@ -98,6 +123,8 @@ const List<LabTest> allLabTests = [
     category: 'Package',
     price: 3500,
     sampleType: 'Blood + Urine',
+    labName: 'Koshi Zonal Hospital',
+    labAddress: 'Biratnagar-4, Koshi Province',
     reportTime: '48 hrs',
     description: 'A comprehensive panel covering blood count, sugar, '
         'lipid profile, liver and kidney function, and more.',
