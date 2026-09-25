@@ -15,14 +15,16 @@ class LabTestDiscoveryScreen extends ConsumerStatefulWidget {
       _LabTestDiscoveryScreenState();
 }
 
-class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen> {
+class _LabTestDiscoveryScreenState
+    extends ConsumerState<LabTestDiscoveryScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() {
-      ref.read(labTestSearchQueryProvider.notifier).state = _searchController.text;
+      ref.read(labTestSearchQueryProvider.notifier).state =
+          _searchController.text;
     });
   }
 
@@ -39,7 +41,10 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
     final selectedCategory = ref.watch(labTestCategoryFilterProvider);
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
-    final categories = ['All', ...{for (final t in allTests) t.category}];
+    final categories = [
+      'All',
+      ...{for (final t in allTests) t.category},
+    ];
 
     return Scaffold(
       backgroundColor: kNeuBg,
@@ -82,7 +87,11 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
                     height: 54.h,
                     child: Row(
                       children: [
-                        Icon(Icons.search_rounded, size: 19.sp, color: AppColors.textSecondary),
+                        Icon(
+                          Icons.search_rounded,
+                          size: 19.sp,
+                          color: AppColors.textSecondary,
+                        ),
                         SizedBox(width: 10.w),
                         Expanded(
                           child: TextField(
@@ -103,7 +112,11 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
                         if (_searchController.text.isNotEmpty)
                           GestureDetector(
                             onTap: () => _searchController.clear(),
-                            child: Icon(Icons.close_rounded, size: 18.sp, color: AppColors.textSecondary),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 18.sp,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                       ],
                     ),
@@ -125,7 +138,12 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
                         label: c,
                         selected: selectedCategory == c,
                         onTap: () =>
-                            ref.read(labTestCategoryFilterProvider.notifier).state = c,
+                            ref
+                                    .read(
+                                      labTestCategoryFilterProvider.notifier,
+                                    )
+                                    .state =
+                                c,
                       );
                     },
                   ),
@@ -147,7 +165,12 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
             child: results.isEmpty
                 ? _emptyState()
                 : ListView.separated(
-                    padding: EdgeInsets.fromLTRB(24.w, 14.h, 24.w, 24.h + bottomInset),
+                    padding: EdgeInsets.fromLTRB(
+                      24.w,
+                      14.h,
+                      24.w,
+                      24.h + bottomInset,
+                    ),
                     itemCount: results.length,
                     separatorBuilder: (_, __) => SizedBox(height: 12.h),
                     itemBuilder: (context, i) {
@@ -155,7 +178,8 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
                       return LabTestCard(
                         test: test,
                         onTap: () {
-                          ref.read(selectedLabTestProvider.notifier).state = test;
+                          ref.read(selectedLabTestProvider.notifier).state =
+                              test;
                           // TODO: navigate to lab test detail/booking screen.
                         },
                       );
@@ -174,7 +198,11 @@ class _LabTestDiscoveryScreenState extends ConsumerState<LabTestDiscoveryScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off_rounded, size: 40.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.search_off_rounded,
+              size: 40.sp,
+              color: AppColors.textSecondary,
+            ),
             SizedBox(height: 12.h),
             Text(
               'No tests match your search',

@@ -10,7 +10,14 @@ import 'package:med_connect/providers/patient_profile_providers.dart';
 
 const List<String> _genders = ['Male', 'Female', 'Other'];
 const List<String> _bloodTypes = [
-  'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-',
+  'A+',
+  'A-',
+  'B+',
+  'B-',
+  'AB+',
+  'AB-',
+  'O+',
+  'O-',
 ];
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -44,10 +51,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     _nameController = TextEditingController(text: profile?.name ?? '');
     _cityController = TextEditingController(text: profile?.city ?? '');
-    _heightController =
-        TextEditingController(text: profile?.heightCm?.toString() ?? '');
-    _weightController =
-        TextEditingController(text: profile?.weightKg?.toString() ?? '');
+    _heightController = TextEditingController(
+      text: profile?.heightCm?.toString() ?? '',
+    );
+    _weightController = TextEditingController(
+      text: profile?.weightKg?.toString() ?? '',
+    );
     _dob = profile?.dob;
     _gender = profile?.gender;
     _bloodType = profile?.bloodType;
@@ -221,8 +230,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   style: AppTextStyles.body,
-                                  decoration:
-                                      bareInputDecoration('Enter Height'),
+                                  decoration: bareInputDecoration(
+                                    'Enter Height',
+                                  ),
                                 ),
                               ),
                             ],
@@ -243,8 +253,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   style: AppTextStyles.body,
-                                  decoration:
-                                      bareInputDecoration('Enter Weight'),
+                                  decoration: bareInputDecoration(
+                                    'Enter Weight',
+                                  ),
                                 ),
                               ),
                             ],

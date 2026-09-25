@@ -50,7 +50,9 @@ class LabTestCard extends StatelessWidget {
                         test.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
+                        style: AppTextStyles.body.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                       SizedBox(height: 4.h),
                       Text(
@@ -60,19 +62,30 @@ class LabTestCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, size: 18.sp, color: AppColors.textSecondary),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  size: 18.sp,
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
 
             SizedBox(height: 12.h),
-            Divider(height: 1, color: AppColors.mutedBlue.withValues(alpha: 0.4)),
+            Divider(
+              height: 1,
+              color: AppColors.mutedBlue.withValues(alpha: 0.4),
+            ),
             SizedBox(height: 10.h),
 
             // ---- Lab/hospital info ----
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.local_hospital_outlined, size: 14.sp, color: AppColors.navy),
+                Icon(
+                  Icons.local_hospital_outlined,
+                  size: 14.sp,
+                  color: AppColors.navy,
+                ),
                 SizedBox(width: 6.w),
                 Expanded(
                   child: Column(
@@ -92,7 +105,9 @@ class LabTestCard extends StatelessWidget {
                         test.labAddress,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.caption.copyWith(fontSize: 10.5.sp),
+                        style: AppTextStyles.caption.copyWith(
+                          fontSize: 10.5.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -101,24 +116,27 @@ class LabTestCard extends StatelessWidget {
             ),
 
             SizedBox(height: 10.h),
-Row(
-  children: [
-    Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-      decoration: BoxDecoration(
-        color: kTipTint,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Text(
-        'Rs. ${test.price}',
-        style: AppTextStyles.caption.copyWith(
-          color: kTipColor,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    ),
-  ],
-),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 5.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: kTipTint,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    'Rs. ${test.price}',
+                    style: AppTextStyles.caption.copyWith(
+                      color: kTipColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

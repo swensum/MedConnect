@@ -182,15 +182,15 @@ class AppRouter {
         },
       ),
       GoRoute(
-  path: AppRoutes.editProfile,
-  pageBuilder: (context, state) =>
-      slidePage(const EditProfileScreen(), state),
-),
-GoRoute(
-  path: AppRoutes.labTestDiscovery,
-  pageBuilder: (context, state) =>
-      slidePage(const LabTestDiscoveryScreen(), state),
-),
+        path: AppRoutes.editProfile,
+        pageBuilder: (context, state) =>
+            slidePage(const EditProfileScreen(), state),
+      ),
+      GoRoute(
+        path: AppRoutes.labTestDiscovery,
+        pageBuilder: (context, state) =>
+            slidePage(const LabTestDiscoveryScreen(), state),
+      ),
     ],
   );
 }

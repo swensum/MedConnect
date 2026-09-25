@@ -69,7 +69,7 @@ class ProfileTab extends ConsumerWidget {
                             style: AppTextStyles.h3,
                           ),
                           SizedBox(height: 2.h),
-                           Text(
+                          Text(
                             profile?.city ?? '',
                             style: AppTextStyles.bodySecondary,
                           ),
@@ -79,7 +79,7 @@ class ProfileTab extends ConsumerWidget {
                     NeuCircleButton(
                       size: 38,
                       icon: Icons.edit_outlined,
-                 onTap: () => context.push(AppRoutes.editProfile),
+                      onTap: () => context.push(AppRoutes.editProfile),
                     ),
                   ],
                 ),

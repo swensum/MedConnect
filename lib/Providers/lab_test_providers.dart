@@ -14,7 +14,8 @@ final filteredLabTestsProvider = Provider<List<LabTest>>((ref) {
 
   return tests.where((t) {
     final matchesCategory = category == 'All' || t.category == category;
-    final matchesQuery = query.isEmpty ||
+    final matchesQuery =
+        query.isEmpty ||
         t.name.toLowerCase().contains(query) ||
         t.category.toLowerCase().contains(query);
     return matchesCategory && matchesQuery;

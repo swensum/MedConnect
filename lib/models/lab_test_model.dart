@@ -40,7 +40,8 @@ const List<LabTest> allLabTests = [
     labName: 'Koshi Zonal Hospital',
     labAddress: 'Biratnagar-4, Koshi Province',
     reportTime: '12 hrs',
-    description: 'Measures red cells, white cells, and platelets to check '
+    description:
+        'Measures red cells, white cells, and platelets to check '
         'overall health and detect a range of disorders.',
   ),
   LabTest(
@@ -52,7 +53,8 @@ const List<LabTest> allLabTests = [
     labName: 'Nobel Medical College',
     labAddress: 'Kanchanbari, Biratnagar',
     reportTime: '24 hrs',
-    description: 'Checks cholesterol and triglyceride levels to assess '
+    description:
+        'Checks cholesterol and triglyceride levels to assess '
         'heart disease risk.',
   ),
   LabTest(
@@ -126,7 +128,8 @@ const List<LabTest> allLabTests = [
     labName: 'Koshi Zonal Hospital',
     labAddress: 'Biratnagar-4, Koshi Province',
     reportTime: '48 hrs',
-    description: 'A comprehensive panel covering blood count, sugar, '
+    description:
+        'A comprehensive panel covering blood count, sugar, '
         'lipid profile, liver and kidney function, and more.',
   ),
 ];

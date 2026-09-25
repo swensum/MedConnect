@@ -33,6 +33,7 @@ List<BoxShadow> neuShadows({
     ),
   ];
 }
+
 List<BoxShadow> neuFloatingShadow({double blur = 24, double distance = 8}) {
   return [
     BoxShadow(
@@ -198,7 +199,6 @@ class _NeuCircleButtonState extends State<NeuCircleButton> {
     );
   }
 }
-
 
 class NeuInsetSurface extends StatelessWidget {
   const NeuInsetSurface({
@@ -487,6 +487,7 @@ Future<DateTime?> showNeuDatePicker(
     ),
   );
 }
+
 class NeuPulseIcon extends StatefulWidget {
   const NeuPulseIcon({
     super.key,

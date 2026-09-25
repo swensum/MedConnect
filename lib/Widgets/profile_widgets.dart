@@ -567,6 +567,7 @@ class HealthRecordsRow extends StatelessWidget {
     );
   }
 }
+
 class BookConsultationBanner extends StatelessWidget {
   const BookConsultationBanner({super.key, this.onBookTap});
 
@@ -576,7 +577,10 @@ class BookConsultationBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h), // shorter than before
+      padding: EdgeInsets.symmetric(
+        horizontal: 18.w,
+        vertical: 14.h,
+      ), // shorter than before
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
