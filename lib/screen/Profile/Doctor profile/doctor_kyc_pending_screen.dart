@@ -1,19 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
+import 'package:med_connect/Providers/doctor_account_providers.dart';
+import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
+import 'package:med_connect/models/doctor_account_model.dart';
 
 enum DoctorKycStatus { pending, rejected, approved }
 
-class DoctorKycPendingScreen extends StatefulWidget {
+class DoctorKycPendingScreen extends ConsumerStatefulWidget {
   const DoctorKycPendingScreen({
     super.key,
     this.status = DoctorKycStatus.pending,
     this.rejectionReason,
     this.onResubmit,
-    this.onContinue,
   });
 
   final DoctorKycStatus status;
@@ -25,14 +29,13 @@ class DoctorKycPendingScreen extends StatefulWidget {
   /// Typically pops back to the KYC form.
   final VoidCallback? onResubmit;
 
-  /// Called when the doctor taps "Go to dashboard" once approved.
-  final VoidCallback? onContinue;
-
   @override
-  State<DoctorKycPendingScreen> createState() => _DoctorKycPendingScreenState();
+  ConsumerState<DoctorKycPendingScreen> createState() =>
+      _DoctorKycPendingScreenState();
 }
 
-class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
+class _DoctorKycPendingScreenState
+    extends ConsumerState<DoctorKycPendingScreen> {
   bool _isRefreshing = false;
 
   // Local, mutable copy of the status so the fake-approval timer below can
@@ -66,6 +69,24 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
 
     if (!mounted) return;
     setState(() => _isRefreshing = false);
+  }
+
+  /// Sets up the doctor's account (dev placeholder for now) and takes
+  /// them into their dashboard.
+  void _goToDashboard() {
+    // TODO: replace with the real submitted KYC data once that flow
+    // captures name/specialization/etc. properly, and use the doctor's
+    // real uid instead of this hardcoded placeholder.
+    ref.read(doctorAccountProvider.notifier).state = const DoctorAccount(
+      id: 'anita-sharma', // dev placeholder — matches a mock catalog
+                            // doctor so you can see real appointment
+                            // data on the dashboard while testing.
+      name: 'Dr. Anita Sharma',
+      specialization: 'Cardiologist',
+      experienceYears: 12,
+      fee: 800,
+    );
+    context.go(AppRoutes.doctorHome);
   }
 
   @override
@@ -216,7 +237,7 @@ class _DoctorKycPendingScreenState extends State<DoctorKycPendingScreen> {
       case DoctorKycStatus.approved:
         return NeuPillButton(
           enabled: true,
-          onTap: widget.onContinue ?? () {},
+          onTap: _goToDashboard,
           label: 'Go to dashboard',
         );
     }

@@ -5,8 +5,6 @@ import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/patient_home_widgets.dart';
 import 'package:med_connect/models/patient_home_models.dart';
 
-/// Raised pill toggle showing the doctor's current availability
-/// (Online/Offline for new bookings).
 class AvailabilityToggle extends StatelessWidget {
   const AvailabilityToggle({
     super.key,
@@ -101,8 +99,6 @@ class DoctorStatCard extends StatelessWidget {
   }
 }
 
-/// A patient appointment row, from the doctor's point of view — shows the
-/// patient's name instead of the doctor's.
 class PatientAppointmentCard extends StatelessWidget {
   const PatientAppointmentCard({
     super.key,

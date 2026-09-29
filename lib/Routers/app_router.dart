@@ -11,6 +11,7 @@ import 'package:med_connect/models/payment_models.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/otp_verify_screen.dart';
 import 'package:med_connect/screen/AuthScreen/phone_auth/phone_auth_screen.dart';
 import 'package:med_connect/screen/AuthScreen/roles/role_selection_screen.dart';
+import 'package:med_connect/screen/Dashboard/doctor_home_shell.dart';
 import 'package:med_connect/screen/Dashboard/patient_home_shell.dart';
 import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_screen.dart';
 import 'package:med_connect/screen/Profile/Doctor%20profile/doctor_kyc_pending_screen.dart';
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String paymentCheckout = '/payment-checkout';
   static const String editProfile = '/edit-profile';
   static const String labTestDiscovery = '/lab-test-discovery';
+  static const String doctorHome = '/doctor-home';
 }
 
 CustomTransitionPage slidePage(Widget child, GoRouterState state) {
@@ -191,6 +193,11 @@ class AppRouter {
         pageBuilder: (context, state) =>
             slidePage(const LabTestDiscoveryScreen(), state),
       ),
+      GoRoute(
+  path: AppRoutes.doctorHome,
+  pageBuilder: (context, state) =>
+      slidePage(const DoctorHomeShell(), state),
+),
     ],
   );
 }
