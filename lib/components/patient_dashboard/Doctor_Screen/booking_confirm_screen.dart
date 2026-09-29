@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:med_connect/Animations/neumorphic.dart';
 import 'package:med_connect/Providers/appointment_providers.dart';
+import 'package:med_connect/Providers/patient_profile_providers.dart';
 import 'package:med_connect/Routers/app_router.dart';
 import 'package:med_connect/Theme/theme.dart';
 import 'package:med_connect/Widgets/payment_widgets.dart';
@@ -57,9 +58,9 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
     if (!mounted) return;
     context.go(AppRoutes.patientHome);
   }
-
   @override
   Widget build(BuildContext context) {
+    final patientProfile = ref.watch(patientProfileProvider);
     if (_isConfirmed && _confirmedAppointment != null) {
       return Scaffold(
         backgroundColor: kNeuBg,
@@ -93,6 +94,7 @@ class _BookingConfirmScreenState extends ConsumerState<BookingConfirmScreen> {
       date: draft.date!,
       time: draft.slot!,
       consultationMode: draft.consultationMode!,
+      patientName: patientProfile?.name ?? 'Patient', 
     );
 
     return Scaffold(

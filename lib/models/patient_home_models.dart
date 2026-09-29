@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// -------- Mock data (swap for real models/Firestore once wired up) -----
-
-/// A single patient review shown on the doctor profile screen.
 class DoctorReview {
   const DoctorReview({
     required this.patientName,
@@ -15,7 +12,7 @@ class DoctorReview {
   final double rating;
   final String comment;
 
-  /// Relative time label, e.g. '2 weeks ago'.
+  
   final String timeAgo;
 }
 
@@ -43,18 +40,12 @@ class DoctorPreview {
   final double rating;
   final String? bio;
 
-  /// Hospital/clinic the doctor is primarily associated with.
+
   final String? workplaceName;
   final String? workplaceAddress;
 
-  /// e.g. ['In-clinic', 'Video call'] — shown as informational pills on
-  /// the profile screen; the actual choice happens inside booking.
   final List<String> consultationModes;
 
-  /// Quick-glance open slots for today. IMPORTANT: these must exactly
-  /// match the string format used in mockSlotsFor() (two-digit hour,
-  /// e.g. '09:00 AM' not '9:00 AM') or the booking screen won't be able
-  /// to match/highlight them.
   final List<String> todaySlots;
 
   final List<DoctorReview> reviews;
@@ -74,6 +65,7 @@ class AppointmentPreview {
     required this.weekday,
     required this.time,
     this.consultationMode,
+    this.patientName = 'Patient',
   });
 
   final String id;
@@ -86,6 +78,7 @@ class AppointmentPreview {
   final String weekday;
   final String time;
   final String? consultationMode;
+   final String patientName;
 
   bool get isPast {
     final today = DateTime.now();
@@ -125,6 +118,7 @@ class AppointmentPreview {
     required DateTime date,
     required String time,
     required String consultationMode,
+    String patientName = 'Patient',
   }) {
     return AppointmentPreview(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -137,6 +131,7 @@ class AppointmentPreview {
       weekday: _weekdays[date.weekday - 1],
       time: time,
       consultationMode: consultationMode,
+      patientName: patientName,
     );
   }
 }
