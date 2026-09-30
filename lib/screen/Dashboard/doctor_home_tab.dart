@@ -17,6 +17,8 @@ class DoctorHomeTab extends ConsumerWidget {
     final todayAppointments = ref.watch(doctorTodayAppointmentsProvider);
     final upcomingAppointments = ref.watch(doctorUpcomingAppointmentsProvider);
     final nextAppointment = ref.watch(doctorNextAppointmentProvider);
+    final weeklyEarnings = ref.watch(doctorWeeklyEarningsProvider);
+    final totalPatients = ref.watch(doctorTotalPatientsProvider);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 100.h),
@@ -54,7 +56,17 @@ class DoctorHomeTab extends ConsumerWidget {
             isOnline: isOnline,
             onChanged: (v) => ref.read(doctorAvailabilityProvider.notifier).state = v,
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 20.h),
+
+          // ---- Navy earnings banner ----
+          WeeklyEarningsCard(
+            amount: weeklyEarnings,
+            appointmentCount: upcomingAppointments.length,
+            onViewReport: () {
+              // TODO: navigate to a full earnings/reports screen.
+            },
+          ),
+          SizedBox(height: 20.h),
 
           Row(
             children: [
@@ -71,9 +83,9 @@ class DoctorHomeTab extends ConsumerWidget {
               ),
               SizedBox(width: 10.w),
               DoctorStatCard(
-                icon: Icons.payments_outlined,
-                label: 'Fee',
-                value: doctor?.fee != null ? 'Rs. ${doctor!.fee}' : '—',
+                icon: Icons.people_alt_outlined,
+                label: 'Patients',
+                value: '$totalPatients',
               ),
             ],
           ),

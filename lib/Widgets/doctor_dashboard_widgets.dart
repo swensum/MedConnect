@@ -184,3 +184,101 @@ class PatientAppointmentCard extends StatelessWidget {
     );
   }
 }
+/// Navy-to-black gradient card summarizing this week's earnings — mirrors
+/// HealthStatusCard's styling on the patient side for visual consistency.
+class WeeklyEarningsCard extends StatelessWidget {
+  const WeeklyEarningsCard({
+    super.key,
+    required this.amount,
+    required this.appointmentCount,
+    this.onViewReport,
+  });
+
+  final int amount;
+  final int appointmentCount;
+  final VoidCallback? onViewReport;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.navy,
+            Color.lerp(AppColors.navy, Colors.black, 0.85)!,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(22.r),
+        boxShadow: neuShadows(distance: 3, blur: 8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'This week\'s earnings',
+                  style: AppTextStyles.h3.copyWith(color: Colors.white, fontSize: 15.sp),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'Rs. $amount',
+                  style: AppTextStyles.h1.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 26.sp,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  'From $appointmentCount appointment${appointmentCount == 1 ? '' : 's'}',
+                  style: AppTextStyles.caption.copyWith(
+                    color: Colors.white70,
+                    fontSize: 11.5.sp,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                GestureDetector(
+                  onTap: onViewReport,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'View report',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.navy,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11.5.sp,
+                          ),
+                        ),
+                        SizedBox(width: 5.w),
+                        Icon(Icons.arrow_forward_rounded, size: 13.sp, color: AppColors.navy),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.trending_up_rounded,
+            size: 56.sp,
+            color: Colors.white.withValues(alpha: 0.18),
+          ),
+        ],
+      ),
+    );
+  }
+}
