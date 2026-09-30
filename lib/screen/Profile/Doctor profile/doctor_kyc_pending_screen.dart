@@ -21,12 +21,8 @@ class DoctorKycPendingScreen extends ConsumerStatefulWidget {
   });
 
   final DoctorKycStatus status;
-
-  /// Shown only when [status] is rejected — the admin's note on what to fix.
   final String? rejectionReason;
 
-  /// Called when the doctor taps "Edit & resubmit" on a rejected KYC.
-  /// Typically pops back to the KYC form.
   final VoidCallback? onResubmit;
 
   @override
@@ -38,8 +34,6 @@ class _DoctorKycPendingScreenState
     extends ConsumerState<DoctorKycPendingScreen> {
   bool _isRefreshing = false;
 
-  // Local, mutable copy of the status so the fake-approval timer below can
-  // flip it without needing a parent rebuild.
   late DoctorKycStatus _status = widget.status;
   Timer? _fakeApprovalTimer;
 
@@ -71,16 +65,10 @@ class _DoctorKycPendingScreenState
     setState(() => _isRefreshing = false);
   }
 
-  /// Sets up the doctor's account (dev placeholder for now) and takes
-  /// them into their dashboard.
   void _goToDashboard() {
-    // TODO: replace with the real submitted KYC data once that flow
-    // captures name/specialization/etc. properly, and use the doctor's
-    // real uid instead of this hardcoded placeholder.
+
     ref.read(doctorAccountProvider.notifier).state = const DoctorAccount(
-      id: 'anita-sharma', // dev placeholder — matches a mock catalog
-                            // doctor so you can see real appointment
-                            // data on the dashboard while testing.
+      id: 'anita-sharma', 
       name: 'Dr. Anita Sharma',
       specialization: 'Cardiologist',
       experienceYears: 12,
